@@ -1,0 +1,19 @@
+
+
+== Version 1.1 ==
+* removed Java 1.3 downward compatibility - now works with Java 1.5 only (see Version 1.0.2 and onwards for Java 1.3 compatibility)
+* works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");)
+* works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
+* changed unit-tests to use Java 5.0 features
+* added some more unit-tests
+
+
+
+== Version 1.0.2 ==
+* continuing Java 1.3 downward compatibility (i.e. all new features for V1.1 onwards can also be found under 1.0.2 onwards)
+* added some more unit-tests (TODO)
+
+== Version 1.0.1 ==
+
+
+== Version 1.0 ==
