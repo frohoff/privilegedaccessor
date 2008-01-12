@@ -287,7 +287,7 @@ public class PrivilegedAccessorTest extends TestCase {
         }
 
         try {
-            PA.invokeMethod(this.child, "setNumber", 5);
+            PA.invokeMethod(this.child, "setNumber)(", 5);
             fail("should throw NoSuchMethodException");
         } catch (NoSuchMethodException e) {
             // that is what we expect
