@@ -22,7 +22,7 @@ public class TestChild extends TestParent {
     public TestChild(String name) {
         this(name, new Integer(8));
     }
-
+    
     private int getNumber() {
         return this.privateNumber;
     }

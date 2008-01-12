@@ -215,25 +215,28 @@ public class PrivilegedAccessorTest extends TestCase {
      * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
      */
     public void testInvokeMethod() throws Exception {
+        assertEquals("Charlie", PA.invokeMethod(this.parent, "getName()"));
+        
         PA.invokeMethod(this.parent, "setName(java.lang.String)", "Herbert");
         assertEquals("Herbert", PA.getValue(this.parent, "privateName"));
 
         PA.invokeMethod(this.parent, "setName(java.lang.String)", null);
         assertEquals(null, PA.getValue(this.parent, "privateName"));
-
-        PA.invokeMethod(this.child, "setName(java.lang.String)", "Herbert");
-        assertEquals("Herbert", PA.getValue(this.child, "privateName"),
-                "Herbert");
+        
+        PA.invokeMethod(this.parent, "setName()");
+        assertEquals("Chaplin", PA.getValue(this.parent, "privateName"));
+        
+        PA.invokeMethod(this.child, "setName(java.lang.String)", "Hubert");
+        assertEquals("Hubert", PA.getValue(this.child, "privateName"));
 
         PA.invokeMethod(this.child, "setNumber(int)", 3);
         assertEquals(3, PA.invokeMethod(this.child, "getNumber()"));
 
         PA.invokeMethod(this.childInParent, "setName(java.lang.String)",
-                "Herbert");
+                "Norbert");
         PA.invokeMethod(this.childInParent, "setNumber(int)", 3);
-        assertEquals("Herbert", PA.getValue(this.childInParent, "privateName"));
-        assertEquals(3, PA.getValue(this.childInParent,
-                "privateNumber"));
+        assertEquals("Norbert", PA.getValue(this.childInParent, "privateName"));
+        assertEquals(3, PA.getValue(this.childInParent, "privateNumber"));
     }
 
     /**
@@ -410,7 +413,7 @@ public class PrivilegedAccessorTest extends TestCase {
         try {
             PA.invokeMethod(this.child, "setName(java.lang.String)", 2);
             fail("should throw NoSuchMethodException");
-        } catch (NoSuchMethodException e) {
+        } catch (IllegalArgumentException e) {
             // that is what we expect
         }
 
@@ -428,16 +431,37 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (NoSuchMethodException e) {
             // that is what we expect
         }
+        
+        try {
+            PA.invokeMethod(this.child, "setNumber(int)", null);
+            fail("should throw NoSuchMethodException");
+        } catch (IllegalArgumentException e) {
+            // that is what we expect
+        }
     }
 
     public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
         PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                 new Integer[] { 5, 3 });
         assertEquals(8, PA.getValue(this.child, "privateNumber"));
-
+        
+        PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
+                5, 3);
+        assertEquals(8, PA.getValue(this.child, "privateNumber"));
+        
         PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                 new Object[] { 5, 3 });
         assertEquals(8, PA.getValue(this.child, "privateNumber"));
+    }
+    
+    public void testInvokeMethodWithPrimitivesArrayInsteadOfSeveralPrimitives() throws Exception {
+        try {
+            PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
+                    new int[] { 5, 3 });
+            fail("invoking method with array of primitives as parameters should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
     }
 
     public void testInvokeMethodWithObjectAndPrimitive() throws Exception {

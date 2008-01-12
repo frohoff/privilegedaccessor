@@ -24,6 +24,11 @@ public class TestParent {
     protected void setName(String newName) {
         this.privateName = newName;
     }
+    
+    /** overloading setName(String) **/
+    private void setName() {
+        this.privateName = "Chaplin";
+    }
 
     private static void setStaticNumber(int number) {
         TestParent.privateStaticNumber = number;
