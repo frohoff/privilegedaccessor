@@ -1,17 +1,29 @@
 
 
-== Version 1.1 ==
+== Version 1.2 ==
+Version 1.1 is the Java 1.5 (and later) compatible version of PrivilegedAccessor
+
 * removed Java 1.3 downward compatibility - now works with Java 1.5 only (see Version 1.0.2 and onwards for Java 1.3 compatibility)
 * works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");)
 * works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
 * changed unit-tests to use Java 5.0 features
 * added some more unit-tests
+* improved error output
+* removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
+* removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive), invokeMethod(method, primitive))
+* removed test-classes from jar and src.zip
 
+== Version 1.1 ==
+Version 1.1 is the Java 1.3 (and later) compatible version of PrivilegedAccessor
 
-
-== Version 1.0.2 ==
-* continuing Java 1.3 downward compatibility (i.e. all new features for V1.1 onwards can also be found under 1.0.2 onwards)
+* continuing Java 1.3 downward compatibility (i.e. all new features for V1.2 onwards can also be found under 1.1 onwards)
 * added some more unit-tests (TODO)
+* improved error output (TODO)
+* removed test-classes from jar and src.zip (TODO)
+
+= Version 1.0 (discontinued) =
+== Version 1.0.2 ==
+
 
 == Version 1.0.1 ==
 

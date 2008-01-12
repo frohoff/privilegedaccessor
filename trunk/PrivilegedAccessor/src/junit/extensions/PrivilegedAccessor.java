@@ -54,34 +54,34 @@ public final class PrivilegedAccessor {
         }
     }
 
-    /**
-     * Instantiates an object of the given class without parameters.
-     * e.g. instantiate(String.class);
-     *
-     * @param fromClass the class to instantiate an object from
-     * @return the newly created null
-     * @throws IllegalArgumentException if the number of actual and formal
-     *         parameters differ; if an unwrapping conversion for primitive
-     *         arguments fails; or if, after possible unwrapping, a parameter
-     *         value cannot be converted to the corresponding formal parameter
-     *         type by a method invocation conversion.
-     * @throws IllegalAccessException if this Constructor object enforces Java
-     *         language access control and the underlying constructor is
-     *         inaccessible.
-     * @throws InvocationTargetException if the underlying constructor throws
-     *         an exception.
-     * @throws NoSuchMethodException if the constructor could not be found
-     * @throws InstantiationException if the class that declares the underlying
-     *         constructor represents an abstract class.
-     *
-     * @see PrivilegedAccessor#instantiate(Class,Object)
-     */
-    public static Object instantiate(final Class fromClass)
-    throws IllegalArgumentException, InstantiationException,
-    IllegalAccessException, InvocationTargetException,
-    NoSuchMethodException {
-        return instantiate(fromClass, null);
-    }
+//    /**
+//     * Instantiates an object of the given class without parameters.
+//     * e.g. instantiate(String.class);
+//     *
+//     * @param fromClass the class to instantiate an object from
+//     * @return the newly created null
+//     * @throws IllegalArgumentException if the number of actual and formal
+//     *         parameters differ; if an unwrapping conversion for primitive
+//     *         arguments fails; or if, after possible unwrapping, a parameter
+//     *         value cannot be converted to the corresponding formal parameter
+//     *         type by a method invocation conversion.
+//     * @throws IllegalAccessException if this Constructor object enforces Java
+//     *         language access control and the underlying constructor is
+//     *         inaccessible.
+//     * @throws InvocationTargetException if the underlying constructor throws
+//     *         an exception.
+//     * @throws NoSuchMethodException if the constructor could not be found
+//     * @throws InstantiationException if the class that declares the underlying
+//     *         constructor represents an abstract class.
+//     *
+//     * @see PrivilegedAccessor#instantiate(Class,Object)
+//     */
+//    public static Object instantiate(final Class fromClass)
+//    throws IllegalArgumentException, InstantiationException,
+//    IllegalAccessException, InvocationTargetException,
+//    NoSuchMethodException {
+//        return instantiate(fromClass, null);
+//    }
 
     /**
      * Instantiates an object of the given class with the given arguments and
@@ -116,39 +116,6 @@ public final class PrivilegedAccessor {
     }
 
     /**
-     * Instantiates an object of the given class with the given argument. e.g.
-     * instantiate(String.class, "string to copy");
-     *
-     * @param fromClass the class to instantiate an object from
-     * @param argument the argument to pass to the constructor
-     * @return an null of the given type
-     * @throws IllegalArgumentException if the number of actual and formal
-     *         parameters differ; if an unwrapping conversion for primitive
-     *         arguments fails; or if, after possible unwrapping, a parameter
-     *         value cannot be converted to the corresponding formal parameter
-     *         type by a method invocation conversion.
-     * @throws IllegalAccessException if this Constructor object enforces Java
-     *         language access control and the underlying constructor is
-     *         inaccessible.
-     * @throws InvocationTargetException if the underlying constructor throws
-     *         an exception.
-     * @throws NoSuchMethodException if the constructor could not be found
-     * @throws InstantiationException if the class that declares the underlying
-     *         constructor represents an abstract class.
-     *
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object...)
-     */
-    public static Object instantiate(final Class fromClass,
-            final Object argument)
-    throws IllegalArgumentException, InstantiationException,
-            IllegalAccessException, InvocationTargetException,
-            NoSuchMethodException {
-        Object[] args = new Object[1];
-        args[0] = argument;
-        return instantiate(fromClass, args);
-    }
-
-    /**
      * Instantiates an object of the given class with the given arguments.
      *
      * @param fromClass the class to instantiate an object from
@@ -177,253 +144,227 @@ public final class PrivilegedAccessor {
         return instantiate(fromClass, getParameterTypes(args), args);
     }
 
-    /**
-     * Calls a method without parameters on the given object instance or class.
-     * If the given instanceOrClass is a class then a static method is called.
-     *
-     * @param instanceOrClass the instance or class to call the method on
-     * @param methodSignature the name of the method with brackets
-     *        (e.g. "test (java.lang.String, com.company.project.MyObject)")
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature)
-    throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
-        if (methodSignature.indexOf('(') != methodSignature.indexOf(')') - 1) {
-            throw new NoSuchMethodException("Method '" + methodSignature
-                    + "' must have no parameters");
-        }
-        return getMethod(instanceOrClass, getMethodName(methodSignature), null)
-            .invoke(instanceOrClass, null);
-    }
-
-    /**
-     * Calls a method on the given object instance with the given boolean
-     * argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(boolean)")
-     * @param arg the boolean argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final boolean arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Boolean.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Boolean(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given byte argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(byte)")
-     * @param arg the byte argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final byte arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Byte.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Byte(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given char argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(char)")
-     * @param arg the char argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final char arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Character.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Character(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given double
-     * argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(double)")
-     * @param arg the double argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final double arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Double.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Double(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given float
-     * argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(flaot)")
-     * @param arg the float argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final float arg)
-    throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Float.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Float(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given int argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(int)")
-     * @param arg the integer argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final int arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-         return getMethod(instanceOrClass, getMethodName(methodSignature),
-                    new Class[] {Integer.TYPE}).invoke(instanceOrClass,
-                            new Object[] {new Integer(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given long argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(long)")
-     * @param arg the long argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final long arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Long.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Long(arg)});
-    }
-
-    /**
-     * Calls a method on the given object instance with the given argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "test (java.lang.String, com.company.project.MyObject)")
-     * @param arg the argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object...)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final Object arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return invokeMethod(instanceOrClass, methodSignature,
-                new Object[] {arg});
-    }
+//    /**
+//     * Calls a method without parameters on the given object instance or class.
+//     * If the given instanceOrClass is a class then a static method is called.
+//     *
+//     * @param instanceOrClass the instance or class to call the method on
+//     * @param methodSignature the name of the method with brackets
+//     *        (e.g. "test (java.lang.String, com.company.project.MyObject)")
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature)
+//    throws IllegalArgumentException, IllegalAccessException,
+//            InvocationTargetException, NoSuchMethodException {
+//        if (methodSignature.indexOf('(') != methodSignature.indexOf(')') - 1) {
+//            throw new NoSuchMethodException("Method '" + methodSignature
+//                    + "' must have no parameters");
+//        }
+//        return getMethod(instanceOrClass, getMethodName(methodSignature), null)
+//            .invoke(instanceOrClass, null);
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given boolean
+//     * argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(boolean)")
+//     * @param arg the boolean argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final boolean arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Boolean.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Boolean(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given byte argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(byte)")
+//     * @param arg the byte argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final byte arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Byte.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Byte(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given char argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(char)")
+//     * @param arg the char argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final char arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Character.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Character(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given double
+//     * argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(double)")
+//     * @param arg the double argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final double arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Double.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Double(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given float
+//     * argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(flaot)")
+//     * @param arg the float argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final float arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//            InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Float.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Float(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given int argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(int)")
+//     * @param arg the integer argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final int arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//         return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                    new Class[] {Integer.TYPE}).invoke(instanceOrClass,
+//                            new Object[] {new Integer(arg)});
+//    }
+//
+//    /**
+//     * Calls a method on the given object instance with the given long argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(long)")
+//     * @param arg the long argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final long arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Long.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Long(arg)});
+//    }
 
     /**
      * Calls a method on the given object instance with the given arguments.
@@ -458,181 +399,181 @@ public final class PrivilegedAccessor {
                 invoke(instanceOrClass, arguments);
     }
 
-    /**
-     * Calls a method on the given object instance with the given short
-     * argument.
-     *
-     * @param instanceOrClass the instance or class to invoke the method on
-     * @param methodSignature the name of the method and the parameters
-     *        (e.g. "myMethod(short)")
-     * @param arg the short argument to pass to the method
-     * @return the return value of this method or null if void
-     * @throws IllegalAccessException if the method is inaccessible
-     * @throws InvocationTargetException if the underlying method throws an
-     *                                   exception.
-     * @throws NoSuchMethodException if no method with the given
-     *                               <code>methodSignature</code> could be
-     *                               found
-     * @throws IllegalArgumentException if an argument couldn't be converted to
-     *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-     */
-    public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final short arg)
-    throws IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException, NoSuchMethodException {
-        return getMethod(instanceOrClass, getMethodName(methodSignature),
-                new Class[] {Short.TYPE}).invoke(instanceOrClass,
-                new Object[] {new Short(arg)});
-    }
+//    /**
+//     * Calls a method on the given object instance with the given short
+//     * argument.
+//     *
+//     * @param instanceOrClass the instance or class to invoke the method on
+//     * @param methodSignature the name of the method and the parameters
+//     *        (e.g. "myMethod(short)")
+//     * @param arg the short argument to pass to the method
+//     * @return the return value of this method or null if void
+//     * @throws IllegalAccessException if the method is inaccessible
+//     * @throws InvocationTargetException if the underlying method throws an
+//     *                                   exception.
+//     * @throws NoSuchMethodException if no method with the given
+//     *                               <code>methodSignature</code> could be
+//     *                               found
+//     * @throws IllegalArgumentException if an argument couldn't be converted to
+//     *                                  match the expected type
+//     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+//     */
+//    public static Object invokeMethod(final Object instanceOrClass,
+//            final String methodSignature, final short arg)
+//    throws IllegalArgumentException, IllegalAccessException,
+//    InvocationTargetException, NoSuchMethodException {
+//        return getMethod(instanceOrClass, getMethodName(methodSignature),
+//                new Class[] {Short.TYPE}).invoke(instanceOrClass,
+//                new Object[] {new Short(arg)});
+//    }
 
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final boolean value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setBoolean(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final byte value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setByte(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final char value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setChar(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final double value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setDouble(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final float value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setFloat(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final int value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setInt(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
-
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final long value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-
-        try {
-            field.setLong(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final boolean value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setBoolean(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final byte value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setByte(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final char value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setChar(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final double value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setDouble(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final float value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setFloat(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final int value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setInt(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
+//
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final long value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//
+//        try {
+//            field.setLong(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
 
     /**
      * Sets the value of the named field.
@@ -655,26 +596,26 @@ public final class PrivilegedAccessor {
         }
     }
 
-    /**
-     * Sets the value of the named field.
-     * If instanceOrClass is a class then a static field is returned.
-     *
-     * @param instanceOrClass the instance or class to set the field
-     * @param fieldName the name of the field
-     * @param value the new value of the field
-     * @throws NoSuchFieldException if no field with the given
-     *                              <code>fieldName</code> can be found
-     */
-    public static void setValue(final Object instanceOrClass,
-            final String fieldName, final short value)
-    throws NoSuchFieldException {
-        Field field = getField(instanceOrClass, fieldName);
-        try {
-            field.setShort(instanceOrClass, value);
-        } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
-        }
-    }
+//    /**
+//     * Sets the value of the named field.
+//     * If instanceOrClass is a class then a static field is returned.
+//     *
+//     * @param instanceOrClass the instance or class to set the field
+//     * @param fieldName the name of the field
+//     * @param value the new value of the field
+//     * @throws NoSuchFieldException if no field with the given
+//     *                              <code>fieldName</code> can be found
+//     */
+//    public static void setValue(final Object instanceOrClass,
+//            final String fieldName, final short value)
+//    throws NoSuchFieldException {
+//        Field field = getField(instanceOrClass, fieldName);
+//        try {
+//            field.setShort(instanceOrClass, value);
+//        } catch (IllegalAccessException e) {
+//            throw new Error("Assertion failed"); //would mean that setAccessible didn't work
+//        }
+//    }
 
     /**
      * Gets the class with the given className.
@@ -870,10 +811,10 @@ public final class PrivilegedAccessor {
      * @throws IllegalArgumentException if one of the given parameters
      *                                  doesn't math the given methodSignature
      */
-    private static Class[] getParameterTypes(final String methodSignature,
+    private static Class<?>[] getParameterTypes(final String methodSignature,
             final Object... parameters)
     throws NoSuchMethodException, IllegalArgumentException {
-        Class[] typesOfParameters = getTypesInSignature(methodSignature);
+        Class<?>[] typesOfParameters = getTypesInSignature(methodSignature);
 
         for (int i = 0; i < typesOfParameters.length; i++) {
             if (parameters[i] == null
@@ -881,11 +822,10 @@ public final class PrivilegedAccessor {
                 || isPrimitiveForm(typesOfParameters[i], parameters[i].getClass())) {
                 continue;
             }
-            throw new IllegalArgumentException("Method '" + methodSignature
-                    + "'s parameter nr" + i
-                    + " (" + typesOfParameters[i].getName()
-                    + ") does not math argument type ("
-                    + parameters.getClass().getName() + ")");
+            throw new IllegalArgumentException("Parameter #" + i
+                    + " of type '" + parameters[i].getClass().getSimpleName() + "'"
+                    + " does not match expected type '" + typesOfParameters[i].getSimpleName() + "'"
+                    + " in method '" + methodSignature + "'.");
         }
         return typesOfParameters;
     }
@@ -972,29 +912,29 @@ public final class PrivilegedAccessor {
      * @return true if the primitive matches the given type, otherwise false
      * TODO check if this is longer necessary for java 1.5 upwards (autoboxing)
      */
-    private static boolean isPrimitiveForm(final Class primitive, final Class type) {
-        if (primitive  == Integer.TYPE && type == Integer.class) {
+    private static boolean isPrimitiveForm(final Class<?> primitive, final Class<?> type) {
+        if (primitive == Integer.TYPE && type == Integer.class) {
             return true;
         }
-        if (primitive  == Float.TYPE && type == Float.class) {
+        if (primitive == Float.TYPE && type == Float.class) {
             return true;
         }
-        if (primitive  == Double.TYPE && type == Double.class) {
+        if (primitive == Double.TYPE && type == Double.class) {
             return true;
         }
-        if (primitive  == Short.TYPE && type == Short.class) {
+        if (primitive == Short.TYPE && type == Short.class) {
             return true;
         }
-        if (primitive  == Long.TYPE && type == Long.class) {
+        if (primitive == Long.TYPE && type == Long.class) {
             return true;
         }
-        if (primitive  == Byte.TYPE && type == Byte.class) {
+        if (primitive == Byte.TYPE && type == Byte.class) {
             return true;
         }
-        if (primitive  == Character.TYPE && type == Character.class) {
+        if (primitive == Character.TYPE && type == Character.class) {
             return true;
         }
-        if (primitive  == Boolean.TYPE && type == Boolean.class) {
+        if (primitive == Boolean.TYPE && type == Boolean.class) {
             return true;
         }
         return false;
