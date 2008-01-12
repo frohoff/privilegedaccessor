@@ -13,7 +13,7 @@
 
 	<target name="compile">
 		<mkdir dir="${bin.dir}"/>
-		<javac source="1.3"
+		<javac source="1.5"
 			   srcdir="${src.dir}" 
                destdir="${bin.dir}" 
         	   classpath="${lib.dir}/junit_3.8.1.jar"
@@ -23,7 +23,7 @@
 
 	<target name="compile tests" depends="compile">
 		<mkdir dir="${bin.dir}"/>
-		<javac source="1.3"
+		<javac source="1.5"
         	   srcdir="${tst.dir}" 
                destdir="${bin.dir}" 
 	     	   classpath="${lib.dir}/junit_3.8.1.jar"
@@ -35,16 +35,16 @@
 	
 	<target name="jar" depends="compile, compile tests">
 		<mkdir dir="${dst.dir}"/>
-		<jar destfile="${dst.dir}/privilegedAccessor_1.0.2.jar"
+		<jar destfile="${dst.dir}/privilegedAccessor_1.1.jar"
 	       basedir="${bin.dir}"
 	  />
 	</target>
 	
 	<target name="zip" depends="jar">
-		<zip destfile="${dst.dir}/privilegedAccessor_1.0.2.src.zip">
+		<zip destfile="${dst.dir}/privilegedAccessor_1.1.src.zip">
 			<fileset dir="${src.dir}"/>
 			<fileset dir="${tst.dir}"/>
-		    <fileset dir="${dst.dir}" includes="privilegedAccessor_1.0.2.jar"/>
+		    <fileset dir="${dst.dir}" includes="privilegedAccessor_1.1.jar"/>
 		</zip>
 	</target>
 	

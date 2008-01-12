@@ -108,7 +108,7 @@ public final class PrivilegedAccessor {
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
     public static Object instantiate(final Class fromClass,
-            final Class[] argumentTypes, final Object[] args)
+            final Class[] argumentTypes, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -136,7 +136,7 @@ public final class PrivilegedAccessor {
      * @throws InstantiationException if the class that declares the underlying
      *         constructor represents an abstract class.
      *
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object[])
+     * @see PrivilegedAccessor#invokeMethod(Object,String,Object...)
      */
     public static Object instantiate(final Class fromClass,
             final Object argument)
@@ -170,7 +170,7 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class fromClass, final Object[] args)
+    public static Object instantiate(final Class fromClass, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -415,7 +415,7 @@ public final class PrivilegedAccessor {
      *                               found
      * @throws IllegalArgumentException if an argument couldn't be converted to
      *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Object,String,Object[])
+     * @see PrivilegedAccessor#invokeMethod(Object,String,Object...)
      */
     public static Object invokeMethod(final Object instanceOrClass,
             final String methodSignature, final Object arg)
@@ -442,10 +442,10 @@ public final class PrivilegedAccessor {
      *                               found
      * @throws IllegalArgumentException if an argument couldn't be converted to
      *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Class,String,Object[])
+     * @see PrivilegedAccessor#invokeMethod(Class,String,Object...)
      */
     public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final Object[] arguments)
+            final String methodSignature, final Object... arguments)
     throws IllegalArgumentException, IllegalAccessException,
     InvocationTargetException, NoSuchMethodException {
         if (arguments == null) {
@@ -725,7 +725,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Constructor getConstructor(final Class type,
-            final Class[] parameterTypes)
+            final Class... parameterTypes)
             throws NoSuchMethodException {
         Constructor constructor = type.getDeclaredConstructor(parameterTypes);
         constructor.setAccessible(true);
@@ -775,7 +775,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Method getMethod(final Class type, final String methodName,
-            final Class[] parameterTypes) throws NoSuchMethodException {
+            final Class... parameterTypes) throws NoSuchMethodException {
         try {
             return type.getDeclaredMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e) {
@@ -800,7 +800,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Method getMethod(final Object instanceOrClass,
-            final String methodName, final Class[] parameterTypes)
+            final String methodName, final Class... parameterTypes)
     throws NoSuchMethodException {
         Class type;
 
@@ -845,7 +845,7 @@ public final class PrivilegedAccessor {
      * @param parameters the parameters
      * @return the class-types of the arguments
      */
-    private static Class[] getParameterTypes(final Object[] parameters) {
+    private static Class[] getParameterTypes(final Object... parameters) {
         if (parameters == null) {
             return null;
         }
@@ -871,7 +871,7 @@ public final class PrivilegedAccessor {
      *                                  doesn't math the given methodSignature
      */
     private static Class[] getParameterTypes(final String methodSignature,
-            final Object[] parameters)
+            final Object... parameters)
     throws NoSuchMethodException, IllegalArgumentException {
         Class[] typesOfParameters = getTypesInSignature(methodSignature);
 
@@ -896,7 +896,7 @@ public final class PrivilegedAccessor {
      * @param classTypes the types to get as names
      * @return the parameter types as a string
      */
-    private static String getParameterTypesAsString(final Class[] classTypes) {
+    private static String getParameterTypesAsString(final Class... classTypes) {
         if (classTypes == null || classTypes.length == 0) {
             return "";
         }
@@ -970,6 +970,7 @@ public final class PrivilegedAccessor {
      * @param type the type to check if the primitive corresponds to
      *
      * @return true if the primitive matches the given type, otherwise false
+     * TODO check if this is longer necessary for java 1.5 upwards (autoboxing)
      */
     private static boolean isPrimitiveForm(final Class primitive, final Class type) {
         if (primitive  == Integer.TYPE && type == Integer.class) {

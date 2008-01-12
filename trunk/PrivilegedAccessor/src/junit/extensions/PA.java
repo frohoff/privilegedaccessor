@@ -35,10 +35,10 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Class[], Object[])
+     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Class[], Object...)
      */
     public static Object instantiate(final Class fromClass,
-            final Class[] argumentTypes, final Object[] args)
+            final Class[] argumentTypes, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -57,9 +57,9 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Object[])
+     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Object...)
      */
-    public static Object instantiate(final Class fromClass, final Object[] args)
+    public static Object instantiate(final Class fromClass, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -157,10 +157,10 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.invokeMethod(Object, String, Object[])
+     * @see junit.extensions.PrivilegedAccessor.invokeMethod(Object, String, Object...)
      */
     public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final Object[] arguments)
+            final String methodSignature, final Object... arguments)
     throws IllegalArgumentException, IllegalAccessException,
     InvocationTargetException, NoSuchMethodException {
         return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, arguments);
