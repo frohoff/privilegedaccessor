@@ -12,6 +12,21 @@ public class TestChild extends TestParent {
     private boolean privateBoolean;
     private float privateFloat;
     private double privateDouble;
+    private int[] privateNumbers;
+    private String[] privateStrings;
+    private Object[] privateObjects;
+    
+    private class TestInnerChild {
+        private int privateInnerNumber;
+        
+        private void setPrivateInnerNumber(int privateInnerNumber) {
+            this.privateInnerNumber = privateInnerNumber;
+        }
+        
+        private int getPrivateInnerNumber() {
+            return this.privateInnerNumber;
+        }
+    }
     
 
     private TestChild(String name, Integer number) {
@@ -32,19 +47,15 @@ public class TestChild extends TestParent {
     }
 
     private boolean isPrivateBoolean() {
-        return privateBoolean;
+        return this.privateBoolean;
     }
 
     private void setPrivateBoolean(boolean privateBoolean) {
         this.privateBoolean = privateBoolean;
     }
     
-    private boolean getPrivateBoolean() {
-        return privateBoolean;
-    }
-
     private byte getPrivateByte() {
-        return privateByte;
+        return this.privateByte;
     }
 
     private void setPrivateByte(byte privateByte) {
@@ -52,7 +63,7 @@ public class TestChild extends TestParent {
     }
 
     private char getPrivateChar() {
-        return privateChar;
+        return this.privateChar;
     }
 
     private void setPrivateChar(char privateChar) {
@@ -60,7 +71,7 @@ public class TestChild extends TestParent {
     }
 
     private long getPrivateLong() {
-        return privateLong;
+        return this.privateLong;
     }
 
     private void setPrivateLong(long privateLong) {
@@ -68,7 +79,7 @@ public class TestChild extends TestParent {
     }
 
     private short getPrivateShort() {
-        return privateShort;
+        return this.privateShort;
     }
 
     private void setPrivateShort(short privateShort) {
@@ -76,7 +87,7 @@ public class TestChild extends TestParent {
     }
 
     private double getPrivateDouble() {
-        return privateDouble;
+        return this.privateDouble;
     }
 
     private void setPrivateDouble(double privateDouble) {
@@ -84,11 +95,35 @@ public class TestChild extends TestParent {
     }
 
     private float getPrivateFloat() {
-        return privateFloat;
+        return this.privateFloat;
     }
 
     private void setPrivateFloat(float privateFloat) {
         this.privateFloat = privateFloat;
+    }
+    
+    private int[] getPrivateNumbers() {
+        return this.privateNumbers;
+    }
+
+    private void setPrivateNumbers(int[] privateNumbers) {
+        this.privateNumbers = privateNumbers;
+    }
+    
+    private String[] getPrivateStrings() {
+        return this.privateStrings;
+    }
+
+    private void setPrivateStrings(String[] privateStrings) {
+        this.privateStrings = privateStrings;
+    }
+    
+    private Object[] getPrivateObjects() {
+        return this.privateObjects;
+    }
+
+    private void setPrivateObjects(Object[] privateObjects) {
+        this.privateObjects = privateObjects;
     }
 
     private void setSumOfTwoNumbers(int number1, int number2) {

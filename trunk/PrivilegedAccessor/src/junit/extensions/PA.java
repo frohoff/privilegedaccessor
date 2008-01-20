@@ -27,8 +27,8 @@ public final class PA {
     /**
      * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Class[], Object...)
      */
-    public static Object instantiate(final Class fromClass,
-            final Class[] argumentTypes, final Object... args)
+    public static Object instantiate(final Class<?> fromClass,
+            final Class<?>[] argumentTypes, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -38,7 +38,7 @@ public final class PA {
     /**
      * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Object...)
      */
-    public static Object instantiate(final Class fromClass, final Object... args)
+    public static Object instantiate(final Class<?> fromClass, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
