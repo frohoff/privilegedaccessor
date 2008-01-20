@@ -1,5 +1,6 @@
 package junit.extensions;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -78,8 +79,8 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class fromClass,
-            final Class[] argumentTypes, final Object... args)
+    public static Object instantiate(final Class<?> fromClass,
+            final Class<?>[] argumentTypes, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -108,7 +109,7 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class fromClass, final Object... args)
+    public static Object instantiate(final Class<?> fromClass, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -118,6 +119,11 @@ public final class PrivilegedAccessor {
     /**
      * Calls a method on the given object instance with the given arguments.
      * Arguments can be object types or representations for primitives.
+     * 
+     * This method is called with 
+     * arguments=o1, o2 if arguments was object[o1, o2] and with
+     * arguments=[p1, p2] if arguments were indeed primitives[p1, p2].
+     * This is due to the resolution of varargs in Java.
      *
      * @param instanceOrClass the instance or class to invoke the method on
      * @param methodSignature the name of the method and the parameters <br>
@@ -132,20 +138,64 @@ public final class PrivilegedAccessor {
      *                               found
      * @throws IllegalArgumentException if an argument couldn't be converted to
      *                                  match the expected type
-     * @see PrivilegedAccessor#invokeMethod(Class,String,Object...)
      */
     public static Object invokeMethod(final Object instanceOrClass,
             final String methodSignature, final Object... arguments)
     throws IllegalArgumentException, IllegalAccessException,
     InvocationTargetException, NoSuchMethodException {
-        if (arguments == null) {
-            return invokeMethod(instanceOrClass, methodSignature,
-                    new Object[] {null});
-        }
-
+        Object[] correctedArguments;
+               
+        correctedArguments = correctVarargs(arguments);
+        
         return getMethod(instanceOrClass, getMethodName(methodSignature),
-                getParameterTypes(methodSignature, arguments)).
-                invoke(instanceOrClass, arguments);
+                getParameterTypes(methodSignature)).
+                invoke(instanceOrClass, correctedArguments);
+    }
+    
+    /**
+     * Corrects varargs to their initial form.
+     * If you call a method with an object-array as last argument the Java varargs
+     * mechanism converts this array in single arguments.
+     * This method returns an object array if the arguments are all of the same type.
+     * 
+     * @param arguments the possibly converted arguments of a vararg method
+     * @return arguments possibly converted
+     */
+    private static Object[] correctVarargs(final Object... arguments) {
+        if (arguments == null || changedByVararg(arguments)) {
+            return new Object[] {arguments};
+        }
+        return arguments;
+    }
+    
+    /**
+     * Tests if the arguments were changed by vararg.
+     * Arguments are changed by vararg if they are of a non primitive array type.
+     * E.g. arguments[] = Object[String[]] is converted to String[] while
+     * e.g. arguments[] = Object[int[]] is not converted and stays Object[int[]]
+     * 
+     * Unfortunately we can't detect the difference for arg = Object[primitive] since 
+     * arguments[] = Object[Object[primitive]] which is converted to Object[primitive] and
+     * arguments[] = Object[primitive] which stays Object[primitive]
+     * 
+     * and we can't detect the difference for arg = Object[non primitive] since
+     * arguments[] = Object[Object[non primitive]] is converted to Object[non primitive] and
+     * arguments[] = Object[non primitive] stays Object[non primitive]
+     * 
+     *  
+     * @param objects
+     * @return
+     */
+    private static boolean changedByVararg(final Object[] objects) {
+        if (objects.length == 0 || objects[0] == null) {
+            return false;
+        }
+        
+        if (objects.getClass() == Object[].class) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -176,8 +226,14 @@ public final class PrivilegedAccessor {
      * @return the class for the given className
      * @throws ClassNotFoundException if the class could not be found
      */
-    private static Class getClassForName(final String className)
+    private static Class<?> getClassForName(final String className)
             throws ClassNotFoundException {
+
+        if (className.indexOf('[') > -1) {
+            Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
+            return Array.newInstance(clazz, 0).getClass();
+        }
+        
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -217,10 +273,10 @@ public final class PrivilegedAccessor {
      * @return the constructor
      * @throws NoSuchMethodException if the method could not be found
      */
-    private static Constructor getConstructor(final Class type,
-            final Class... parameterTypes)
+    private static Constructor<?> getConstructor(final Class<?> type,
+            final Class<?>... parameterTypes)
             throws NoSuchMethodException {
-        Constructor constructor = type.getDeclaredConstructor(parameterTypes);
+        Constructor<?> constructor = type.getDeclaredConstructor(parameterTypes);
         constructor.setAccessible(true);
         return constructor;
     }
@@ -241,9 +297,9 @@ public final class PrivilegedAccessor {
             throw new NoSuchFieldException("Invalid field : " + fieldName);
         }
 
-        Class type = null;
+        Class<?> type = null;
         if (instanceOrClass instanceof Class) {
-            type = (Class) instanceOrClass;
+            type = (Class<?>) instanceOrClass;
         } else {
             type = instanceOrClass.getClass();
         }
@@ -267,8 +323,8 @@ public final class PrivilegedAccessor {
      * @return the method
      * @throws NoSuchMethodException if the method could not be found
      */
-    private static Method getMethod(final Class type, final String methodName,
-            final Class... parameterTypes) throws NoSuchMethodException {
+    private static Method getMethod(final Class<?> type, final String methodName,
+            final Class<?>... parameterTypes) throws NoSuchMethodException {
         try {
             return type.getDeclaredMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e) {
@@ -293,12 +349,12 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Method getMethod(final Object instanceOrClass,
-            final String methodName, final Class... parameterTypes)
+            final String methodName, final Class<?>... parameterTypes)
     throws NoSuchMethodException {
-        Class type;
+        Class<?> type;
 
         if (instanceOrClass instanceof Class) {
-            type = (Class) instanceOrClass;
+            type = (Class<?>) instanceOrClass;
         } else {
             type = instanceOrClass.getClass();
         }
@@ -338,12 +394,12 @@ public final class PrivilegedAccessor {
      * @param parameters the parameters
      * @return the class-types of the arguments
      */
-    private static Class[] getParameterTypes(final Object... parameters) {
+    private static Class<?>[] getParameterTypes(final Object... parameters) {
         if (parameters == null) {
             return null;
         }
 
-        Class[] typesOfParameters = new Class[parameters.length];
+        Class<?>[] typesOfParameters = new Class[parameters.length];
 
         for (int i = 0; i < parameters.length; i++) {
             typesOfParameters[i] = parameters[i].getClass();
@@ -357,30 +413,30 @@ public final class PrivilegedAccessor {
      * is thrown.
      *
      * @param methodSignature the signature of the method
-     * @param parameters the arguments of the method
      * @return the parameter types as class[]
      * @throws NoSuchMethodException if the method could not be found
      * @throws IllegalArgumentException if one of the given parameters
      *                                  doesn't math the given methodSignature
      */
-    private static Class<?>[] getParameterTypes(final String methodSignature,
-            final Object... parameters)
+    private static Class<?>[] getParameterTypes(final String methodSignature)
     throws NoSuchMethodException, IllegalArgumentException {
-        Class<?>[] typesOfParameters = getTypesInSignature(methodSignature);
-
-        for (int i = 0; i < typesOfParameters.length; i++) {
-            if (parameters[i] == null
-                || typesOfParameters[i].isAssignableFrom(parameters[i].getClass())
-                || isPrimitiveForm(typesOfParameters[i], parameters[i].getClass())) {
-                continue;
+        String signature = getSignatureWithoutBraces(methodSignature);
+        
+        StringTokenizer tokenizer = new StringTokenizer(signature, ", *");
+        Class<?>[] typesInSignature = new Class[tokenizer.countTokens()];
+        
+        for (int x = 0; tokenizer.hasMoreTokens(); x++) {
+            String className = tokenizer.nextToken();
+            try {
+                typesInSignature[x] = getClassForName(className);
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchMethodException("Method '" + methodSignature
+                        + "' not found");
             }
-            throw new IllegalArgumentException("Parameter #" + i
-                    + " of type '" + parameters[i].getClass().getSimpleName() + "'"
-                    + " does not match expected type '" + typesOfParameters[i].getSimpleName() + "'"
-                    + " in method '" + methodSignature + "'.");
         }
-        return typesOfParameters;
+        return typesInSignature;
     }
+
 
     /**
      * Gets the parameter types as a string.
@@ -388,7 +444,7 @@ public final class PrivilegedAccessor {
      * @param classTypes the types to get as names
      * @return the parameter types as a string
      */
-    private static String getParameterTypesAsString(final Class... classTypes) {
+    private static String getParameterTypesAsString(final Class<?>... classTypes) {
         if (classTypes == null || classTypes.length == 0) {
             return "";
         }
@@ -425,70 +481,4 @@ public final class PrivilegedAccessor {
         }
     }
 
-    /**
-     * Gets the types in the method signature. The methodSignature
-     * is a comma separated string with fully qualified types
-     * e.g. java.lang.String, java.lang.Integer
-     *
-     * @param methodSignature the methodSignature to get the types from
-     * @return the types of the signature
-     * @throws NoSuchMethodException if the signature is not correct
-     */
-    private static Class[] getTypesInSignature(final String methodSignature)
-    throws NoSuchMethodException {
-        String signature = getSignatureWithoutBraces(methodSignature);
-
-        StringTokenizer tokenizer = new StringTokenizer(signature, ", *");
-        Class[] typesInSignature = new Class[tokenizer.countTokens()];
-
-        for (int x = 0; tokenizer.hasMoreTokens(); x++) {
-            String className = tokenizer.nextToken();
-            try {
-                typesInSignature[x] = getClassForName(className);
-            } catch (ClassNotFoundException e) {
-                throw new NoSuchMethodException("Method '" + methodSignature
-                        + "'s parameter nr" + (x + 1) + " (" + className
-                        + ") not found");
-            }
-        }
-
-        return typesInSignature;
-    }
-
-    /**
-     * Tests if the given primitive is the primitive form for the given class.
-     *
-     * @param primitive the primitive to test
-     * @param type the type to check if the primitive corresponds to
-     *
-     * @return true if the primitive matches the given type, otherwise false
-     * TODO check if this is longer necessary for java 1.5 upwards (autoboxing)
-     */
-    private static boolean isPrimitiveForm(final Class<?> primitive, final Class<?> type) {
-        if (primitive == Integer.TYPE && type == Integer.class) {
-            return true;
-        }
-        if (primitive == Float.TYPE && type == Float.class) {
-            return true;
-        }
-        if (primitive == Double.TYPE && type == Double.class) {
-            return true;
-        }
-        if (primitive == Short.TYPE && type == Short.class) {
-            return true;
-        }
-        if (primitive == Long.TYPE && type == Long.class) {
-            return true;
-        }
-        if (primitive == Byte.TYPE && type == Byte.class) {
-            return true;
-        }
-        if (primitive == Character.TYPE && type == Character.class) {
-            return true;
-        }
-        if (primitive == Boolean.TYPE && type == Boolean.class) {
-            return true;
-        }
-        return false;
-    }
 }

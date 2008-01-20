@@ -220,7 +220,7 @@ public class PrivilegedAccessorTest extends TestCase {
         PA.invokeMethod(this.parent, "setName(java.lang.String)", "Herbert");
         assertEquals("Herbert", PA.getValue(this.parent, "privateName"));
 
-        PA.invokeMethod(this.parent, "setName(java.lang.String)", null);
+        PA.invokeMethod(this.parent, "setName(java.lang.String)", (Object[])null);
         assertEquals(null, PA.getValue(this.parent, "privateName"));
         
         PA.invokeMethod(this.parent, "setName()");
@@ -259,7 +259,7 @@ public class PrivilegedAccessorTest extends TestCase {
         assertEquals((byte)3, PA.invokeMethod(this.child, "getPrivateByte()"));
 
         PA.invokeMethod(this.child, "setPrivateBoolean(boolean)", true);
-        assertEquals(true, PA.invokeMethod(this.child, "getPrivateBoolean()"));
+        assertEquals(true, PA.invokeMethod(this.child, "isPrivateBoolean()"));
 
         PA.invokeMethod(this.child, "setPrivateChar(char)", 'A');
         assertEquals('A', PA.invokeMethod(this.child, "getPrivateChar()"));
@@ -269,7 +269,6 @@ public class PrivilegedAccessorTest extends TestCase {
 
         PA.invokeMethod(this.child, "setPrivateDouble(double)", 3.1);
         assertEquals(3.1, PA.invokeMethod(this.child, "getPrivateDouble()"));
-
     }
 
     /**
@@ -416,6 +415,13 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
+        
+        try {
+            PA.invokeMethod(this.child, "setNumber(java.lang.String)", (Object[])null);
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
 
         try {
             PA.invokeMethod(this.child, "setNumber(int)", "Herbert");
@@ -433,37 +439,190 @@ public class PrivilegedAccessorTest extends TestCase {
         }
         
         try {
-            PA.invokeMethod(this.child, "setNumber(int)", null);
+            PA.invokeMethod(this.child, "setNumber(int)", (Object[])null);
             fail("should throw NoSuchMethodException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
     }
 
+    /**
+     * Tests the method <code>invokeMethod</code> with several primitive arguments.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
     public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
-        PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
-                new Integer[] { 5, 3 });
-        assertEquals(8, PA.getValue(this.child, "privateNumber"));
-        
         PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                 5, 3);
         assertEquals(8, PA.getValue(this.child, "privateNumber"));
         
         PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
-                new Object[] { 5, 3 });
-        assertEquals(8, PA.getValue(this.child, "privateNumber"));
+                new Integer(5), new Integer(4));
+        assertEquals(9, PA.getValue(this.child, "privateNumber"));
     }
     
-    public void testInvokeMethodWithPrimitivesArrayInsteadOfSeveralPrimitives() throws Exception {
+    /**
+     * Tests the method <code>invokeMethod</code> with arrays as arguments.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
+    public void testInvokeMethodWithArrays() throws Exception {
+        int[] numbers = new int[] { 5, 3 };
+        PA.invokeMethod(this.child, "setPrivateNumbers(int[])", numbers);
+        assertEquals(numbers, PA.getValue(this.child, "privateNumbers"));
+
+        numbers = new int[] { 5 };
+        PA.invokeMethod(this.child, "setPrivateNumbers(int[])", numbers);
+        assertEquals(numbers, PA.getValue(this.child, "privateNumbers"));
+        
+        String[] strings = new String[] { "Hello", "Dolly"};
+        PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", (Object[])strings);
+        assertEquals(strings, PA.getValue(this.child, "privateStrings"));
+
+        strings = new String[] { "Hello"};
+        PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", (Object[])strings);
+        assertEquals(strings, PA.getValue(this.child, "privateStrings"));
+    }
+    
+    /**
+     * Tests the bugs in invoke method (invoke method does not work on methods that require object arrays as parameters)
+     * 
+     * @throws Exception
+     */
+    public void testInvokeMethodThatRequireArrays() throws Exception {
+        //TODO this is a bug
+        try {
+            PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] { new Integer(1)});
+            fail("invoking method which require object arrays as parameters currently fails");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        //TODO this is a bug
+        try {
+            PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] { "Dolly" });
+            fail("invoking method which require object arrays as parameters currently fails");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+
+        //TODO this is a bug
+        try {
+            PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] { "Hello", new Integer(1)});
+            fail("invoking method which require object arrays as parameters currently fails");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+    }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with array of non primitives instead of several arguments.
+     * This is ok for several reasons:
+     * a) downward compatibility - since this was the only way prior to varargs
+     * b) using varargs there is no possibility to distinquish arrays from several arguments.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
+    public void testInvokeMethodWithArrayInsteadOfSingleValues() throws Exception {
+        Object[] onumbers = new Object[] { 3, 3 };
+        PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", onumbers);
+        assertEquals(6, PA.getValue(this.child, "privateNumber"));
+    }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with array of primitives instead of several arguments.
+     * This is not ok for several reasons:
+     * a) downward compatibility - was not ok in the past (one had to use Object[])
+     * b) this is the typical behaviour when using varargs (Java doesn't autoconvert primitive arrays)
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
+    public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() throws Exception {
+        try {
+            PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new int[] { 5, 3 });
+            fail("invoking method with an array of primitives instead of single primitives should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Integer[] { 4, 3 });
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+    }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with arrays of wrong length instead of several arguments.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
+    public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() throws Exception {
         try {
             PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
-                    new int[] { 5, 3 });
-            fail("invoking method with array of primitives as parameters should raise exception");
+                    new int[] { 1 });
+            fail("invoking method with array of wrong size should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
+                    new Integer[] { 2 });
+            fail("invoking method with array of wrong size should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
+                    new Object[] { 3 });
+            fail("invoking method with array of wrong size should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+    }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with single values instead of an array.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
+    public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
+        try {
+            PA.invokeMethod(this.child, "setPrivateNumbers(int[])", 1, 2);
+            fail("invoking method with single values instead of array as parameters should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", "Hello", "Bruno");
+            fail("invoking method with single values instead of array as parameters should raise exception");
+        } catch (IllegalArgumentException e) {
+            //that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", "Hello", new Integer(3));
+            fail("invoking method with single values instead of array as parameters should raise exception");
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
     }
 
+    /**
+     * Tests the method <code>invokeMethod</code> with arguments of type object and primitive.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     */
     public void testInvokeMethodWithObjectAndPrimitive() throws Exception {
         Object[] args = { "Marcus", 5 };
         PA.invokeMethod(this.child,
@@ -496,21 +655,12 @@ public class PrivilegedAccessorTest extends TestCase {
      * @throws Exception
      * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
      */
-    public void testSetValue() throws Exception {
-        PA.setValue(this.parent, "privateName", "Hubert");
-        assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
-
-        PA.setValue(this.child, "privateName", "Hubert");
+    public void testSetGetValueWithPrimitives() throws Exception {
         PA.setValue(this.child, "privateNumber", 6);
-        assertEquals("Hubert", PA.getValue(this.child, "privateName"));
         assertEquals(6, PA.getValue(this.child, "privateNumber"));
 
-        PA.setValue(this.childInParent, "privateName", "Hubert");
         PA.setValue(this.childInParent, "privateNumber", 6);
-        assertEquals("Hubert", PA.getValue(this.childInParent, "privateName"),
-                "Hubert");
-        assertEquals(6, PA.getValue(this.childInParent,
-                "privateNumber"));
+        assertEquals(6, PA.getValue(this.childInParent, "privateNumber"));
         
         PA.setValue(this.child, "privateLong", 8L);
         assertEquals(8L, PA.getValue(this.child, "privateLong"));
@@ -532,6 +682,31 @@ public class PrivilegedAccessorTest extends TestCase {
         
         PA.setValue(this.child, "privateDouble", 1.175);
         assertEquals(1.175, PA.getValue(this.child, "privateDouble"));
+    }
+    
+    /**
+     * Tests the method <code>setValue</code>.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     */
+    public void testSetGetValueWithObjectsAndArrays() throws Exception {
+        PA.setValue(this.parent, "privateName", "Hubert");
+        assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
+
+        PA.setValue(this.child, "privateName", "Hubert");
+        assertEquals("Hubert", PA.getValue(this.child, "privateName"));
+
+        PA.setValue(this.childInParent, "privateName", "Hubert");
+        assertEquals("Hubert", PA.getValue(this.childInParent, "privateName"));
+        
+        int[] numbers = new int[] {1, 2, 3};
+        PA.setValue(this.child, "privateNumbers", numbers);
+        assertEquals(numbers, PA.getValue(this.child, "privateNumbers"));
+        
+        String[] strings = new String[] {"Happy", "Birthday"};
+        PA.setValue(this.child, "privateStrings", strings);
+        assertEquals(strings, PA.getValue(this.child, "privateStrings"));
     }
 
     /**
