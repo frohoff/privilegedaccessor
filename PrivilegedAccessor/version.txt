@@ -8,16 +8,20 @@ FUNCTIONAL CHANGES:
 * use varargs instead of object arrays to deliver parameters. Object arrays are only accepted when explicitly expected.
 
 FEATURES:
-* works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");)
+* works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) - thanks to Dan Richter for the advice
 * works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
 * changed unit-tests to use Java 5.0 features
-* added some more unit-tests
+* added some more unit-tests - coverage is now 100% for junit.extensions.PA and 92% for junit.extensions.PrivilegedAccessor
 * improved error output
 * removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
 * removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive), invokeMethod(method, primitive))
-* removed test-classes from jar and src.zip
 * size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (1/2 KB instead of 1 KB for V1.0)
-* works now with methods that require array type parameters
+* returns the exact type when instantiating objects (no need to cast)
+* fixed minor javadoc typos
+
+FIXED BUGS:
+* works now with methods that require array type parameters (with the exception of object array parameters)
+* removed test-classes from jar and src.zip
 
 KNOWN BUGS:
 * does not work with methods that require object array parameters
@@ -29,15 +33,28 @@ FEATURES:
 * continuing Java 1.3 downward compatibility (i.e. all new features for V1.2 onwards can also be found under 1.1 onwards)
 * added some more unit-tests (TODO)
 * improved error output (TODO)
-* removed test-classes from jar and src.zip (TODO)
 * size of jar is reduced due to removal of test-classes (??? KB instead of 1 KB for V1.0) (TODO)
 * works now with methods that require array type parameters (TODO)
+* fixed minor javadoc typos (TODO)
+
+FIXED BUGS:
+* removed test-classes from jar and src.zip (TODO)
+
+KNOWN BUGS:
+* does not work with methods that require object array parameters
 
 = Version 1.0 (discontinued) =
 == Version 1.0.2 ==
 
+KNOWN BUGS:
+* does not work with methods that require array parameters
 
 == Version 1.0.1 ==
 
+KNOWN BUGS:
+* does not work with methods that require array parameters
 
 == Version 1.0 ==
+
+KNOWN BUGS:
+* does not work with methods that require array parameters

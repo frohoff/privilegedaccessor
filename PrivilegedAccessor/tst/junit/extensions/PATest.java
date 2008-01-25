@@ -135,6 +135,9 @@ public class PATest extends TestCase {
      * @see junit.extensions.PrivilegedAccessor#instantiate(Class)
      */
     public void testInstantiate() throws Exception {
+        TestParent tp = PA.instantiate(TestParent.class);
+        assertEquals(this.parent, tp);
+        assertNotSame(this.parent, tp);
         assertEquals(this.parent, PA.instantiate(TestParent.class));
         assertEquals(this.parent, PA.instantiate(TestParent.class, "Charlie"));
         assertEquals(this.child, PA.instantiate(TestChild.class,
