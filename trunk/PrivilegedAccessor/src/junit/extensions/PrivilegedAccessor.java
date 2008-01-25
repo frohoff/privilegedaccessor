@@ -62,7 +62,7 @@ public final class PrivilegedAccessor {
      * @param fromClass the class to instantiate an object from
      * @param args the arguments to pass to the constructor
      * @param argumentTypes the types of the arguments of the constructor
-     * @return an null of the given type
+     * @return an object of the given type
      * @throws IllegalArgumentException if the number of actual and formal
      *         parameters differ; if an unwrapping conversion for primitive
      *         arguments fails; or if, after possible unwrapping, a parameter
@@ -79,7 +79,7 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class<?> fromClass,
+    public static <T> T instantiate(final Class<? extends T> fromClass,
             final Class<?>[] argumentTypes, final Object[] args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
@@ -92,7 +92,7 @@ public final class PrivilegedAccessor {
      *
      * @param fromClass the class to instantiate an object from
      * @param args the arguments to pass to the constructor
-     * @return an null of the given type
+     * @return an object of the given type
      * @throws IllegalArgumentException if the number of actual and formal
      *         parameters differ; if an unwrapping conversion for primitive
      *         arguments fails; or if, after possible unwrapping, a parameter
@@ -109,7 +109,7 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class<?> fromClass, final Object[] args)
+    public static <T> T instantiate(final Class<? extends T> fromClass, final Object[] args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -218,10 +218,10 @@ public final class PrivilegedAccessor {
      * @return the constructor
      * @throws NoSuchMethodException if the method could not be found
      */
-    private static Constructor<?> getConstructor(final Class<?> type,
+    private static <T> Constructor<T> getConstructor(final Class<T> type,
             final Class<?>[] parameterTypes)
             throws NoSuchMethodException {
-        Constructor<?> constructor = type.getDeclaredConstructor(parameterTypes);
+        Constructor<T> constructor = type.getDeclaredConstructor(parameterTypes);
         constructor.setAccessible(true);
         return constructor;
     }
