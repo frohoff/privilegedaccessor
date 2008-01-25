@@ -80,7 +80,7 @@ public final class PrivilegedAccessor {
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
     public static Object instantiate(final Class<?> fromClass,
-            final Class<?>[] argumentTypes, final Object... args)
+            final Class<?>[] argumentTypes, final Object[] args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -109,7 +109,7 @@ public final class PrivilegedAccessor {
      *
      * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
      */
-    public static Object instantiate(final Class<?> fromClass, final Object... args)
+    public static Object instantiate(final Class<?> fromClass, final Object[] args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -120,11 +120,6 @@ public final class PrivilegedAccessor {
      * Calls a method on the given object instance with the given arguments.
      * Arguments can be object types or representations for primitives.
      * 
-     * This method is called with 
-     * arguments=o1, o2 if arguments was object[o1, o2] and with
-     * arguments=[p1, p2] if arguments were indeed primitives[p1, p2].
-     * This is due to the resolution of varargs in Java.
-     *
      * @param instanceOrClass the instance or class to invoke the method on
      * @param methodSignature the name of the method and the parameters <br>
      *        (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
@@ -140,64 +135,14 @@ public final class PrivilegedAccessor {
      *                                  match the expected type
      */
     public static Object invokeMethod(final Object instanceOrClass,
-            final String methodSignature, final Object... arguments)
+            final String methodSignature, final Object[] arguments)
     throws IllegalArgumentException, IllegalAccessException,
     InvocationTargetException, NoSuchMethodException {
-        Object[] correctedArguments;
-               
-        correctedArguments = correctVarargs(arguments);
-        
         return getMethod(instanceOrClass, getMethodName(methodSignature),
                 getParameterTypes(methodSignature)).
-                invoke(instanceOrClass, correctedArguments);
+                invoke(instanceOrClass, arguments);
     }
     
-    /**
-     * Corrects varargs to their initial form.
-     * If you call a method with an object-array as last argument the Java varargs
-     * mechanism converts this array in single arguments.
-     * This method returns an object array if the arguments are all of the same type.
-     * 
-     * @param arguments the possibly converted arguments of a vararg method
-     * @return arguments possibly converted
-     */
-    private static Object[] correctVarargs(final Object... arguments) {
-        if (arguments == null || changedByVararg(arguments)) {
-            return new Object[] {arguments};
-        }
-        return arguments;
-    }
-    
-    /**
-     * Tests if the arguments were changed by vararg.
-     * Arguments are changed by vararg if they are of a non primitive array type.
-     * E.g. arguments[] = Object[String[]] is converted to String[] while
-     * e.g. arguments[] = Object[int[]] is not converted and stays Object[int[]]
-     * 
-     * Unfortunately we can't detect the difference for arg = Object[primitive] since 
-     * arguments[] = Object[Object[primitive]] which is converted to Object[primitive] and
-     * arguments[] = Object[primitive] which stays Object[primitive]
-     * 
-     * and we can't detect the difference for arg = Object[non primitive] since
-     * arguments[] = Object[Object[non primitive]] is converted to Object[non primitive] and
-     * arguments[] = Object[non primitive] stays Object[non primitive]
-     * 
-     *  
-     * @param objects
-     * @return
-     */
-    private static boolean changedByVararg(final Object[] objects) {
-        if (objects.length == 0 || objects[0] == null) {
-            return false;
-        }
-        
-        if (objects.getClass() == Object[].class) {
-            return false;
-        }
-        
-        return true;
-    }
-
     /**
      * Sets the value of the named field.
      * If instanceOrClass is a class then a static field is returned.
@@ -274,7 +219,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Constructor<?> getConstructor(final Class<?> type,
-            final Class<?>... parameterTypes)
+            final Class<?>[] parameterTypes)
             throws NoSuchMethodException {
         Constructor<?> constructor = type.getDeclaredConstructor(parameterTypes);
         constructor.setAccessible(true);
@@ -324,7 +269,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Method getMethod(final Class<?> type, final String methodName,
-            final Class<?>... parameterTypes) throws NoSuchMethodException {
+            final Class<?>[] parameterTypes) throws NoSuchMethodException {
         try {
             return type.getDeclaredMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e) {
@@ -349,7 +294,7 @@ public final class PrivilegedAccessor {
      * @throws NoSuchMethodException if the method could not be found
      */
     private static Method getMethod(final Object instanceOrClass,
-            final String methodName, final Class<?>... parameterTypes)
+            final String methodName, final Class<?>[] parameterTypes)
     throws NoSuchMethodException {
         Class<?> type;
 
@@ -394,7 +339,7 @@ public final class PrivilegedAccessor {
      * @param parameters the parameters
      * @return the class-types of the arguments
      */
-    private static Class<?>[] getParameterTypes(final Object... parameters) {
+    private static Class<?>[] getParameterTypes(final Object[] parameters) {
         if (parameters == null) {
             return null;
         }
@@ -444,7 +389,7 @@ public final class PrivilegedAccessor {
      * @param classTypes the types to get as names
      * @return the parameter types as a string
      */
-    private static String getParameterTypesAsString(final Class<?>... classTypes) {
+    private static String getParameterTypesAsString(final Class<?>[] classTypes) {
         if (classTypes == null || classTypes.length == 0) {
             return "";
         }
