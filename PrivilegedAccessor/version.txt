@@ -15,7 +15,7 @@ FEATURES:
 * improved error output
 * removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
 * removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive), invokeMethod(method, primitive))
-* size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (1/2 KB instead of 1 KB for V1.0)
+* size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (5256 bytes instead of 9859 bytes for V1.0)
 * returns the exact type when instantiating objects (no need to cast)
 * fixed minor javadoc typos
 
@@ -33,7 +33,7 @@ FEATURES:
 * continuing Java 1.3 downward compatibility (i.e. all new features for V1.2 onwards can also be found under 1.1 onwards)
 * added some more unit-tests (TODO)
 * improved error output (TODO)
-* size of jar is reduced due to removal of test-classes (??? KB instead of 1 KB for V1.0) (TODO)
+* size of jar is reduced due to removal of test-classes (??? bytes instead of 9859 bytes for V1.0) (TODO)
 * works now with methods that require array type parameters (TODO)
 * fixed minor javadoc typos (TODO)
 
