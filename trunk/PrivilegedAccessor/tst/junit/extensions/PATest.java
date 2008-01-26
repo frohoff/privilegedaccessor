@@ -763,4 +763,15 @@ public class PATest extends TestCase {
             // that is what we expect
         }
     }
+    
+    public void testInstantiateInnerClass() throws Exception {
+        Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
+        assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
+    }
+    
+    public void testAccessInnerClass() throws Exception {
+        Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
+        PA.setValue(tic, "privateInnerNumber", 5);
+        assertEquals(5, PA.getValue(tic, "privateInnerNumber"));
+    }
 }

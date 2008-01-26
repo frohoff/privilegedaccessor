@@ -1,0 +1,36 @@
+PrivilegedAccessor is a simple to use framework for accessing private methods, attributes, constructors via reflection.
+You are strongly advised NOT to use PrivilegedAccessor in production code - since it undermines the information hiding principle.
+Use it ONLY for testing or test setup purposes - e.g. for assigning mock objects to production code to work with.
+
+== How does it work ==
+PrivilegedAccessor is based on Java reflection and the possibility to change access-rights via "setAccessible(true)".
+PrivilegedAccessor tries to find the method, attribute, constructor you want to access, sets its accessibility to true and accesses it.
+
+== How can you use it ==
+The usage of PrivilegedAccessor is rather simple. Use the following to access your otherwise unaccessible code:
+
+* getValue(Object obj, String attribute-name) 						- to read a private attribute
+* setValue(Object obj, String attribute-name, Object new-value)		- to change a private attribute
+* instantiate(Class clazz)											- to instantiate a class via its private constructor
+* instantiate(Class clazz, Object... parameters)						- to instantiate a class via a private constructor with parameters
+* invokeMethod(Object obj, String methodSignature, Object... args)	- to invoke a private method
+
+PA (the convenience short form for PrivilegedAccessor) works with varargs and autoboxing.
+
+== Examples ==
+* PA.getValue(myObject, "myAttribute");
+* PA.setValue(myObject, "myAttribute", 42);
+* PA.instantiate(MyClass.class);
+* PA.instantiate(MyClass.class, "Hello", "World", 42);
+* PA.invokeMethod(myObject, "sayHello(java.lang.Integer)", 42);
+
+== Caveats ==
+* be sure to always use the full method signature for invokeMethod - i.e. including fully qualified parameter classes
+* you can use all sorts of arguments (primitives, objects and arrays) - only Object[] will not work (but e.g. String[] will work)
+* you can access private member classes - but you need to add the surrounding object as first argument - e.g. PA.instantiate(Class.forName("MyClass$MyInnerClass"), myObject);
+
+== Compatibility ==
+* PrivilegedAccessor V 1.1 is downward compatible to Java 1.3 (tested), but should work as well with newer releases (tested up to Java 1.7)
+* PrivilegedAccessor V 1.2 is downward compatible to Java 1.5 (tested), but should work as well with newer releases (tested up to Java 1.7)
+
+PrivilegedAccessor uses a lot of unit tests to check its functionality - if you find a bug or missing feature, please feel free to contact us.

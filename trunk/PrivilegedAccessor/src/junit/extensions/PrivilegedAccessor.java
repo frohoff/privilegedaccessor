@@ -58,6 +58,8 @@ public final class PrivilegedAccessor {
     /**
      * Instantiates an object of the given class with the given arguments and
      * the given argument types.
+     * If you want to instantiate a member class, you must provide the object
+     * it is a member of as first argument.
      *
      * @param fromClass the class to instantiate an object from
      * @param args the arguments to pass to the constructor
@@ -86,9 +88,11 @@ public final class PrivilegedAccessor {
             NoSuchMethodException {
         return getConstructor(fromClass, argumentTypes).newInstance(args);
     }
-
+    
     /**
      * Instantiates an object of the given class with the given arguments.
+     * If you want to instantiate a member class, you must provide the object
+     * it is a member of as first argument.
      *
      * @param fromClass the class to instantiate an object from
      * @param args the arguments to pass to the constructor
