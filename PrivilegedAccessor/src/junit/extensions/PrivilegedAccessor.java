@@ -5,6 +5,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.StringTokenizer;
 
 /**
@@ -37,6 +40,55 @@ public final class PrivilegedAccessor {
     }
 
     /**
+     * Gets the name of all fields (public, private, protected, default) of the given instance or class.
+     * This includes as well all fields (public, private, protected, default) of all its super classes.
+     * 
+     * @param instanceOrClass the instance or class to get the fields of
+     * @return the collection of field names of the given instance or class
+     */
+    public static Collection<String> getFieldNames(final Object instanceOrClass) {
+        if (instanceOrClass == null) {
+            return new ArrayList<String>();
+        }
+        
+        Class<?> clazz = getClass(instanceOrClass);
+        Field[] fields = clazz.getDeclaredFields();
+        Collection<String> fieldNames = new ArrayList<String>(fields.length);
+        
+        for (Field field : fields) {
+            fieldNames.add(field.getName());
+        }
+        fieldNames.addAll(getFieldNames (clazz.getSuperclass()));
+        
+        return fieldNames;
+    }
+    
+    /**
+     * Gets the signatures of all methods (public, private, protected, default) of the given instance or class.
+     * This includes as well all methods (public, private, protected, default) of all its super classes.
+     * This does not include constructors.
+     * 
+     * @param instanceOrClass the instance or class to get the method signatures of
+     * @return the collection of method signatures of the given instance or class
+     */
+    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
+        if (instanceOrClass == null) {
+            return new ArrayList<String>();
+        }
+        
+        Class<?> clazz = getClass(instanceOrClass);
+        Method[] methods = clazz.getDeclaredMethods();
+        Collection<String> methodSignatures = new ArrayList<String>(methods.length + Object.class.getDeclaredMethods().length);
+        
+        for (Method method : methods) {
+            methodSignatures.add(method.getName() + "(" + getParameterTypesAsString(method.getParameterTypes()) + ")");
+        }
+        methodSignatures.addAll(getMethodSignatures (clazz.getSuperclass()));
+        
+        return methodSignatures;
+    }
+    
+    /**
      * Gets the value of the named field and returns it as an object.
      * If instanceOrClass is a class then a static field is returned.
      *
@@ -54,7 +106,7 @@ public final class PrivilegedAccessor {
             throw new Error("Assertion failed"); // would mean that setAccessible(true) didn't work
         }
     }
-
+    
     /**
      * Instantiates an object of the given class with the given arguments and
      * the given argument types.
@@ -238,28 +290,42 @@ public final class PrivilegedAccessor {
      * @param fieldName the name of the field to get
      * @return the field
      * @throws NoSuchFieldException if no such field can be found
+     * @throws InvalidParameterException if instanceOrClass was null
      */
     private static Field getField(final Object instanceOrClass,
             final String fieldName)
-    throws NoSuchFieldException {
+    throws NoSuchFieldException, InvalidParameterException {
         if (instanceOrClass == null) {
-            throw new NoSuchFieldException("Invalid field : " + fieldName);
+            throw new InvalidParameterException("Can't get field on null object/class");
         }
 
-        Class<?> type = null;
-        if (instanceOrClass instanceof Class) {
-            type = (Class<?>) instanceOrClass;
-        } else {
-            type = instanceOrClass.getClass();
-        }
+        Class<?> type = getClass(instanceOrClass);
 
         try {
             Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException e) {
+            if (type.getSuperclass() == null) {
+                throw new NoSuchFieldException("No such field '" + fieldName + "'");
+            }
             return getField(type.getSuperclass(), fieldName);
         }
+    }
+
+    /**
+     * Gets the class of the given parameter. If the parameter is a class,
+     * it is returned, if it is an object, its class is returned
+     * 
+     * @param instanceOrClass the instance or class to get the class of
+     * @return the class of the given parameter
+     */
+    private static Class<?> getClass(final Object instanceOrClass) {
+        if (instanceOrClass instanceof Class) {
+            return (Class<?>) instanceOrClass;
+        }
+        
+        return instanceOrClass.getClass();
     }
 
     /**
@@ -302,11 +368,7 @@ public final class PrivilegedAccessor {
     throws NoSuchMethodException {
         Class<?> type;
 
-        if (instanceOrClass instanceof Class) {
-            type = (Class<?>) instanceOrClass;
-        } else {
-            type = instanceOrClass.getClass();
-        }
+        type = getClass(instanceOrClass);
 
         Method accessMethod = getMethod(type, methodName, parameterTypes);
         accessMethod.setAccessible(true);
@@ -399,17 +461,11 @@ public final class PrivilegedAccessor {
         }
 
         String parameterTypes = "";
-        for (int x = 0; x < classTypes.length; x++) {
-            if (classTypes[x] == null) {
-                parameterTypes += "null";
-            } else {
-                parameterTypes += classTypes[x].getName();
-            }
-            parameterTypes += ", ";
+        for (Class<?> clazz : classTypes) {
+            assert clazz != null;   //would mean that there was an error in getParameterTypes()
+            parameterTypes += clazz.getName() + ", ";
         }
-        parameterTypes = parameterTypes.substring(0,
-                parameterTypes.length() - 2);
-        return parameterTypes;
+        return parameterTypes.substring(0, parameterTypes.length() - 2);
     }
 
     /**

@@ -11,14 +11,15 @@ FEATURES:
 * works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) - thanks to Dan Richter for the advice
 * works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
 * changed unit-tests to use Java 5.0 features
-* added some more unit-tests - coverage is now 100% for junit.extensions.PA and 92% for junit.extensions.PrivilegedAccessor
+* added some more unit-tests - coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
 * improved error output
 * removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
 * removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive), invokeMethod(method, primitive))
-* size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (5256 bytes instead of 9859 bytes for V1.0)
+* size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (6.087 bytes instead of 9.859 bytes for V1.0)
 * returns the exact type when instantiating objects (no need to cast)
 * fixed minor javadoc typos
 * works as well with private member classes
+* added methods to get all attribute names and all method signatures
 
 FIXED BUGS:
 * works now with methods that require array type parameters (with the exception of object array parameters)
@@ -32,12 +33,13 @@ Version 1.1 is the Java 1.3 (and later) compatible version of PrivilegedAccessor
 
 FEATURES:
 * continuing Java 1.3 downward compatibility (i.e. all new features for V1.2 onwards (that are not due to Java 1.5 language enhancements) can also be found under 1.1 onwards)
-* added some more unit-tests (TODO)
+* added some more unit-tests (TODO) - coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
 * improved error output (TODO)
 * size of jar is reduced due to removal of test-classes (??? bytes instead of 9859 bytes for V1.0) (TODO)
 * works now with methods that require array type parameters (TODO)
 * fixed minor javadoc typos (TODO)
 * works as well with private member classes (TODO)
+* added methods to get all attribute names and all method signatures (TODO)
 
 FIXED BUGS:
 * removed test-classes from jar and src.zip (TODO)
