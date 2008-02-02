@@ -1,6 +1,9 @@
 package junit.extensions;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is the short named interface to the PrivilegedAccessor class.
@@ -17,6 +20,20 @@ public final class PA {
         throw new Error("Assertion failed"); //should never be called
     }
 
+    /**
+     * @see junit.extensions.PrivilegedAccessor.getFields(Object)
+     */
+    public static Collection<String> getFieldNames(final Object instanceOrClass) {
+        return PrivilegedAccessor.getFieldNames(instanceOrClass);
+    }
+    
+    /**
+     * @see junit.extensions.PrivilegedAccessor.getMethodSignaturess(Object)
+     */
+    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
+        return PrivilegedAccessor.getMethodSignatures(instanceOrClass);
+    }
+    
     /**
      * @see junit.extensions.PrivilegedAccessor.getValue(Object, String)
      */

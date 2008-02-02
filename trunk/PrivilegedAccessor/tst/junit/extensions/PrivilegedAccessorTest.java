@@ -1,5 +1,11 @@
 package junit.extensions;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import junit.framework.TestCase;
 
 /**
@@ -63,6 +69,44 @@ public class PrivilegedAccessorTest extends TestCase {
     }
 
     /**
+     * Tests the method <code>getFieldNames</code>.
+     */
+    public final void testGetFieldNames() throws Exception {
+        Collection<String> testFieldNames = new ArrayList<String>();
+        
+        assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(null));
+        
+        assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(Object.class));
+        
+        testFieldNames.add("privateName"); testFieldNames.add("privateStaticNumber"); 
+        assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(this.parent));
+        
+        testFieldNames = Arrays.asList(new String[] {"privateNumber", "privateLong", "privateShort", "privateByte", 
+                "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateNumbers", "privateStrings", "privateObjects",
+                "privateName", "privateStaticNumber"});
+        assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(this.child));
+        assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(this.childInParent));
+    }
+    
+    /**
+     * Tests the method <code>getMethodSignatures</code>.
+     */
+    public final void testGetMethodsignatures() throws Exception {
+        Collection<String> testMethodSignatures = new ArrayList<String>();
+        
+        assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(null));
+        
+        testMethodSignatures = Arrays.asList(new String[] {"hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+                "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
+        assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(Object.class));
+        
+        testMethodSignatures = Arrays.asList(new String[] {"setStaticNumber(int)", "equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
+                "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+                "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
+        assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(this.parent));        
+    }
+    
+    /**
      * Tests the method <code>getValue</code>.
      *
      * @throws Exception
@@ -124,6 +168,13 @@ public class PrivilegedAccessorTest extends TestCase {
             PrivilegedAccessor.getValue(TestParent.class, "noSuchField");
             fail("should throw NoSuchFieldException");
         } catch (NoSuchFieldException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.getValue(null, "noSuchField");
+            fail("should throw InvalidParameterException");
+        } catch (InvalidParameterException e) {
             // that is what we expect
         }
     }
@@ -290,6 +341,13 @@ public class PrivilegedAccessorTest extends TestCase {
         }
 
         try {
+            PrivilegedAccessor.invokeMethod(this.child, "getNumber)", null);
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
             PrivilegedAccessor.invokeMethod(this.child, "noSuchMethod()", new Object[] { "Herbert" });
             fail("should throw NoSuchMethodException");
         } catch (NoSuchMethodException e) {
@@ -437,6 +495,13 @@ public class PrivilegedAccessorTest extends TestCase {
         
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setNumber(int)", (Object[])null);
+            fail("should throw NoSuchMethodException");
+        } catch (IllegalArgumentException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Object[] { 3, 4, null});
             fail("should throw NoSuchMethodException");
         } catch (IllegalArgumentException e) {
             // that is what we expect

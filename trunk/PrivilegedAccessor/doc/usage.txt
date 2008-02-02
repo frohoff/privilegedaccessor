@@ -9,11 +9,13 @@ PrivilegedAccessor tries to find the method, attribute, constructor you want to 
 == How can you use it ==
 The usage of PrivilegedAccessor is rather simple. Use the following to access your otherwise unaccessible code:
 
-* getValue(Object obj, String attribute-name) 						- to read a private attribute
-* setValue(Object obj, String attribute-name, Object new-value)		- to change a private attribute
-* instantiate(Class clazz)											- to instantiate a class via its private constructor
-* instantiate(Class clazz, Object... parameters)						- to instantiate a class via a private constructor with parameters
-* invokeMethod(Object obj, String methodSignature, Object... args)	- to invoke a private method
+* getValue(Object objectOrClass, String attribute-name) 						- to read a private attribute
+* setValue(Object objectOrClass, String attribute-name, Object new-value)		- to change a private attribute
+* instantiate(Class clazz)														- to instantiate a class via its private constructor
+* instantiate(Class clazz, Object... parameters)								- to instantiate a class via a private constructor with parameters
+* invokeMethod(Object objectOrClass, String methodSignature, Object... args)	- to invoke a private method
+* getFieldNames(Object objectOrClass)											- to get all fields of an object or class (including fields of super-classes)
+* getMethodSignatures(Object objectOrClass)										- to get all method signatures of an object or class (including super-classes)
 
 PA (the convenience short form for PrivilegedAccessor) works with varargs and autoboxing.
 
@@ -25,7 +27,7 @@ PA (the convenience short form for PrivilegedAccessor) works with varargs and au
 * PA.invokeMethod(myObject, "sayHello(java.lang.Integer)", 42);
 
 == Caveats ==
-* be sure to always use the full method signature for invokeMethod - i.e. including fully qualified parameter classes
+* be sure to always use the full method signature for invokeMethod - i.e. including fully qualified parameter classes (e.g. PA.invokeMethod(myObject, "setName(java.lang.String)", "Tom");)
 * you can use all sorts of arguments (primitives, objects and arrays) - only Object[] will not work (but e.g. String[] will work)
 * you can access private member classes - but you need to add the surrounding object as first argument - e.g. PA.instantiate(Class.forName("MyClass$MyInnerClass"), myObject);
 

@@ -1,5 +1,10 @@
 package junit.extensions;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import junit.framework.TestCase;
 
 /**
@@ -63,6 +68,45 @@ public class PATest extends TestCase {
     }
 
     /**
+     * Tests the method <code>getFieldNames</code>.
+     */
+    public final void testGetFieldNames() throws Exception {
+        Collection<String> testFieldNames = new ArrayList<String>();
+        
+        assertEquals(testFieldNames, PA.getFieldNames(null));
+        
+        assertEquals(testFieldNames, PA.getFieldNames(Object.class));
+        
+        testFieldNames.add("privateName"); testFieldNames.add("privateStaticNumber"); 
+        assertEquals(testFieldNames, PA.getFieldNames(this.parent));
+        
+        testFieldNames = Arrays.asList(new String[] {"privateNumber", "privateLong", "privateShort", "privateByte", 
+                "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateNumbers", "privateStrings", "privateObjects",
+                "privateName", "privateStaticNumber"});
+        
+        assertEquals(testFieldNames, PA.getFieldNames(this.child));
+        assertEquals(testFieldNames, PA.getFieldNames(this.childInParent));
+    }
+    
+    /**
+     * Tests the method <code>getMethodSignatures</code>.
+     */
+    public final void testGetMethodsignatures() throws Exception {
+        Collection<String> testMethodSignatures = new ArrayList<String>();
+        
+        assertEquals(testMethodSignatures, PA.getMethodSignatures(null));
+        
+        testMethodSignatures = Arrays.asList(new String[] {"hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+                "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
+        assertEquals(testMethodSignatures, PA.getMethodSignatures(Object.class));
+        
+        testMethodSignatures = Arrays.asList(new String[] {"setStaticNumber(int)", "equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
+                "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+                "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
+        assertEquals(testMethodSignatures, PA.getMethodSignatures(this.parent));        
+    }
+    
+    /**
      * Tests the method <code>getValue</code>.
      *
      * @throws Exception
@@ -124,6 +168,13 @@ public class PATest extends TestCase {
             PA.getValue(TestParent.class, "noSuchField");
             fail("should throw NoSuchFieldException");
         } catch (NoSuchFieldException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.getValue(null, "noSuchField");
+            fail("should throw InvalidParameterException");
+        } catch (InvalidParameterException e) {
             // that is what we expect
         }
     }
@@ -290,6 +341,13 @@ public class PATest extends TestCase {
 
         try {
             PA.invokeMethod(this.child, "setNumber)(", 5);
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "getNumber)");
             fail("should throw NoSuchMethodException");
         } catch (NoSuchMethodException e) {
             // that is what we expect
