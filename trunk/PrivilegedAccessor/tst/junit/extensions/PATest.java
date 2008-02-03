@@ -832,4 +832,10 @@ public class PATest extends TestCase {
         PA.setValue(tic, "privateInnerNumber", 5);
         assertEquals(5, PA.getValue(tic, "privateInnerNumber"));
     }
+    
+    public void testAccessInnerMethod() throws Exception {
+        Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
+        PA.invokeMethod(tic, "setPrivateInnerNumber(int)", 7);
+        assertEquals(7, PA.invokeMethod(tic, "getPrivateInnerNumber()"));        
+    }
 }
