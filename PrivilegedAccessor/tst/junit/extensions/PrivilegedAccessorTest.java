@@ -822,4 +822,21 @@ public class PrivilegedAccessorTest extends TestCase {
             // that is what we expect
         }
     }
+    
+    public void testInstantiateInnerClass() throws Exception {
+        Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
+        assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
+    }
+    
+    public void testAccessInnerClass() throws Exception {
+        Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
+        PrivilegedAccessor.setValue(tic, "privateInnerNumber", 5);
+        assertEquals(5, PrivilegedAccessor.getValue(tic, "privateInnerNumber"));
+    }
+    
+    public void testAccessInnerMethod() throws Exception {
+        Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
+        PrivilegedAccessor.invokeMethod(tic, "setPrivateInnerNumber(int)", new Object[] { 7 });
+        assertEquals(7, PrivilegedAccessor.invokeMethod(tic, "getPrivateInnerNumber()", null));        
+    }
 }
