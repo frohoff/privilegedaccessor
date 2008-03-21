@@ -19,21 +19,21 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.getFields(Object)
+     * {@inheritDoc}
      */
-    public static Collection<String> getFieldNames(final Object instanceOrClass) {
+    public static Collection < String > getFieldNames(final Object instanceOrClass) {
         return PrivilegedAccessor.getFieldNames(instanceOrClass);
     }
-    
+
     /**
-     * @see junit.extensions.PrivilegedAccessor.getMethodSignaturess(Object)
+     * {@inheritDoc}
      */
-    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
+    public static Collection < String > getMethodSignatures(final Object instanceOrClass) {
         return PrivilegedAccessor.getMethodSignatures(instanceOrClass);
     }
-    
+
     /**
-     * @see junit.extensions.PrivilegedAccessor.getValue(Object, String)
+     * {@inheritDoc}
      */
     public static Object getValue(final Object instanceOrClass,
             final String fieldName) throws NoSuchFieldException {
@@ -41,10 +41,10 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Class[], Object[])
+     * {@inheritDoc}
      */
-    public static <T> T instantiate(final Class<? extends T> fromClass,
-            final Class<?>[] argumentTypes, final Object... args)
+    public static < T > T instantiate(final Class < ? extends T > fromClass,
+            final Class < ? > [] argumentTypes, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -52,9 +52,9 @@ public final class PA {
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.instantiate(Class, Object[])
+     * {@inheritDoc}
      */
-    public static <T> T instantiate(final Class<? extends T> fromClass, final Object... args)
+    public static < T > T instantiate(final Class < ? extends T > fromClass, final Object... args)
     throws IllegalArgumentException, InstantiationException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
@@ -64,7 +64,7 @@ public final class PA {
     /**
      * Calls a method on the given object instance with the given arguments.
      * Arguments can be object types or representations for primitives.
-     * 
+     *
      * @param instanceOrClass the instance or class to invoke the method on
      * @param methodSignature the name of the method and the parameters <br>
      *        (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
@@ -83,16 +83,15 @@ public final class PA {
             final String methodSignature, final Object... arguments)
     throws IllegalArgumentException, IllegalAccessException,
     InvocationTargetException, NoSuchMethodException {
-        
         return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
     }
-    
+
     /**
      * Corrects varargs to their initial form.
      * If you call a method with an object-array as last argument the Java varargs
      * mechanism converts this array in single arguments.
      * This method returns an object array if the arguments are all of the same type.
-     * 
+     *
      * @param arguments the possibly converted arguments of a vararg method
      * @return arguments possibly converted
      */
@@ -102,39 +101,38 @@ public final class PA {
         }
         return arguments;
     }
-    
+
     /**
      * Tests if the arguments were changed by vararg.
      * Arguments are changed by vararg if they are of a non primitive array type.
      * E.g. arguments[] = Object[String[]] is converted to String[] while
      * e.g. arguments[] = Object[int[]] is not converted and stays Object[int[]]
-     * 
-     * Unfortunately we can't detect the difference for arg = Object[primitive] since 
+     *
+     * Unfortunately we can't detect the difference for arg = Object[primitive] since
      * arguments[] = Object[Object[primitive]] which is converted to Object[primitive] and
      * arguments[] = Object[primitive] which stays Object[primitive]
-     * 
+     *
      * and we can't detect the difference for arg = Object[non primitive] since
      * arguments[] = Object[Object[non primitive]] is converted to Object[non primitive] and
      * arguments[] = Object[non primitive] stays Object[non primitive]
-     * 
-     *  
-     * @param objects
-     * @return
+     *
+     * @param parameters the parameters
+     * @return true if parameters were changes by varargs, false otherwise
      */
-    private static boolean changedByVararg(final Object[] objects) {
-        if (objects.length == 0 || objects[0] == null) {
+    private static boolean changedByVararg(final Object[] parameters) {
+        if (parameters.length == 0 || parameters[0] == null) {
             return false;
         }
-        
-        if (objects.getClass() == Object[].class) {
+
+        if (parameters.getClass() == Object[].class) {
             return false;
         }
-        
+
         return true;
     }
 
     /**
-     * @see junit.extensions.PrivilegedAccessor.setValue(Object, String, Object)
+     * {@inheritDoc}
      */
     public static void setValue(final Object instanceOrClass,
             final String fieldName, final Object value)
