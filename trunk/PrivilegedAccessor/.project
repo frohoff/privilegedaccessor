@@ -5,11 +5,9 @@
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments/>
     </buildCommand>
     <buildCommand>
       <name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
-      <arguments/>
     </buildCommand>
   </buildSpec>
   <natures>
