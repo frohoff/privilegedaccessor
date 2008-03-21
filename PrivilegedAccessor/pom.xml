@@ -31,6 +31,13 @@
 			scm:svn:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
 		</developerConnection>
 	</scm>
+	
+	<distributionManagement>
+		<site>
+			<id>maven-site</id>
+			<url>file://${basedir}/target/site</url>
+		</site>
+	</distributionManagement>
 
 	<developers>
 		<developer>
