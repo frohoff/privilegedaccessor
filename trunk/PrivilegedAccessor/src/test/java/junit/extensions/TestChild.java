@@ -15,6 +15,7 @@ public class TestChild extends TestParent {
     private int[] privateNumbers;
     private String[] privateStrings;
     private Object[] privateObjects;
+    private java.util.Collection<String> privateCollection;
     
     private class TestInnerChild {
         private int privateInnerNumber;
@@ -125,6 +126,14 @@ public class TestChild extends TestParent {
     private void setPrivateObjects(Object[] privateObjects) {
         this.privateObjects = privateObjects;
     }
+    
+    private java.util.Collection<String> getPrivateCollection() {
+        return privateCollection;
+    }
+
+    private void setPrivateCollection(java.util.Collection<String> privateCollection) {
+        this.privateCollection = privateCollection;
+    }
 
     private void setSumOfTwoNumbers(int number1, int number2) {
         this.privateNumber = number1 + number2;
@@ -140,6 +149,6 @@ public class TestChild extends TestParent {
         ", privateShort=" + getPrivateShort() + ", privateByte=" + getPrivateByte() + ", privateChar=" + getPrivateChar() +
         ", privateBoolean=" + isPrivateBoolean() + ", privateFloat=" + getPrivateFloat() + ", privateDouble=" + getPrivateDouble() +
         ", privateNumbers=" + getPrivateNumbers() + ", privateStrings=" + getPrivateStrings() + ", privateObjects=" + getPrivateObjects() +
-        ", " + super.toString().substring(super.toString().indexOf('{')+1);
+        ", privateCollection=" + getPrivateCollection() + ", " + super.toString().substring(super.toString().indexOf('{')+1);
     }
 }

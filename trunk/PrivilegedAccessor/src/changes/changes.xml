@@ -34,7 +34,7 @@
 		changed unit-tests to use Java 5.0 features
       </action>
       <action dev="Sebastian.Dietrich" type="add">
-		added some more unit-tests - coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
+		added some more unit-tests - line coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
       </action>
       <action dev="Sebastian.Dietrich" type="update">
 		improved error output

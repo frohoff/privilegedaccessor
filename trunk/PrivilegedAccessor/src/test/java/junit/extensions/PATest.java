@@ -73,7 +73,10 @@ public class PATest extends TestCase {
     public final void testToString() throws Exception {
         assertEquals(this.parent.toString(), PA.toString(this.parent));
         assertEquals(this.child.toString(), PA.toString(this.child));
-        assertEquals(this.childInParent.toString(), PA.toString(this.childInParent));   
+        assertEquals(this.childInParent.toString(), PA.toString(this.childInParent));
+
+        class TestClassWithoutAttributes {};
+        assertEquals("java.lang.Object", PA.toString(new Object()));
     }
     
     /**
@@ -319,8 +322,12 @@ public class PATest extends TestCase {
 
         PA.invokeMethod(this.parent, "setObject(Object)", "Heribert");
         assertEquals("Heribert", PA.getValue(this.parent, "privateObject"));
+        
+        Collection<String> testCollection = new ArrayList<String> ();
+        PA.invokeMethod(this.child, "setPrivateCollection(Collection)", testCollection);
+        assertEquals(testCollection, PA.getValue(this.child, "privateCollection"));        
     }
-
+    
     /**
      * Tests the method <code>invokeMethod</code> with different primitives.
      *
@@ -422,7 +429,19 @@ public class PATest extends TestCase {
         assertEquals(5, PA.getValue(this.childInParent,
                 "privateNumber"));
     }
-
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with a typed collection.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+     */
+    public void testInvokeMethodWithTypedCollection() throws Exception {
+        Collection<String> testCollection = new ArrayList<String> ();
+        PA.invokeMethod(this.child, "setPrivateCollection(java.util.Collection)", testCollection);
+        assertEquals(testCollection, PA.getValue(this.child, "privateCollection"));
+    }
+    
     /**
      * Tests the method <code>invokeMethod</code> with invalid arguments.
      *
@@ -473,7 +492,7 @@ public class PATest extends TestCase {
         } catch (NoSuchMethodException e) {
             // that is what we expect
         }
-
+        
         try {
             PA.invokeMethod(this.child, "setData(non.existing.package.NonExistingClass)", "Herbert");
             fail("should throw NoSuchMethodException");
@@ -506,8 +525,36 @@ public class PATest extends TestCase {
 
         try {
             PA.invokeMethod(this.child, "setName(java.lang.String)", 2);
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setName(.String)", "Heribert");
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setName(string)", "Heribert");
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setName(NotAString)", "Heribert");
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PA.invokeMethod(this.child, "setData(Integer)", 2);
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
             // that is what we expect
         }
         
@@ -520,7 +567,7 @@ public class PATest extends TestCase {
 
         try {
             PA.invokeMethod(this.child, "setNumber(int)", "Herbert");
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
@@ -535,7 +582,7 @@ public class PATest extends TestCase {
         
         try {
             PA.invokeMethod(this.child, "setNumber(int)", (Object[])null);
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
