@@ -7,7 +7,7 @@
 
 	<groupId>junit.extensions</groupId>
 	<artifactId>PrivilegedAccessor</artifactId>
-	<version>1.02</version>
+	<version>1.2</version>
 	<name>PrivilegedAccessor</name>
 	<description>
 		gives privileged access to private methods and attributes
@@ -28,7 +28,7 @@
 			scm:cvs:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
 		</connection>
 		<developerConnection>
-			scm:svn:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
+			scm:cvs:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
 		</developerConnection>
 	</scm>
 	
@@ -37,6 +37,11 @@
 			<id>maven-site</id>
 			<url>file://${basedir}/target/site</url>
 		</site>
+        <snapshotRepository>
+          <id>ibiblio</id>
+          <name>ibiblio</name>
+          <url>scp://www.ibiblio.org/maven2</url>
+        </snapshotRepository>
 	</distributionManagement>
 
 	<developers>
@@ -137,32 +142,6 @@
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/*IntegrationTest.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<!-- Erzeugt einen historischen Excel Report -->
-			<!-- muss erst aus altem projekt (bwin datafeed) rausgeholt werden
-				<plugin>
-				<groupId>com.anecon</groupId>
-				<artifactId>
-				quality-figure-tracker-maven-plugin
-				</artifactId>
-				<version>1.1</version>
-				<configuration>
-				<outputExcelFile>
-				${basedir}/target/site/quality-figures.xls
-				</outputExcelFile>
-				</configuration>
-				</plugin>
-			-->
-			<!-- Fuehrt die FindBug Analyse durch -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<configuration>
 					<xmlOutput>true</xmlOutput>
@@ -173,6 +152,20 @@
 
 	<reporting>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<configuration>
+				    <formats>
+            			<format>html</format>
+            			<format>xml</format>
+          			</formats>
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -236,6 +229,7 @@
 				</reportSets>
 			</plugin>
 
+			<!-- FIXME: does not work with cvs connection string
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>changelog-maven-plugin</artifactId>
@@ -254,6 +248,8 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			-->
+			
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
