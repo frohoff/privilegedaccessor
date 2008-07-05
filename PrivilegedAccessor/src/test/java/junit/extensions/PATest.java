@@ -78,48 +78,52 @@ public class PATest extends TestCase {
     
     /**
      * Tests the method <code>getFieldNames</code>.
+     *
+     * @see junit.extensions.PA#getFieldNames(java.lang.Object)
      */
     public final void testGetFieldNames() throws Exception {
         Collection<String> testFieldNames = new ArrayList<String>();
-        
+
         assertEquals(testFieldNames, PA.getFieldNames(null));
-        
+
         assertEquals(testFieldNames, PA.getFieldNames(Object.class));
-        
+
         testFieldNames.add("privateName"); testFieldNames.add("privateStaticNumber"); 
         assertEquals(testFieldNames, PA.getFieldNames(this.parent));
-        
+
         testFieldNames = Arrays.asList(new String[] {"privateNumber", "privateLong", "privateShort", "privateByte", 
                 "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateNumbers", "privateStrings", "privateObjects",
                 "privateName", "privateStaticNumber"});
-        
+
         assertEquals(testFieldNames, PA.getFieldNames(this.child));
         assertEquals(testFieldNames, PA.getFieldNames(this.childInParent));
     }
-    
+
     /**
      * Tests the method <code>getMethodSignatures</code>.
+     *
+     * @see junit.extenstion.PA#getMethodSigantures(java.lang.Object)
      */
     public final void testGetMethodsignatures() throws Exception {
         Collection<String> testMethodSignatures = new ArrayList<String>();
-        
+
         assertEquals(testMethodSignatures, PA.getMethodSignatures(null));
-        
+
         testMethodSignatures = Arrays.asList(new String[] {"hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
         assertEquals(testMethodSignatures, PA.getMethodSignatures(Object.class));
-        
-        testMethodSignatures = Arrays.asList(new String[] {"setStaticNumber(int)", "equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
-                "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+
+        testMethodSignatures = Arrays.asList(new String[] {"equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
+                "setStaticNumber(int)", "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
         assertEquals(testMethodSignatures, PA.getMethodSignatures(this.parent));        
     }
-    
+
     /**
      * Tests the method <code>getValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
      */
     public final void testGetValue() throws Exception {
         assertEquals("Charlie", PA.getValue(this.parent, "privateName"));
@@ -136,7 +140,7 @@ public class PATest extends TestCase {
      * Tests the method <code>getValue</code> with a static field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
      */
     public void testGetValueOfStaticField() throws Exception {
         assertEquals(new Integer(1), PA.getValue(this.parent,
@@ -149,7 +153,7 @@ public class PATest extends TestCase {
      * Tests the method <code>getValue</code> with a non-existing field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
      */
     public void testGetValueOnInvalidField() throws Exception {
         try {
@@ -192,7 +196,7 @@ public class PATest extends TestCase {
      * Tests the method <code>instantiate</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#instantiate(Class)
+     * @see junit.extensions.PA#instantiate(java.lang.Class)
      */
     public void testInstantiate() throws Exception {
         TestParent tp = PA.instantiate(TestParent.class);
@@ -208,12 +212,12 @@ public class PATest extends TestCase {
                 new Class[] {String.class, Integer.class},
                 "Charlie", 8));
     }
-    
+
     /**
      * Tests the method <code>instantiate</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#instantiate(Class)
+     * @see junit.extensions.PA#instantiate(java.lang.Class)
      */
     public void testInstantiateOnInvalidParameters() throws Exception {
         try {
@@ -222,14 +226,14 @@ public class PATest extends TestCase {
         } catch (Exception e) {
             //this is what we expect
         }
-        
+
         try {
             PA.instantiate(TestChild.class, "Charlie", "Brown");
             fail ("instantiating with wrong second parameter type should throw Exception");
         } catch (Exception e) {
             //this is what we expect
-        }        
-        
+        }
+
         try {
             PA.instantiate(TestChild.class, new Class[] {String.class, String.class},
                     "Charlie", 8);
@@ -240,20 +244,21 @@ public class PATest extends TestCase {
         } catch (Exception e) {
             //this is what we expect
         }
-        
+
         try {
             PA.instantiate(TestChild.class, new Class[] {String.class, Integer.class, String.class},
                     "Charlie", 8, "Brown");
             fail ("instantiating with wrong parameter count should throw Exception");
         } catch (Exception e) {
             //this is what we expect
-        }               
+        }
     }
 
     /**
      * Tests the constructor of PA and PrivilegedAccessor.
      *
      * @throws Exception if something went wrong
+     * @see junit.extensions.PA#instantiate(java.lang.Class)
      */
     public final void testInstantiationThrowsException() throws Exception {
         try {
@@ -275,20 +280,20 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethod() throws Exception {
         assertEquals("Charlie", PA.invokeMethod(this.parent, "getName()"));
-        
+
         PA.invokeMethod(this.parent, "setName(java.lang.String)", "Herbert");
         assertEquals("Herbert", PA.getValue(this.parent, "privateName"));
 
         PA.invokeMethod(this.parent, "setName(java.lang.String)", (Object[])null);
         assertEquals(null, PA.getValue(this.parent, "privateName"));
-        
+
         PA.invokeMethod(this.parent, "setName()");
         assertEquals("Chaplin", PA.getValue(this.parent, "privateName"));
-        
+
         PA.invokeMethod(this.child, "setName(java.lang.String)", "Hubert");
         assertEquals("Hubert", PA.getValue(this.child, "privateName"));
 
@@ -306,7 +311,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with different primitives.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithPrimitives() throws Exception {
         PA.invokeMethod(this.child, "setNumber(int)", 3);
@@ -338,7 +343,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> on a non-existing method.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodOnInvalidMethodName() throws Exception {
         try {
@@ -391,6 +396,12 @@ public class PATest extends TestCase {
         }
     }
 
+    /**
+     * Tests the method <code>invokeMethod</code> with an array.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+     */
     public void testInvokeMethodWithArray() throws Exception {
         Object[] args = { 5 };
         PA.invokeMethod(this.childInParent, "setNumber(int)", args);
@@ -402,7 +413,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with invalid arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithInvalidSignature() throws Exception {
         try {
@@ -439,7 +450,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with invalid arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithInvalidArguments() throws Exception {
         try {
@@ -520,7 +531,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with several primitive arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
         PA.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
@@ -536,7 +547,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with arrays as arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArrays() throws Exception {
         int[] numbers = new int[] { 5, 3 };
@@ -560,6 +571,7 @@ public class PATest extends TestCase {
      * Tests the bugs in invoke method (invoke method does not work on methods that require object arrays as parameters)
      * 
      * @throws Exception
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodThatRequireArrays() throws Exception {
         //TODO this is a bug
@@ -594,7 +606,7 @@ public class PATest extends TestCase {
      * b) using varargs there is no possibility to distinquish arrays from several arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArrayInsteadOfSingleValues() throws Exception {
         Object[] onumbers = new Object[] { 3, 3 };
@@ -609,7 +621,7 @@ public class PATest extends TestCase {
      * b) this is the typical behaviour when using varargs (Java doesn't autoconvert primitive arrays)
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() throws Exception {
         try {
@@ -630,7 +642,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with arrays of wrong length instead of several arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() throws Exception {
         try {
@@ -662,7 +674,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with single values instead of an array.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
         try {
@@ -691,7 +703,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> with arguments of type object and primitive.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithObjectAndPrimitive() throws Exception {
         Object[] args = { "Marcus", 5 };
@@ -711,7 +723,7 @@ public class PATest extends TestCase {
      * Tests the method <code>invokeMethod</code> on a static method.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeStaticMethod() throws Exception {
         PA.invokeMethod(TestParent.class, "setStaticNumber(int)", 3);
@@ -723,7 +735,7 @@ public class PATest extends TestCase {
      * Tests the method <code>setValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetGetValueWithPrimitives() throws Exception {
         PA.setValue(this.child, "privateNumber", 6);
@@ -758,7 +770,7 @@ public class PATest extends TestCase {
      * Tests the method <code>setValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetGetValueWithObjectsAndArrays() throws Exception {
         PA.setValue(this.parent, "privateName", "Hubert");
@@ -783,7 +795,7 @@ public class PATest extends TestCase {
      * Tests the method <code>setValue</code> with a static field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetValueOfStaticField() throws Exception {
         PA.setValue(this.parent, "privateStaticNumber", 6);
@@ -799,7 +811,7 @@ public class PATest extends TestCase {
      * Tests the method <code>setValue</code> with a non-existing field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetValueOnInvalidField() throws Exception {
         try {
@@ -830,18 +842,36 @@ public class PATest extends TestCase {
             // that is what we expect
         }
     }
-    
+
+    /**
+     * Tests the method <code>instantiate</code> on an inner class.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#instantiate(java.lang.Class)
+     */
     public void testInstantiateInnerClass() throws Exception {
         Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
         assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
     }
-    
+
+    /**
+     * Tests the method <code>getValue</code> with a field of an inner class.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+     */
     public void testAccessInnerClass() throws Exception {
         Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
         PA.setValue(tic, "privateInnerNumber", 5);
         assertEquals(5, PA.getValue(tic, "privateInnerNumber"));
     }
-    
+
+    /**
+     * Tests the method <code>invokeMethod</code> with a method of an inner class.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+     */
     public void testAccessInnerMethod() throws Exception {
         Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
         PA.invokeMethod(tic, "setPrivateInnerNumber(int)", 7);
