@@ -1,10 +1,10 @@
 
 
 == Version 1.2 ==
-Version 1.1 is the Java 1.5 (and later) compatible version of PrivilegedAccessor
+Version 1.2 is the Java 1.5 (and later) compatible version of PrivilegedAccessor. 
 
 FUNCTIONAL CHANGES:
-* version 1.2 is no longer downward compatible to Java 1.3, but only to Java 1.5 (see version 1.1 for downward compatibility to Java 1.3).
+* version 1.2 is no longer downward compatible to Java 1.3, but only to Java 1.5 (see version 1.1 and onwards for downward compatibility to Java 1.3).
 * use varargs instead of object arrays to deliver parameters to PA. PrivilegedAccessor still works with object[].
 
 FEATURES:
@@ -29,7 +29,7 @@ KNOWN BUGS:
 * does not work with methods that require object array parameters
 
 == Version 1.1 ==
-Version 1.1 is the Java 1.3 (and later) compatible version of PrivilegedAccessor
+Version 1.1 is the Java 1.3 (and later) compatible version of PrivilegedAccessor. This is the last 1.3 compatible version of PrivilegedAccessor - expect maintenance releases only (1.1.1, 1.1.2, ...)
 
 FEATURES:
 * continuing Java 1.3 downward compatibility (i.e. all new features for V1.2 onwards (that are not due to Java 1.5 language enhancements) can also be found under 1.1 onwards)
