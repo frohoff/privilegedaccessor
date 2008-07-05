@@ -33,6 +33,10 @@ public class TestParent {
     private static void setStaticNumber(int number) {
         TestParent.privateStaticNumber = number;
     }
+    
+    private static int getStaticNumber() {
+        return TestParent.privateStaticNumber;
+    }
 
     public boolean equals(Object other) {
         if (!(other instanceof TestParent)) {
@@ -46,5 +50,9 @@ public class TestParent {
         }
 
         return false;
+    }
+    
+    public String toString() {
+        return this.getClass().getName() + " {privateName=" + getName() + ", privateStaticNumber=" + TestParent.getStaticNumber() + "}";
     }
 }

@@ -134,4 +134,12 @@ public class TestChild extends TestParent {
         setName(name);
         this.privateNumber = number;
     }
+    
+    public String toString() {
+        return this.getClass().getName() + " {privateNumber=" + getNumber() + ", privateLong=" + getPrivateLong() +
+        ", privateShort=" + getPrivateShort() + ", privateByte=" + getPrivateByte() + ", privateChar=" + getPrivateChar() +
+        ", privateBoolean=" + isPrivateBoolean() + ", privateFloat=" + getPrivateFloat() + ", privateDouble=" + getPrivateDouble() +
+        ", privateNumbers=" + getPrivateNumbers() + ", privateStrings=" + getPrivateStrings() + ", privateObjects=" + getPrivateObjects() +
+        ", " + super.toString().substring(super.toString().indexOf('{')+1);
+    }
 }

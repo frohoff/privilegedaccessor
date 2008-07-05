@@ -68,6 +68,15 @@ public class PATest extends TestCase {
     }
 
     /**
+     * Tests the method <code>toString</code>
+     */
+    public final void testToString() throws Exception {
+        assertEquals(this.parent.toString(), PA.toString(this.parent));
+        assertEquals(this.child.toString(), PA.toString(this.child));
+        assertEquals(this.childInParent.toString(), PA.toString(this.childInParent));   
+    }
+    
+    /**
      * Tests the method <code>getFieldNames</code>.
      */
     public final void testGetFieldNames() throws Exception {
