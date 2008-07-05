@@ -100,17 +100,17 @@ public class PrivilegedAccessorTest extends TestCase {
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
         assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(Object.class));
         
-        testMethodSignatures = Arrays.asList(new String[] {"setStaticNumber(int)", "equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
-                "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
+        testMethodSignatures = Arrays.asList(new String[] {"equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
+                "setStaticNumber(int)", "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
         assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(this.parent));        
     }
-    
+
     /**
      * Tests the method <code>getValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see PrivilegedAccessor#getValue(Object, String)
      */
     public final void testGetValue() throws Exception {
         assertEquals("Charlie", PrivilegedAccessor.getValue(this.parent, "privateName"));
@@ -127,7 +127,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>getValue</code> with a static field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see junit.extensions.PrivilegedAccessor#getValue(java.lang.Object, java.lang.String)
      */
     public void testGetValueOfStaticField() throws Exception {
         assertEquals(new Integer(1), PrivilegedAccessor.getValue(this.parent,
@@ -140,7 +140,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>getValue</code> with a non-existing field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#getValue(Object, String)
+     * @see junit.extensions.PrivilegedAccessor#getValue(java.lang.Object, java.lang.String)
      */
     public void testGetValueOnInvalidField() throws Exception {
         try {
@@ -170,7 +170,7 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (NoSuchFieldException e) {
             // that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.getValue(null, "noSuchField");
             fail("should throw InvalidParameterException");
@@ -183,7 +183,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>instantiate</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#instantiate(Class)
+     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
      */
     public void testInstantiate() throws Exception {
         assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, null));
@@ -198,7 +198,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>instantiate</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#instantiate(Class)
+     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
      */
     public void testInstantiateOnInvalidParameters() throws Exception {
         try {
@@ -207,14 +207,14 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (Exception e) {
             //this is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.instantiate(TestChild.class, new Object[] { "Charlie", "Brown" });
             fail ("instantiating with wrong second parameter type should throw Exception");
         } catch (Exception e) {
             //this is what we expect
-        }        
-        
+        }
+
         try {
             PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, String.class},
                     new Object[] { "Charlie", 8 });
@@ -225,14 +225,14 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (Exception e) {
             //this is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, Integer.class, String.class},
                     new Object[] { "Charlie", 8, "Brown" });
             fail ("instantiating with wrong parameter count should throw Exception");
         } catch (Exception e) {
             //this is what we expect
-        }               
+        }
     }
 
     /**
@@ -260,7 +260,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethod() throws Exception {
         assertEquals("Charlie", PrivilegedAccessor.invokeMethod(this.parent, "getName()", null));
@@ -291,7 +291,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> with different primitives.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithPrimitives() throws Exception {
         PrivilegedAccessor.invokeMethod(this.child, "setNumber(int)", new Object[] { 3 });
@@ -323,7 +323,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> on a non-existing method.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodOnInvalidMethodName() throws Exception {
         try {
@@ -387,7 +387,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> with invalid arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithInvalidSignature() throws Exception {
         try {
@@ -419,12 +419,12 @@ public class PrivilegedAccessorTest extends TestCase {
         }
 
     }
-        
+
     /**
      * Tests the method <code>invokeMethod</code> with invalid arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithInvalidArguments() throws Exception {
         try {
@@ -499,7 +499,7 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Object[] { 3, 4, null});
             fail("should throw NoSuchMethodException");
@@ -512,23 +512,23 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> with several primitive arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
         PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                 new Object[] { 5, 3 });
         assertEquals(8, PrivilegedAccessor.getValue(this.child, "privateNumber"));
-        
+
         PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                 new Object[] { new Integer(5), new Integer(4) });
         assertEquals(9, PrivilegedAccessor.getValue(this.child, "privateNumber"));
     }
-    
+
     /**
      * Tests the method <code>invokeMethod</code> with arrays as arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArrays() throws Exception {
         int[] numbers = new int[] { 5, 3 };
@@ -547,10 +547,10 @@ public class PrivilegedAccessorTest extends TestCase {
         PrivilegedAccessor.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", new Object[] { strings });
         assertEquals(strings, PrivilegedAccessor.getValue(this.child, "privateStrings"));
     }
-    
+
     /**
      * Tests the bugs in invoke method (invoke method does not work on methods that require object arrays as parameters)
-     * 
+     *
      * @throws Exception
      */
     public void testInvokeMethodThatRequireArrays() throws Exception {
@@ -561,7 +561,7 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         //TODO this is a bug
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] { "Dolly" });
@@ -578,7 +578,7 @@ public class PrivilegedAccessorTest extends TestCase {
             //that is what we expect
         }
     }
-    
+
     /**
      * Tests the method <code>invokeMethod</code> with array of non primitives instead of several arguments.
      * This is ok for several reasons:
@@ -586,14 +586,14 @@ public class PrivilegedAccessorTest extends TestCase {
      * b) using varargs there is no possibility to distinquish arrays from several arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArrayInsteadOfSingleValues() throws Exception {
         Object[] onumbers = new Object[] { 3, 3 };
         PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", onumbers);
         assertEquals(6, PrivilegedAccessor.getValue(this.child, "privateNumber"));
     }
-    
+
     /**
      * Tests the method <code>invokeMethod</code> with array of primitives instead of several arguments.
      * This is not ok for several reasons:
@@ -601,7 +601,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * b) this is the typical behaviour when using varargs (Java doesn't autoconvert primitive arrays)
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() throws Exception {
         try {
@@ -610,19 +610,19 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Object[] { new Integer[] { 4, 3 }});
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
     }
-    
+
     /**
      * Tests the method <code>invokeMethod</code> with arrays of wrong length instead of several arguments.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() throws Exception {
         try {
@@ -632,7 +632,7 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                     new Object[] { new Integer[] { 2 }});
@@ -640,7 +640,7 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)",
                     new Object[] { new Object[] { 3 }});
@@ -649,12 +649,12 @@ public class PrivilegedAccessorTest extends TestCase {
             //that is what we expect
         }
     }
-    
+
     /**
      * Tests the method <code>invokeMethod</code> with single values instead of an array.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
         try {
@@ -663,14 +663,14 @@ public class PrivilegedAccessorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", new Object[] { "Hello", "Bruno" });
             fail("invoking method with single values instead of array as parameters should raise exception");
         } catch (IllegalArgumentException e) {
             //that is what we expect
         }
-        
+
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] { "Hello", new Integer(3) });
             fail("invoking method with single values instead of array as parameters should raise exception");
@@ -683,7 +683,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> with arguments of type object and primitive.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeMethodWithObjectAndPrimitive() throws Exception {
         Object[] args = { "Marcus", 5 };
@@ -703,7 +703,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>invokeMethod</code> on a static method.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#invokeMethod(Object, String, Object)
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
      */
     public void testInvokeStaticMethod() throws Exception {
         PrivilegedAccessor.invokeMethod(TestParent.class, "setStaticNumber(int)", new Object[] { 3 });
@@ -715,7 +715,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>setValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetGetValueWithPrimitives() throws Exception {
         PrivilegedAccessor.setValue(this.child, "privateNumber", 6);
@@ -745,12 +745,12 @@ public class PrivilegedAccessorTest extends TestCase {
         PrivilegedAccessor.setValue(this.child, "privateDouble", 1.175);
         assertEquals(1.175, PrivilegedAccessor.getValue(this.child, "privateDouble"));
     }
-    
+
     /**
      * Tests the method <code>setValue</code>.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetGetValueWithObjectsAndArrays() throws Exception {
         PrivilegedAccessor.setValue(this.parent, "privateName", "Hubert");
@@ -775,7 +775,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>setValue</code> with a static field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PrivilegedAccessor#(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetValueOfStaticField() throws Exception {
         PrivilegedAccessor.setValue(this.parent, "privateStaticNumber", 6);
@@ -791,7 +791,7 @@ public class PrivilegedAccessorTest extends TestCase {
      * Tests the method <code>setValue</code> with a non-existing field.
      *
      * @throws Exception
-     * @see junit.extensions.PrivilegedAccessor#setValue(Object, String, String)
+     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
      */
     public void testSetValueOnInvalidField() throws Exception {
         try {
@@ -822,18 +822,18 @@ public class PrivilegedAccessorTest extends TestCase {
             // that is what we expect
         }
     }
-    
+
     public void testInstantiateInnerClass() throws Exception {
         Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
         assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
     }
-    
+
     public void testAccessInnerClass() throws Exception {
         Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
         PrivilegedAccessor.setValue(tic, "privateInnerNumber", 5);
         assertEquals(5, PrivilegedAccessor.getValue(tic, "privateInnerNumber"));
     }
-    
+
     public void testAccessInnerMethod() throws Exception {
         Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), new Object[] { this.child });
         PrivilegedAccessor.invokeMethod(tic, "setPrivateInnerNumber(int)", new Object[] { 7 });
