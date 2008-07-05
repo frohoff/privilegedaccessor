@@ -305,32 +305,86 @@ public final class PrivilegedAccessor {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            if (className.equals("int")) {
-                return Integer.TYPE;
-            }
-            if (className.equals("float")) {
-                return Float.TYPE;
-            }
-            if (className.equals("double")) {
-                return Double.TYPE;
-            }
-            if (className.equals("short")) {
-                return Short.TYPE;
-            }
-            if (className.equals("long")) {
-                return Long.TYPE;
-            }
-            if (className.equals("byte")) {
-                return Byte.TYPE;
-            }
-            if (className.equals("char")) {
-                return Character.TYPE;
-            }
-            if (className.equals("boolean")) {
-                return Boolean.TYPE;
-            }
-            throw e;
+            return getSpecialClassForName(className);
         }
+    }
+
+    /**
+     * Gets special classes for the given className. Special classes
+     * are primitives and "standard" Java types (like String)
+     * 
+     * @param className
+     *            the name of the class to get
+     * @return 
+     * @return the class for the given className
+     * @throws ClassNotFoundException
+     *             if the class could not be found
+     */
+    private static Class<?> getSpecialClassForName(final String className) throws ClassNotFoundException {
+        if (className.equals("int")) {
+            return Integer.TYPE;
+        }
+        if (className.equals("float")) {
+            return Float.TYPE;
+        }
+        if (className.equals("double")) {
+            return Double.TYPE;
+        }
+        if (className.equals("short")) {
+            return Short.TYPE;
+        }
+        if (className.equals("long")) {
+            return Long.TYPE;
+        }
+        if (className.equals("byte")) {
+            return Byte.TYPE;
+        }
+        if (className.equals("char")) {
+            return Character.TYPE;
+        }
+        if (className.equals("boolean")) {
+            return Boolean.TYPE;
+        }
+        if (missesPackageName(className)) {
+            return getStandardClassForName(className);
+        }
+        
+        throw new ClassNotFoundException("No class for '" + className + "' found");
+    }
+
+    /**
+     * Gets a 'standard' java class for the given className.
+     * 
+     * @param className the className
+     * @return the class for the given className (if any)
+     * @throws ClassNotFoundException of no 'standard' java class was found for the given className
+     */
+    private static Class<?> getStandardClassForName(String className) throws ClassNotFoundException {
+        try {
+            return Class.forName("java.lang." + className);
+        } catch (ClassNotFoundException e) {
+            try {
+                return Class.forName("java.util." + className);
+            } catch (ClassNotFoundException e1) {
+                throw new ClassNotFoundException("no 'standard' java class found for '" + className + "'");
+            }
+        }
+    }
+
+    /**
+     * Tests if the given className possibly misses its package name.
+     * 
+     * @param className the className
+     * @return true if the className might miss its package name, otherwise false
+     */
+    private static boolean missesPackageName(String className) {
+        if (className.contains(".")) {
+            return false;
+        }
+        if (className.startsWith(className.substring(0, 1).toUpperCase())) {
+            return true;
+        }
+        return false;
     }
 
     /**

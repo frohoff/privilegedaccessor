@@ -5,16 +5,20 @@ package junit.extensions;
  */
 public class TestParent {
     private String privateName;
+    private Object privateObject;
 
     private static int privateStaticNumber;
 
     public TestParent(String name) {
         this.privateName = name;
+        this.privateObject = "Brown";
         privateStaticNumber = 1;
     }
 
     private TestParent() {
         this.privateName = "Charlie";
+        this.privateObject = "Brown";
+        privateStaticNumber = 0;
     }
 
     private String getName() {
@@ -30,6 +34,14 @@ public class TestParent {
         this.privateName = "Chaplin";
     }
 
+    private Object getObject() {
+        return this.privateObject;
+    }
+
+    private void setObject(Object newObject) {
+        this.privateObject = newObject;
+    }
+    
     private static void setStaticNumber(int number) {
         TestParent.privateStaticNumber = number;
     }
@@ -45,7 +57,7 @@ public class TestParent {
 
         TestParent otherTestParent = (TestParent) other;
 
-        if (this.privateName.equals(otherTestParent.privateName)) {
+        if (this.privateName.equals(otherTestParent.privateName) && this.privateObject.equals(otherTestParent.privateObject)) {
             return true;
         }
 
@@ -53,6 +65,6 @@ public class TestParent {
     }
     
     public String toString() {
-        return this.getClass().getName() + " {privateName=" + getName() + ", privateStaticNumber=" + TestParent.getStaticNumber() + "}";
+        return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticNumber=" + TestParent.getStaticNumber() + "}";
     }
 }

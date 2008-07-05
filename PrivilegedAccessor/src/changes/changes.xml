@@ -12,6 +12,24 @@
       <action dev="Sebastian.Dietrich" type="add">
 		works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
       </action>
+      <action dev="Sebastian.Dietrich" type="add">
+		no need to fully declare common objects (e.g. PA.invokeMethod(MyClass.class, "setName(String)", "Brown");) - thanks to Matthias Herp for the request
+      </action>
+      <action dev="Sebastian.Dietrich" type="update">
+		returns the exact type when instantiating objects (no need to cast)
+      </action>
+      <action dev="Sebastian.Dietrich" type="add">
+		works as well with private member classes
+      </action>
+      <action dev="Sebastian.Dietrich" type="add">
+		added methods to get all attribute names and all method signatures - thanks to Matthias Herp for the request
+      </action>
+      <action dev="Sebastian.Dietrich" type="add">
+		added method toString to get a default String representation for objects - thanks to Matthias Herp for the request
+      </action>
+      <action dev="Sebastian.Dietrich" type="fix">
+		works now with methods that require array type parameters (with the exception of object array parameters) - thanks to nut for the advice
+      </action>
       <action dev="Sebastian.Dietrich" type="update">
 		changed unit-tests to use Java 5.0 features
       </action>
@@ -29,18 +47,6 @@
       </action>
       <action dev="Sebastian.Dietrich" type="fix">
 		size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (6.087 bytes instead of 9.859 bytes for V1.0)
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		returns the exact type when instantiating objects (no need to cast)
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		works as well with private member classes
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		added methods to get all attribute names and all method signatures
-      </action>
-      <action dev="Sebastian.Dietrich" type="fix">
-		works now with methods that require array type parameters (with the exception of object array parameters)
       </action>
       <action dev="Sebastian.Dietrich" type="fix">
 		removed test-classes from jar and src.zip
