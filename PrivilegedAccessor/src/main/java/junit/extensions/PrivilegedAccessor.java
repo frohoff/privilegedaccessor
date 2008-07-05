@@ -58,8 +58,7 @@ public final class PrivilegedAccessor {
                 sb.append(fieldName + "="
                         + getValue(instanceOrClass, fieldName) + ", ");
             } catch (NoSuchFieldException e) {
-                assert false; // would mean that we couldn't get a field that
-                // was previously there
+                assert false; // would mean that we couldn't get a field that was previously there
             }
         }
 
@@ -143,9 +142,7 @@ public final class PrivilegedAccessor {
         try {
             return field.get(instanceOrClass);
         } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); // would mean that
-            // setAccessible(true)
-            // didn't work
+            throw new Error("Assertion failed"); // would mean that setAccessible(true) didn't work
         }
     }
 
@@ -278,9 +275,7 @@ public final class PrivilegedAccessor {
         try {
             field.set(instanceOrClass, value);
         } catch (IllegalAccessException e) {
-            throw new Error("Assertion failed"); // would mean that
-            // setAccessible didn't
-            // work
+            throw new Error("Assertion failed"); // would mean that setAccessible didn't work
         }
     }
 

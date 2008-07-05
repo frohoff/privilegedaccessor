@@ -428,6 +428,24 @@ public class PrivilegedAccessorTest extends TestCase {
         }
 
     }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with not fully declared types.
+     *
+     * @throws Exception
+     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+     */
+    public void testInvokeMethodWithNotFullyDeclaredTypes() throws Exception {
+        PrivilegedAccessor.invokeMethod(this.parent, "setName(String)", new Object[] {"Hubert"} );
+        assertEquals("Hubert", PrivilegedAccessor.getValue(this.parent, "privateName"));
+
+        PrivilegedAccessor.invokeMethod(this.parent, "setObject(Object)", new Object[] {"Heribert"});
+        assertEquals("Heribert", PrivilegedAccessor.getValue(this.parent, "privateObject"));
+        
+        Collection<String> testCollection = new ArrayList<String> ();
+        PrivilegedAccessor.invokeMethod(this.child, "setPrivateCollection(Collection)", new Object[] {testCollection});
+        assertEquals(testCollection, PrivilegedAccessor.getValue(this.child, "privateCollection"));        
+    }
 
     /**
      * Tests the method <code>invokeMethod</code> with invalid arguments.
@@ -475,8 +493,36 @@ public class PrivilegedAccessorTest extends TestCase {
 
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setName(java.lang.String)", new Object[] { 2 });
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.invokeMethod(this.child, "setName(.String)", new Object[] {"Heribert"});
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.invokeMethod(this.child, "setName(string)", new Object[] {"Heribert"});
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.invokeMethod(this.child, "setName(NotAString)", new Object[] {"Heribert"});
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
+            // that is what we expect
+        }
+        
+        try {
+            PrivilegedAccessor.invokeMethod(this.child, "setData(Integer)", new Object[] {2} );
+            fail("should throw NoSuchMethodException");
+        } catch (NoSuchMethodException e) {
             // that is what we expect
         }
         
@@ -489,7 +535,7 @@ public class PrivilegedAccessorTest extends TestCase {
 
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setNumber(int)", new Object[] { "Herbert" });
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
@@ -504,14 +550,14 @@ public class PrivilegedAccessorTest extends TestCase {
         
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setNumber(int)", (Object[])null);
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
 
         try {
             PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Object[] { 3, 4, null});
-            fail("should throw NoSuchMethodException");
+            fail("should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // that is what we expect
         }
