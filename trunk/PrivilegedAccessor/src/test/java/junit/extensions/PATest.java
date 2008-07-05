@@ -88,15 +88,15 @@ public class PATest extends TestCase {
 
         assertEquals(testFieldNames, PA.getFieldNames(Object.class));
 
-        testFieldNames.add("privateName"); testFieldNames.add("privateStaticNumber"); 
+        testFieldNames.add("privateName"); testFieldNames.add("privateObject"); testFieldNames.add("privateStaticNumber"); 
         assertEquals(testFieldNames, PA.getFieldNames(this.parent));
 
-        testFieldNames = Arrays.asList(new String[] {"privateNumber", "privateLong", "privateShort", "privateByte", 
+        testFieldNames = Arrays.asList(new String[] {"privateNumber", "privateObject", "privateLong", "privateShort", "privateByte", 
                 "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateNumbers", "privateStrings", "privateObjects",
                 "privateName", "privateStaticNumber"});
 
-        assertEquals(testFieldNames, PA.getFieldNames(this.child));
-        assertEquals(testFieldNames, PA.getFieldNames(this.childInParent));
+        assertTrue("getFieldNames didn't return all field names", PA.getFieldNames(this.child).containsAll(testFieldNames));
+        assertTrue("getFieldNames didn't return all field names", PA.getFieldNames(this.childInParent).containsAll(testFieldNames));
     }
 
     /**
@@ -111,12 +111,12 @@ public class PATest extends TestCase {
 
         testMethodSignatures = Arrays.asList(new String[] {"hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
-        assertEquals(testMethodSignatures, PA.getMethodSignatures(Object.class));
+        assertTrue("getMethodSignatures didn't return correct signatures", PA.getMethodSignatures(Object.class).containsAll(testMethodSignatures));
 
         testMethodSignatures = Arrays.asList(new String[] {"equals(java.lang.Object)", "getName()", "setName(java.lang.String)", "setName()",
                 "setStaticNumber(int)", "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
                 "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
-        assertEquals(testMethodSignatures, PA.getMethodSignatures(this.parent));        
+        assertTrue("getMethodSignatures didn't return correct signatures", PA.getMethodSignatures(this.parent).containsAll(testMethodSignatures));   
     }
 
     /**
@@ -305,6 +305,20 @@ public class PATest extends TestCase {
         PA.invokeMethod(this.childInParent, "setNumber(int)", 3);
         assertEquals("Norbert", PA.getValue(this.childInParent, "privateName"));
         assertEquals(3, PA.getValue(this.childInParent, "privateNumber"));
+    }
+    
+    /**
+     * Tests the method <code>invokeMethod</code> with not fully declared types.
+     *
+     * @throws Exception
+     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+     */
+    public void testInvokeMethodWithNotFullyDeclaredTypes() throws Exception {
+        PA.invokeMethod(this.parent, "setName(String)", "Hubert");
+        assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
+
+        PA.invokeMethod(this.parent, "setObject(Object)", "Heribert");
+        assertEquals("Heribert", PA.getValue(this.parent, "privateObject"));
     }
 
     /**
