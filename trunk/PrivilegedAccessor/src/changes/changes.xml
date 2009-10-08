@@ -1,11 +1,17 @@
 <document>
   <properties>
-    <title>Changes for Technology Radar</title>
-    <author email="Sebastian.Dietrich@anecon.com">Sebastian Dietrich</author>
+    <title>Changes for PrivilegedAccessor</title>
+    <author email="Sebastian.Dietrich@e-movimento.com">Sebastian Dietrich</author>
   </properties>
   <body>
     <release version="1.2" date="upcoming" description="feature release">
       <!-- please enter all major changes to this project below... -->
+      <action dev="Sebastian.Dietrich" type="update">
+		switched to maven as supported build tool (including configuration for eclipse, project site and deployment)
+      </action>
+      <action dev="Sebastian.Dietrich" type="update">
+		reduced some code and slightly improved performance
+      </action>
       <action dev="Sebastian.Dietrich" type="add">
 		works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) - thanks to Dan Richter for the advice
       </action>
@@ -34,10 +40,10 @@
 		changed unit-tests to use Java 5.0 features
       </action>
       <action dev="Sebastian.Dietrich" type="add">
-		added some more unit-tests - line coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
+		added some more unit-tests - line coverage is now 95% for junit.extensions.PA and 90% for junit.extensions.PrivilegedAccessor
       </action>
       <action dev="Sebastian.Dietrich" type="update">
-		improved error output
+		improved exception information, more verbous and similar to java internal exceptions
       </action>
       <action dev="Sebastian.Dietrich" type="remove">
 		removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
