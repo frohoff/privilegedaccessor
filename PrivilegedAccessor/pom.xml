@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -22,33 +21,48 @@
 		</license>
 	</licenses>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<version.java>1.5</version.java>
+	</properties>
+
 	<scm>
-		<url>http://sourceforge.net/projects/privaccessor/</url>
-		<connection>
-			scm:cvs:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
-		</connection>
-		<developerConnection>
-			scm:cvs:privaccessor.cvs.sourceforge.net/cvsroot/privaccessor
-		</developerConnection>
+		<url>http://privaccessor.cvs.sourceforge.net/privaccessor/</url>
+		<connection>scm:cvs:pserver:anoncvs@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</connection>
+		<developerConnection>scm:cvs:pserver:anoncvs@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</developerConnection>
 	</scm>
-	
+
 	<distributionManagement>
 		<site>
 			<id>maven-site</id>
 			<url>file://${basedir}/target/site</url>
 		</site>
-        <snapshotRepository>
-          <id>ibiblio</id>
-          <name>ibiblio</name>
-          <url>scp://www.ibiblio.org/maven2</url>
-        </snapshotRepository>
+		<repository>
+			<id>ibiblio</id>
+			<name>ibiblio</name>
+			<url>scp://www.ibiblio.org/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>ibiblio</id>
+			<name>ibiblio</name>
+			<url>scp://www.ibiblio.org/maven2</url>
+		</snapshotRepository>
 	</distributionManagement>
+	<issueManagement>
+		<system>sourceforge</system>
+		<url>http://sourceforge.net/tracker/?group_id=125148</url>
+	</issueManagement>
 
 	<developers>
 		<developer>
 			<id>Sebastian.Dietrich</id>
 			<name>Sebastian Dietrich</name>
+			<email>Sebastian.Dietrich@e-movimento.com</email>
+			<organization>e-movimento Software Design &amp; Beratung GmbH</organization>
 			<timezone>+1</timezone>
+			<roles>
+			</roles>
 		</developer>
 	</developers>
 
@@ -57,18 +71,9 @@
 			<id>ibiblio-repository</id>
 			<name>Ibiblio Repository</name>
 			<url>http://www.ibiblio.org/maven2</url>
-		</repository>
-		<repository>
-			<id>codehaus-repository</id>
-			<name>Codehaus Repository</name>
-			<url>http://repository.codehaus.org</url>
-		</repository>
-		<repository>
-			<id>apache-snapshot-repository</id>
-			<name>Apache Snapshot Repository</name>
-			<url>
-				http://people.apache.org/maven-snapshot-repository/
-			</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
@@ -77,6 +82,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -86,8 +92,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>${version.java}</source>
+					<target>${version.java}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -99,14 +105,21 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
 				<configuration>
 					<locales>en</locales>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>clirr-maven-plugin</artifactId>
+				<configuration>
+					<minSeverity>info</minSeverity>
+				</configuration>
 			</plugin>
 
 			<!-- defines what to generate when running maven eclipse:eclipse  -->
@@ -114,38 +127,58 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<configuration>
-					<downloadSources>false</downloadSources>
+					<downloadSources>true</downloadSources>
 					<wtpversion>none</wtpversion>
+					
+					<!-- add additional natures and builders -->
 					<projectnatures>
-						<java.lang.String>
-							org.eclipse.jdt.core.javanature
-						</java.lang.String>
-						<java.lang.String>
-							com.atlassw.tools.eclipse.checkstyle.CheckstyleNature
-						</java.lang.String>
+						<java.lang.String>org.eclipse.jdt.core.javanature</java.lang.String>
+						<java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</java.lang.String>
 					</projectnatures>
 					<buildcommands>
-						<java.lang.String>
-							org.eclipse.jdt.core.javabuilder
-						</java.lang.String>
-						<java.lang.String>
-							com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder
-						</java.lang.String>
+						<java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
+						<java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
 					</buildcommands>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<configuration>
-					<xmlOutput>true</xmlOutput>
-				</configuration>
+					<additionalConfig>
+						<file>
+							<name>.djunitplugin</name>
+							<content>
+								<![CDATA[
+									#djUnit Plugin Settings
+									VirtualMockIgnoreLibrary=false
+									UseMarker=true
+									CoverageIncludedPatterns=junit.extensions.PA;junit.extensions.PrivilegedAccessor;
+									UseVirtualMock=false
+									UseCoverage=true
+									BytecodeLibrary=BCEL
+									UseNoverify=true
+								]]>
+							</content>
+						</file>
+						<file>
+							<name>.checkstyle</name>
+							<!-- project specific checkstyle configuration -->
+							<content>
+								<![CDATA[
+									<?xml version="1.0" encoding="UTF-8"?>
+									<fileset-config file-format-version="1.2.0" simple-config="false">
+									    <local-check-config name="checkstyle checks" location=".settings/checkstyle-checks.xml" type="project" description="">
+									        <additional-data name="protect-config-file" value="false"/>
+									    </local-check-config>
+									    <local-check-config name="checkstyle checks for tests" location=".settings/checkstyle-checks for tests.xml" type="project" description="">
+									    </local-check-config>
+									    <fileset name="checkstyle checks for sources" enabled="true" check-config-name="checkstyle checks" local="true">
+									        <file-match-pattern match-pattern="src\\main\\java\\.*" include-pattern="true"/>
+									    </fileset>
+									    <fileset name="checkstyle checks for tests" enabled="true" check-config-name="checkstyle checks for tests" local="true">
+									        <file-match-pattern match-pattern="src\\test\\java\\.*" include-pattern="true"/>
+									    </fileset>
+									</fileset-config>
+								]]>
+							</content>
+						</file>
+					</additionalConfig>
+		        </configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -153,17 +186,32 @@
 	<reporting>
 		<plugins>
 			<plugin>
+				<!-- Generate a report based on the results of unit tests. -->
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<configuration>
+                    <argLine>-enableassertions</argLine>
+                </configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report-only</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<configuration>
-				    <formats>
-            			<format>html</format>
-            			<format>xml</format>
-          			</formats>
-					<excludes>
-						<exclude>**/*IntegrationTest.java</exclude>
-					</excludes>
-				</configuration>
+                  <argLine>-enableassertions</argLine>
+                </configuration>
+			</plugin>
+			
+			<!-- TODO, @todo list report -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
 			</plugin>
 			
 			<plugin>
@@ -176,9 +224,14 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 			</plugin>
 
+			<!-- Erzeugt den Checkstyle Report -->
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jdepend-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>.settings/checkstyle-checks.xml</configLocation>
+					<sourceDirectory>src/main/java</sourceDirectory>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -193,27 +246,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
-					<targetJdk>1.5</targetJdk>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>net.objectlab</groupId>
-				<artifactId>mvn-qalab-plugin</artifactId>
-				<version>2.2</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>report-merge-chart</report>
-							<report>report-movers-all</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-				<configuration>
-					<dateOnly>true</dateOnly>
-					<startTimeHoursOffset>
-						24<!-- shows quality changes for 1 day (=24 h) -->
-					</startTimeHoursOffset>
+					<targetJdk>${version.java}</targetJdk>
 				</configuration>
 			</plugin>
 
@@ -229,7 +262,6 @@
 				</reportSets>
 			</plugin>
 
-			<!-- FIXME: does not work with cvs connection string
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>changelog-maven-plugin</artifactId>
@@ -248,12 +280,20 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			-->
-			
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>dashboard-maven-plugin</artifactId>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>clirr-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>

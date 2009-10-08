@@ -4,67 +4,72 @@ package junit.extensions;
  * Test class with private methods to invoke via PrivilegedAccessor
  */
 public class TestParent {
-    private String privateName;
-    private Object privateObject;
+   private String     privateName;
+   private Object     privateObject;
 
-    private static int privateStaticNumber;
+   private static int privateStaticNumber;
 
-    public TestParent(String name) {
-        this.privateName = name;
-        this.privateObject = "Brown";
-        privateStaticNumber = 1;
-    }
+   public TestParent(String name) {
+      this.privateName = name;
+      this.privateObject = "Brown";
+      privateStaticNumber = 1;
+   }
 
-    private TestParent() {
-        this.privateName = "Charlie";
-        this.privateObject = "Brown";
-        privateStaticNumber = 0;
-    }
+   @SuppressWarnings("unused")
+   private TestParent() {
+      this.privateName = "Charlie";
+      this.privateObject = "Brown";
+      privateStaticNumber = 0;
+   }
 
-    private String getName() {
-        return this.privateName;
-    }
+   private String getName() {
+      return this.privateName;
+   }
 
-    protected void setName(String newName) {
-        this.privateName = newName;
-    }
-    
-    /** overloading setName(String) **/
-    private void setName() {
-        this.privateName = "Chaplin";
-    }
+   protected void setName(String newName) {
+      this.privateName = newName;
+   }
 
-    private Object getObject() {
-        return this.privateObject;
-    }
+   /** overloading setName(String) **/
+   @SuppressWarnings("unused")
+   private void setName() {
+      this.privateName = "Chaplin";
+   }
 
-    private void setObject(Object newObject) {
-        this.privateObject = newObject;
-    }
-    
-    private static void setStaticNumber(int number) {
-        TestParent.privateStaticNumber = number;
-    }
-    
-    private static int getStaticNumber() {
-        return TestParent.privateStaticNumber;
-    }
+   private Object getObject() {
+      return this.privateObject;
+   }
 
-    public boolean equals(Object other) {
-        if (!(other instanceof TestParent)) {
-            return false;
-        }
+   @SuppressWarnings("unused")
+   private void setObject(Object newObject) {
+      this.privateObject = newObject;
+   }
 
-        TestParent otherTestParent = (TestParent) other;
+   @SuppressWarnings("unused")
+   private static void setStaticNumber(int number) {
+      TestParent.privateStaticNumber = number;
+   }
 
-        if (this.privateName.equals(otherTestParent.privateName) && this.privateObject.equals(otherTestParent.privateObject)) {
-            return true;
-        }
+   private static int getStaticNumber() {
+      return TestParent.privateStaticNumber;
+   }
 
-        return false;
-    }
-    
-    public String toString() {
-        return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticNumber=" + TestParent.getStaticNumber() + "}";
-    }
+   public boolean equals(Object other) {
+      if (!(other instanceof TestParent)) {
+         return false;
+      }
+
+      TestParent otherTestParent = (TestParent) other;
+
+      if (this.privateName.equals(otherTestParent.privateName) && this.privateObject.equals(otherTestParent.privateObject)) {
+         return true;
+      }
+
+      return false;
+   }
+
+   public String toString() {
+      return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticNumber="
+         + TestParent.getStaticNumber() + "}";
+   }
 }
