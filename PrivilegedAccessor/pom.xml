@@ -13,6 +13,7 @@
 	</description>
 	<url>http://sourceforge.net/projects/privaccessor/</url>
 	<packaging>jar</packaging>
+	<inceptionYear>2005</inceptionYear>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -29,39 +30,45 @@
 
 	<scm>
 		<url>http://privaccessor.cvs.sourceforge.net/privaccessor/</url>
-		<connection>scm:cvs:pserver:anoncvs@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</connection>
-		<developerConnection>scm:cvs:pserver:anoncvs@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</developerConnection>
+		<connection>scm:cvs:pserver:anoncvs:@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</connection>
+		<developerConnection>scm:cvs:pserver:anoncvs:@privaccessor.cvs.sourceforge.net:/cvsroot/privaccessor:PrivilegedAccessor</developerConnection>
 	</scm>
 
+	<!-- Used to upload artifacts to sourceforge - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
 	<distributionManagement>
-		<site>
-			<id>maven-site</id>
-			<url>file://${basedir}/target/site</url>
-		</site>
+		<downloadUrl>http://sourceforge.net/project/showfiles.php?group_id=125148</downloadUrl>
 		<repository>
-			<id>ibiblio</id>
-			<name>ibiblio</name>
-			<url>scp://www.ibiblio.org/maven2</url>
+			<id>PA-release</id>
+		    <name>release repo for PA at sourceforge</name>
+			<url>sftp://web.sourceforge.net/home/groups/p/pr/privaccessor/htdocs/mvn-repo/release</url>
 		</repository>
 		<snapshotRepository>
-			<id>ibiblio</id>
-			<name>ibiblio</name>
-			<url>scp://www.ibiblio.org/maven2</url>
+			<id>PA-snapshot</id>
+		    <name>snapshot repo for PA at sourceforge</name>
+			<url>sftp://web.sourceforge.net/home/groups/p/pr/privaccessor/htdocs/mvn-repo/snapshot</url>
 		</snapshotRepository>
+		<site>
+			<id>PA-site</id>
+			<name>website for PA at sourceforge</name>
+			<url>sftp://web.sourceforge.net/home/groups/p/pr/privaccessor/htdocs/site</url>
+		</site>
 	</distributionManagement>
+	
 	<issueManagement>
-		<system>sourceforge</system>
+		<system>sourceforge.net</system>
 		<url>http://sourceforge.net/tracker/?group_id=125148</url>
 	</issueManagement>
 
 	<developers>
 		<developer>
-			<id>Sebastian.Dietrich</id>
+			<id>sebidietrich</id>
 			<name>Sebastian Dietrich</name>
-			<email>Sebastian.Dietrich@e-movimento.com</email>
+			<email>Sebastian.Dietrich at e-movimento.com</email>
 			<organization>e-movimento Software Design &amp; Beratung GmbH</organization>
 			<timezone>+1</timezone>
 			<roles>
+				<role>lead</role>
+				<role>developer</role>
 			</roles>
 		</developer>
 	</developers>
@@ -97,6 +104,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptors>
@@ -104,10 +112,15 @@
 					</descriptors>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<useDefaultManifestFile>true</useDefaultManifestFile>
+				</configuration>
 			</plugin>
+			
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
 				<configuration>
@@ -185,6 +198,23 @@
 
 	<reporting>
 		<plugins>
+			<!-- Generates a changes plugin based on changes at sourceforge -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<inherited>false</inherited>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>changes-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<!-- Generate a report based on the results of unit tests. -->
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -248,18 +278,6 @@
 				<configuration>
 					<targetJdk>${version.java}</targetJdk>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>changes-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
 			</plugin>
 
 			<plugin>
