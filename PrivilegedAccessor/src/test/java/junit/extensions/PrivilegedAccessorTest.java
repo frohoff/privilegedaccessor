@@ -1,11 +1,17 @@
 package junit.extensions;
 
+import static org.junit.Assert.fail;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the class <code>PrivilegedAccessor</code>.
@@ -31,6 +37,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * 
     * @see junit.framework.TestCase#setUp()
     */
+   @Before
    public final void setUp() {
       this.parent = new TestParent("Charlie");
       this.child = new TestChild("Charlie");
@@ -42,15 +49,33 @@ public class PrivilegedAccessorTest extends TestCase {
     * 
     * @see junit.framework.TestCase#tearDown()
     */
+   @After
    public final void tearDown() {
       this.parent = null;
       this.child = null;
       this.childInParent = null;
    }
+   
+   /**
+    * Tests the constructor of PrivilegedAccessor and PrivilegedAccessor.
+    * 
+    * @throws Exception if something went wrong
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public final void testInstantiationThrowsException() throws Exception {
+      try {
+         PrivilegedAccessor.instantiate(PrivilegedAccessor.class, null);
+         fail("Instantiating PrivilegedAccessor should throw Exception - you must have enabled assertions to run unit-tests");
+      } catch (Exception e) {
+         // thats what we expect
+      }
+   }
 
    /**
     * Tests the method <code>toString</code>
     */
+   @Test
    @SuppressWarnings("deprecation")
    public final void testToString() throws Exception {
       assertEquals(this.parent.toString(), PrivilegedAccessor.toString(this.parent));
@@ -61,6 +86,7 @@ public class PrivilegedAccessorTest extends TestCase {
    /**
     * Tests the method <code>getFieldNames</code>.
     */
+   @Test
    @SuppressWarnings("deprecation")
    public final void testGetFieldNames() throws Exception {
       Collection<String> testFieldNames = new ArrayList<String>();
@@ -86,6 +112,7 @@ public class PrivilegedAccessorTest extends TestCase {
    /**
     * Tests the method <code>getMethodSignatures</code>.
     */
+   @Test
    @SuppressWarnings("deprecation")
    public final void testGetMethodsignatures() throws Exception {
       Collection<String> testMethodSignatures = new ArrayList<String>();
@@ -110,6 +137,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see PrivilegedAccessor#getValue(Object, String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public final void testGetValue() throws Exception {
       assertEquals("Charlie", PrivilegedAccessor.getValue(this.parent, "privateName"));
@@ -127,6 +155,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#getValue(java.lang.Object, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testGetValueOfStaticField() throws Exception {
       assertEquals(new Integer(1), PrivilegedAccessor.getValue(this.parent, "privateStaticNumber"));
@@ -139,6 +168,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#getValue(java.lang.Object, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testGetValueOnInvalidField() throws Exception {
       try {
@@ -183,6 +213,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInstantiate() throws Exception {
       assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, null));
@@ -200,6 +231,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateOnInvalidParameters() throws Exception {
       try {
@@ -235,33 +267,12 @@ public class PrivilegedAccessorTest extends TestCase {
    }
 
    /**
-    * Tests the constructor of PrivilegedAccessor and PrivilegedAccessor.
-    * 
-    * @throws Exception if something went wrong
-    */
-   @SuppressWarnings("deprecation")
-   public final void testInstantiationThrowsException() throws Exception {
-      try {
-         PrivilegedAccessor.instantiate(PrivilegedAccessor.class, null);
-         fail("Instantiating PrivilegedAccessor should throw Exception");
-      } catch (Exception e) {
-         // thats what we expect
-      }
-
-      try {
-         PrivilegedAccessor.instantiate(PrivilegedAccessor.class, null);
-         fail("Instantiating PrivilegedAccessor should throw Exception");
-      } catch (Exception e) {
-         // thats what we expect
-      }
-   }
-
-   /**
     * Tests the method <code>invokeMethod</code>.
     * 
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethod() throws Exception {
       assertEquals("Charlie", PrivilegedAccessor.invokeMethod(this.parent, "getName()", null));
@@ -293,6 +304,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithPrimitives() throws Exception {
       PrivilegedAccessor.invokeMethod(this.child, "setNumber(int)", new Object[] {3});
@@ -326,6 +338,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodOnInvalidMethodName() throws Exception {
       try {
@@ -385,6 +398,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
    }
 
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithArray() throws Exception {
       Object[] args = {5};
@@ -398,6 +412,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithNotFullyDeclaredTypes() throws Exception {
       PrivilegedAccessor.invokeMethod(this.parent, "setName(String)", new Object[] {"Hubert"});
@@ -417,6 +432,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithTypedCollection() throws Exception {
       Collection<String> testCollection = new ArrayList<String>();
@@ -430,6 +446,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithInvalidSignature() throws Exception {
       try {
@@ -468,6 +485,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithInvalidArguments() throws Exception {
       try {
@@ -582,6 +600,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
       PrivilegedAccessor.invokeMethod(this.child, "setSumOfTwoNumbers(int, int)", new Object[] {5, 3});
@@ -597,6 +616,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithArrays() throws Exception {
       int[] numbers = new int[] {5, 3};
@@ -621,6 +641,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * 
     * @throws Exception
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodThatRequireArrays() throws Exception {
       // TODO this is a bug
@@ -656,6 +677,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithArrayInsteadOfSingleValues() throws Exception {
       Object[] onumbers = new Object[] {3, 3};
@@ -671,6 +693,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() throws Exception {
       try {
@@ -693,6 +716,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() throws Exception {
       try {
@@ -723,6 +747,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
       try {
@@ -753,6 +778,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeMethodWithObjectAndPrimitive() throws Exception {
       Object[] args = {"Marcus", 5};
@@ -771,6 +797,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testInvokeStaticMethod() throws Exception {
       PrivilegedAccessor.invokeMethod(TestParent.class, "setStaticNumber(int)", new Object[] {3});
@@ -783,6 +810,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testSetGetValueWithPrimitives() throws Exception {
       PrivilegedAccessor.setValue(this.child, "privateNumber", 6);
@@ -819,6 +847,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testSetGetValueWithObjectsAndArrays() throws Exception {
       PrivilegedAccessor.setValue(this.parent, "privateName", "Hubert");
@@ -845,6 +874,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#(java.lang.Object, java.lang.String, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testSetValueOfStaticField() throws Exception {
       PrivilegedAccessor.setValue(this.parent, "privateStaticNumber", 6);
@@ -860,6 +890,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * @throws Exception
     * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
+   @Test
    @SuppressWarnings("deprecation")
    public void testSetValueOnInvalidField() throws Exception {
       try {
@@ -891,6 +922,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
    }
 
+   @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateInnerClass() throws Exception {
       Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),
@@ -898,6 +930,7 @@ public class PrivilegedAccessorTest extends TestCase {
       assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
    }
 
+   @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerClass() throws Exception {
       Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),
@@ -906,6 +939,7 @@ public class PrivilegedAccessorTest extends TestCase {
       assertEquals(5, PrivilegedAccessor.getValue(tic, "privateInnerNumber"));
    }
 
+   @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerMethod() throws Exception {
       Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),

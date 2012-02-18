@@ -46,7 +46,7 @@ public final class PA {
     * Private constructor to make it impossible to instantiate this class.
     */
    private PA() {
-      assert false; // should never happen - would mean that the private constructor was called
+      assert false: "You mustn't instantiate PA, use its methods statically";
    }
 
    /**
