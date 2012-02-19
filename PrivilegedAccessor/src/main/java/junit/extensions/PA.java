@@ -37,7 +37,7 @@ import java.util.Collection;
  * </pre>
  * 
  * Internally PA uses the class PrivilegedAccessor which does not support varargs but is still available for backward compatibility.
- * PrivilegedAccessor is deprecated and will not be available in future releases.
+ * PrivilegedAccessor is deprecated and will not be available in releases > 1.2.
  * 
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
  */

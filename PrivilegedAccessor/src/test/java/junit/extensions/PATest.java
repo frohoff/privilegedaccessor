@@ -632,28 +632,28 @@ public class PATest {
     */
    @Test
    public void testInvokeMethodThatRequireArrays() throws Exception {
-      // TODO this is a bug
+      // TODO[7] fix this bug
       try {
          PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {new Integer(1)});
          fail("invoking method which require object arrays as parameters currently fails");
       } catch (IllegalArgumentException e) {
-         // that is what we expect
+         assertEquals(e.getMessage(), "java.lang.Object[] parameters currently not supported");
       }
 
-      // TODO this is a bug
+      // TODO[7] fix this bug
       try {
          PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {"Dolly"});
          fail("invoking method which require object arrays as parameters currently fails");
       } catch (IllegalArgumentException e) {
-         // that is what we expect
+         assertEquals(e.getMessage(), "java.lang.Object[] parameters currently not supported");
       }
 
-      // TODO this is a bug
+      // TODO[7] fix this bug
       try {
          PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {"Hello", new Integer(1)});
          fail("invoking method which require object arrays as parameters currently fails");
       } catch (IllegalArgumentException e) {
-         // that is what we expect
+         assertEquals(e.getMessage(), "java.lang.Object[] parameters currently not supported");
       }
    }
 
