@@ -1,7 +1,5 @@
 package junit.extensions;
 
-import static org.junit.Assert.fail;
-
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
