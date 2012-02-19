@@ -7,6 +7,9 @@
     <release version="1.2" date="upcoming" description="feature release">
       <!-- please enter all major changes to this project below... -->
       <action dev="Sebastian.Dietrich" type="update">
+		switched to junit4 for testing
+      </action>
+      <action dev="Sebastian.Dietrich" type="update">
 		switched to maven as supported build tool (including configuration for eclipse, project site and deployment)
       </action>
       <action dev="Sebastian.Dietrich" type="update">

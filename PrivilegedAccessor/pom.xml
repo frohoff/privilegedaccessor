@@ -5,11 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>junit.extensions</groupId>
-	<artifactId>PrivilegedAccessor</artifactId>
+	<artifactId>pa</artifactId>
 	<version>1.2</version>
-	<name>PrivilegedAccessor</name>
+	<name>privileged accessor</name>
 	<description>
-		gives privileged access to private and protected methods and attributes
+		gives privileged access to private and protected methods and attributes.
+		Use it in testing scenarios to set up your objects under test.
 	</description>
 	<url>http://code.google.com/p/privilegedaccessor/</url>
 	<packaging>jar</packaging>
@@ -29,9 +30,9 @@
 	</properties>
 
 	<scm>
+		<url>https://privilegedaccessor.googlecode.com/svn</url>
 		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn</connection>
 		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn</developerConnection>
-		<url>https://privilegedaccessor.googlecode.com/svn</url>
 	</scm>
 
 	<!-- Used to upload artifacts to google code - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
@@ -42,6 +43,11 @@
 		</repository>
 	</distributionManagement>
 
+  <!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
+  <!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
+  <!-- <repositories></repositories> -->
+  <!-- <pluginRepositories></pluginRepositories> -->
+  
 	<issueManagement>
 		<system>Google Code</system>
 		<url>http://code.google.com/p/privilegedaccessor/issues/list</url>
@@ -60,17 +66,6 @@
 			</roles>
 		</developer>
 	</developers>
-
-	<repositories>
-		<repository>
-			<id>ibiblio-repository</id>
-			<name>Ibiblio Repository</name>
-			<url>http://www.ibiblio.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -199,7 +194,7 @@
 					</reportSet>
 				</reportSets>
 				<configuration>
-					<issueLinkTemplate>http://sourceforge.net/support/tracker.php?aid=%ISSUE%</issueLinkTemplate>
+					<issueLinkTemplate>http://code.google.com/p/privilegedaccessor/issues/detail?id=%ISSUE%</issueLinkTemplate>
 				</configuration>
 			</plugin>
 
