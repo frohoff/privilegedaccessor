@@ -10,7 +10,7 @@ FUNCTIONAL CHANGES:
 FEATURES:
 * works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) - thanks to Dan Richter for the advice
 * works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
-* changed unit-tests to use Java 5.0 features
+* changed unit-tests to use Java 5.0 features and run based on junit4
 * added some more unit-tests - coverage is now 100% for junit.extensions.PA and 94% for junit.extensions.PrivilegedAccessor
 * improved error output
 * removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
