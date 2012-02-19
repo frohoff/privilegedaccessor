@@ -43,11 +43,12 @@
 		</repository>
 	</distributionManagement>
 
-  <!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
-  <!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
-  <!-- <repositories></repositories> -->
-  <!-- <pluginRepositories></pluginRepositories> -->
-  
+	<!-- Do NOT provide release or plugin repositories, otherwise automatic 
+		deployment of artifacts to public repositories fails -->
+	<!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
+	<!-- <repositories></repositories> -->
+	<!-- <pluginRepositories></pluginRepositories> -->
+
 	<issueManagement>
 		<system>Google Code</system>
 		<url>http://code.google.com/p/privilegedaccessor/issues/list</url>
@@ -77,7 +78,39 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- to automatically upload releases to google code - see http://code.google.com/p/maven-gcu-plugin/wiki/Usage -->
+				<plugin>
+					<groupId>com.googlecode.maven-gcu-plugin</groupId>
+					<artifactId>maven-gcu-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
+			<!-- to automatically upload releases to google code - see http://code.google.com/p/maven-gcu-plugin/wiki/Usage -->
+			<plugin>
+				<groupId>com.googlecode.maven-gcu-plugin</groupId>
+				<artifactId>maven-gcu-plugin</artifactId>
+				<configuration>
+					<serverId>googlecode</serverId> <!-- default: googlecode -->
+					<failsOnError>false</failsOnError> <!-- default: false -->
+					<projectName>privilegedaccessor</projectName> <!-- default: ${project.artifactId} -->
+					<uploads>
+						<upload>
+							<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
+							<summary>${project.name} sources bundle ${project.version}</summary>
+							<labels>
+								<label>Featured</label>
+								<label>Type-Archive</label>
+							</labels>
+						</upload>
+					</uploads>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

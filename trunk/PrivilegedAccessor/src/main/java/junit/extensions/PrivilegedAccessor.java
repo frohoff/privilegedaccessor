@@ -35,7 +35,7 @@ public final class PrivilegedAccessor {
     * Private constructor to make it impossible to instantiate this class.
     */
    private PrivilegedAccessor() {
-      assert false: "You mustn't instantiate PrivilegedAccessor, use its methods statically";
+      assert false : "You mustn't instantiate PrivilegedAccessor, use its methods statically";
    }
 
    /**
@@ -59,7 +59,7 @@ public final class PrivilegedAccessor {
          try {
             sb.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
          } catch (NoSuchFieldException e) {
-            assert false: "It should always be possible to get a field that was just here";
+            assert false : "It should always be possible to get a field that was just here";
          }
       }
 
@@ -128,7 +128,7 @@ public final class PrivilegedAccessor {
       try {
          return field.get(instanceOrClass);
       } catch (IllegalAccessException e) {
-         assert false: "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
+         assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
          return null;
       }
    }
@@ -217,7 +217,7 @@ public final class PrivilegedAccessor {
       try {
          field.set(instanceOrClass, value);
       } catch (IllegalAccessException e) {
-         assert false: "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
+         assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
 
       }
    }
@@ -230,9 +230,12 @@ public final class PrivilegedAccessor {
     * @throws ClassNotFoundException if the class could not be found
     */
    private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
-
       if (className.indexOf('[') > -1) {
          Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
+         if (clazz == Object.class) {
+            // TODO[7] fix this bug
+            throw new IllegalArgumentException("java.lang.Object[] parameters currently not supported");
+         }
          return Array.newInstance(clazz, 0).getClass();
       }
 
@@ -426,7 +429,7 @@ public final class PrivilegedAccessor {
       try {
          return methodSignature.substring(0, methodSignature.indexOf('(')).trim();
       } catch (StringIndexOutOfBoundsException e) {
-         assert false: "Signature must have been checked before this method was called";
+         assert false : "Signature must have been checked before this method was called";
          return null;
       }
    }
@@ -485,14 +488,14 @@ public final class PrivilegedAccessor {
     * @see java.lang.Class#argumentTypesAsString()
     */
    private static String getParameterTypesAsString(final Class<?>[] classTypes) {
-      assert classTypes != null: "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
+      assert classTypes != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
       if (classTypes.length == 0) {
          return "";
       }
 
       StringBuilder parameterTypes = new StringBuilder();
       for (Class<?> clazz : classTypes) {
-         assert clazz != null: "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
+         assert clazz != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
          parameterTypes.append(clazz.getName()).append(", ");
       }
 
@@ -509,7 +512,7 @@ public final class PrivilegedAccessor {
       try {
          return methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'));
       } catch (IndexOutOfBoundsException e) {
-         assert false: "signature must have been checked before this method";
+         assert false : "signature must have been checked before this method";
          return null;
       }
    }
