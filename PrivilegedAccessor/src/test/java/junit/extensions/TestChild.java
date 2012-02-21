@@ -4,7 +4,7 @@ package junit.extensions;
  * Test class with private methods to invoke via PrivilegedAccessor.
  */
 public class TestChild extends TestParent {
-   private int                          privateNumber;
+   private int                          privateInt;
    private long                         privateLong;
    private short                        privateShort;
    private byte                         privateByte;
@@ -12,40 +12,40 @@ public class TestChild extends TestParent {
    private boolean                      privateBoolean;
    private float                        privateFloat;
    private double                       privateDouble;
-   private int[]                        privateNumbers;
+   private int[]                        privateInts;
    private String[]                     privateStrings;
    private Object[]                     privateObjects;
    private java.util.Collection<String> privateCollection;
 
    @SuppressWarnings("unused")
    private class TestInnerChild {
-      private int privateInnerNumber;
+      private int privateInnerInt;
 
-      private void setPrivateInnerNumber(int privateInnerNumber) {
-         this.privateInnerNumber = privateInnerNumber;
+      private void setPrivateInnerInt(int privateInnerInt) {
+         this.privateInnerInt = privateInnerInt;
       }
 
-      private int getPrivateInnerNumber() {
-         return this.privateInnerNumber;
+      private int getPrivateInnerInt() {
+         return this.privateInnerInt;
       }
    }
 
    private TestChild(String name, Integer number) {
       super(name);
-      this.privateNumber = number.intValue();
+      this.privateInt = number.intValue();
    }
 
    public TestChild(String name) {
       this(name, new Integer(8));
    }
 
-   private int getNumber() {
-      return this.privateNumber;
+   private int getInt() {
+      return this.privateInt;
    }
 
    @SuppressWarnings("unused")
-   private void setNumber(int number) {
-      this.privateNumber = number;
+   private void setInt(int number) {
+      this.privateInt = number;
    }
 
    private boolean isPrivateBoolean() {
@@ -111,13 +111,13 @@ public class TestChild extends TestParent {
       this.privateFloat = privateFloat;
    }
 
-   private int[] getPrivateNumbers() {
-      return this.privateNumbers;
+   private int[] getPrivateInts() {
+      return this.privateInts;
    }
 
    @SuppressWarnings("unused")
-   private void setPrivateNumbers(int[] privateNumbers) {
-      this.privateNumbers = privateNumbers;
+   private void setPrivateInts(int[] privateInts) {
+      this.privateInts = privateInts;
    }
 
    private String[] getPrivateStrings() {
@@ -127,6 +127,48 @@ public class TestChild extends TestParent {
    @SuppressWarnings("unused")
    private void setPrivateStrings(String[] privateStrings) {
       this.privateStrings = privateStrings;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateStringsAndInt(String[] privateStrings, int privateInt) {
+      this.privateStrings = privateStrings;
+      this.privateInt = privateInt;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateObjectsAndInt(Object[] privateObjects, int privateInt) {
+      this.privateObjects = privateObjects;
+      this.privateInt = privateInt;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateIntAndStrings(int privateInt, String[] privateStrings) {
+      this.privateStrings = privateStrings;
+      this.privateInt = privateInt;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateIntAndObjects(int privateInt, Object[] privateObjects) {
+      this.privateObjects = privateObjects;
+      this.privateInt = privateInt;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateStringsAndObjects(String[] privateStrings, Object[] privateObjects) {
+      this.privateStrings = privateStrings;
+      this.privateObjects = privateObjects;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateObjectsAndStrings(Object[] privateObjects, String[] privateStrings) {
+      this.privateStrings = privateStrings;
+      this.privateObjects = privateObjects;
+   }
+   
+   @SuppressWarnings("unused")
+   private void setPrivateObjectsAndObjects(Object[] privateObjects1, Object[] privateObjects2) {
+      this.privateObjects = privateObjects1;
+      this.privateObjects = privateObjects2;
    }
 
    private Object[] getPrivateObjects() {
@@ -148,21 +190,21 @@ public class TestChild extends TestParent {
    }
 
    @SuppressWarnings("unused")
-   private void setSumOfTwoNumbers(int number1, int number2) {
-      this.privateNumber = number1 + number2;
+   private void setSumOfTwoInts(int int1, int int2) {
+      this.privateInt = int1 + int2;
    }
 
    @SuppressWarnings("unused")
    private void setData(String name, int number) {
       setName(name);
-      this.privateNumber = number;
+      this.privateInt = number;
    }
 
    public String toString() {
-      return this.getClass().getName() + " {privateNumber=" + getNumber() + ", privateLong=" + getPrivateLong() + ", privateShort="
+      return this.getClass().getName() + " {privateInt=" + getInt() + ", privateLong=" + getPrivateLong() + ", privateShort="
          + getPrivateShort() + ", privateByte=" + getPrivateByte() + ", privateChar=" + getPrivateChar() + ", privateBoolean="
-         + isPrivateBoolean() + ", privateFloat=" + getPrivateFloat() + ", privateDouble=" + getPrivateDouble() + ", privateNumbers="
-         + getPrivateNumbers() + ", privateStrings=" + getPrivateStrings() + ", privateObjects=" + getPrivateObjects()
+         + isPrivateBoolean() + ", privateFloat=" + getPrivateFloat() + ", privateDouble=" + getPrivateDouble() + ", privateInts="
+         + getPrivateInts() + ", privateStrings=" + getPrivateStrings() + ", privateObjects=" + getPrivateObjects()
          + ", privateCollection=" + getPrivateCollection() + ", " + super.toString().substring(super.toString().indexOf('{') + 1);
    }
 }
