@@ -7,19 +7,19 @@ public class TestParent {
    private String     privateName;
    private Object     privateObject;
 
-   private static int privateStaticNumber;
+   private static int privateStaticInt;
 
    public TestParent(String name) {
       this.privateName = name;
       this.privateObject = "Brown";
-      privateStaticNumber = 1;
+      privateStaticInt = 1;
    }
 
    @SuppressWarnings("unused")
    private TestParent() {
       this.privateName = "Charlie";
       this.privateObject = "Brown";
-      privateStaticNumber = 0;
+      privateStaticInt = 0;
    }
 
    private String getName() {
@@ -46,12 +46,12 @@ public class TestParent {
    }
 
    @SuppressWarnings("unused")
-   private static void setStaticNumber(int number) {
-      TestParent.privateStaticNumber = number;
+   private static void setStaticInt(int number) {
+      TestParent.privateStaticInt = number;
    }
 
-   private static int getStaticNumber() {
-      return TestParent.privateStaticNumber;
+   private static int getStaticInt() {
+      return TestParent.privateStaticInt;
    }
 
    public boolean equals(Object other) {
@@ -69,7 +69,7 @@ public class TestParent {
    }
 
    public String toString() {
-      return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticNumber="
-         + TestParent.getStaticNumber() + "}";
+      return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
+         + TestParent.getStaticInt() + "}";
    }
 }

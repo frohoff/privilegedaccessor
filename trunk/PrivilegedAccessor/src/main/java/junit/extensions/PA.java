@@ -148,7 +148,7 @@ public final class PA {
    }
 
    /**
-    * Calls a method on the given object instance with the given arguments. Arguments can be object types or representations for
+    * Calls a method on the given object instance with the given arguments. Arguments can be fully qualified object types or representations for
     * primitives.
     * 
     * @param instanceOrClass the instance or class to invoke the method on

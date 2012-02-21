@@ -200,8 +200,39 @@ public final class PrivilegedAccessor {
       if (methodSignature.indexOf('(') == -1 || methodSignature.indexOf('(') >= methodSignature.indexOf(')')) {
          throw new NoSuchMethodException(methodSignature);
       }
-      return getMethod(instanceOrClass, getMethodName(methodSignature), getParameterTypes(methodSignature)).invoke(instanceOrClass,
-         arguments);
+      Class<?>[] parameterTypes = getParameterTypes(methodSignature);
+      return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
+         getCorrectedArguments(parameterTypes, arguments));
+   }
+
+   
+   /**
+    * Gets the given arguments corrected to math the given methodSignature. Correction is necessary for array arguments not to be
+    * mistaken by varargs.
+    * 
+    * @param methodSignature
+    * @param arguments
+    * @return
+    * @throws IllegalArgumentException
+    * @throws NoSuchMethodException
+    */
+   private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) throws NoSuchMethodException,
+      IllegalArgumentException {
+      if (arguments == null) return arguments;
+      if (parameterTypes.length > arguments.length) return arguments;
+      if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
+      
+      Object[] correctedArguments = new Object[arguments.length];      
+      int currentArgument = 0;
+      for (Class<?> parameterType : parameterTypes) {
+         if (parameterType.isArray() && arguments[currentArgument] != null && !arguments[currentArgument].getClass().isArray()) {
+            correctedArguments[currentArgument] = new Object[] {arguments[currentArgument]};
+         } else {
+            correctedArguments[currentArgument] = arguments[currentArgument];
+         }
+         currentArgument++;
+      }
+      return correctedArguments;
    }
 
    /**
@@ -218,7 +249,6 @@ public final class PrivilegedAccessor {
          field.set(instanceOrClass, value);
       } catch (IllegalAccessException e) {
          assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
-
       }
    }
 
@@ -232,10 +262,10 @@ public final class PrivilegedAccessor {
    private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
       if (className.indexOf('[') > -1) {
          Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
-         if (clazz == Object.class) {
-            // TODO[7] fix this bug
-            throw new IllegalArgumentException("java.lang.Object[] parameters currently not supported");
-         }
+         // if (clazz == Object.class) {
+         // // TODO[7] fix this bug
+         // throw new IllegalArgumentException("java.lang.Object[] parameters currently not supported");
+         // }
          return Array.newInstance(clazz, 0).getClass();
       }
 
