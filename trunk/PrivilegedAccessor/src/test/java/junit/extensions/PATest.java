@@ -35,15 +35,6 @@ public class PATest {
    private TestParent parent;
 
    /**
-    * The main test-method.
-    * 
-    * @param unused not used
-    */
-   public static void main(final String[] unused) {
-      junit.textui.TestRunner.run(PrivilegedAccessorTest.class);
-   }
-
-   /**
     * Sets up the test-environment by instantiating the test-instances.
     * 
     * @see junit.framework.TestCase#setUp()
@@ -94,6 +85,10 @@ public class PATest {
       testFieldNames.add("privateName");
       testFieldNames.add("privateObject");
       testFieldNames.add("privateStaticInt");
+      testFieldNames.add("privateFinalInt");
+      testFieldNames.add("privateFinalString");
+      testFieldNames.add("privateStaticFinalInt");
+      testFieldNames.add("privateStaticFinalString");
       assertEquals(testFieldNames, PA.getFieldNames(this.parent));
 
       testFieldNames = Arrays.asList(new String[] {"privateInt", "privateObject", "privateLong", "privateShort", "privateByte",
@@ -785,7 +780,6 @@ public class PATest {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new int[] {1});
          fail("invoking method with array of wrong size should raise exception");
       } catch (IllegalArgumentException e) {
-         System.out.println(e);
          // that is what we expect
       }
 
@@ -853,7 +847,8 @@ public class PATest {
    public void testVarargsCantBeDistinquishedFromObjectArray() throws Exception {
       PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {"Hello", new Integer(3)});
 
-      //[Issue 11] the next method should fail with IllegalArgumentException, but since we can't distinquish varargs from Object[] it works.
+      // [Issue 11] the next method should fail with IllegalArgumentException, but since we can't distinquish varargs from Object[] it
+      // works.
       PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", "Hello", new Integer(3));
    }
 
@@ -885,6 +880,27 @@ public class PATest {
    public void testInvokeStaticMethod() throws Exception {
       PA.invokeMethod(TestParent.class, "setStaticInt(int)", 3);
       assertEquals(3, PA.getValue(TestParent.class, "privateStaticInt"));
+   }
+
+   /**
+    * Tests the example given in javadoc of <code>setValue</code>.
+    * 
+    * This test could fail under some JVMs, since setting the value of final fields at other times than instantiation can have
+    * unpredictable effects.
+    * 
+    * @see java.lang.reflect.Field.set(java.lang.Object, java.lang.Object)
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetGetValueExample() throws Exception {
+      String myString = "Test";
+      PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'}); // sets the final field value
+      PA.setValue(myString.getClass(), "serialVersionUID", 1); // sets the static final field serialVersionUID
+
+      assertTrue(Arrays.equals(new char[] {'T', 'e', 's', 't'}, (char[]) PA.getValue(myString, "value")));
+      assertEquals(1L, PA.getValue(String.class, "serialVersionUID"));
    }
 
    /**
@@ -957,11 +973,106 @@ public class PATest {
     */
    @Test
    public void testSetValueOfStaticField() throws Exception {
-      PA.setValue(this.parent, "privateStaticInt", 6);
-      assertEquals(6, PA.getValue(this.parent, "privateStaticInt"));
+      int previousValue = (Integer) PA.getValue(this.parent, "privateStaticInt");
+      assertTrue(previousValue != -1);
 
-      PA.setValue(TestParent.class, "privateStaticInt", 7);
-      assertEquals(7, PA.getValue(this.parent, "privateStaticInt"));
+      PA.setValue(this.parent, "privateStaticInt", -1);
+      assertEquals(-1, PA.getValue(this.parent, "privateStaticInt"));
+
+      PA.setValue(TestParent.class, "privateStaticInt", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateStaticInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfFinalField() throws Exception {
+      int previousValue = (Integer) PA.getValue(this.parent, "privateFinalInt");
+      assertTrue(previousValue != -2);
+
+      PA.setValue(this.parent, "privateFinalInt", -2);
+      assertEquals(-2, PA.getValue(this.parent, "privateFinalInt"));
+
+      PA.setValue(this.parent, "privateFinalInt", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfFinalStringField() throws Exception {
+      String previousValue = (String) PA.getValue(this.parent, "privateFinalString");
+      assertTrue(previousValue != "Test");
+
+      PA.setValue(this.parent, "privateFinalString", "Test");
+      assertEquals("Test", PA.getValue(this.parent, "privateFinalString"));
+
+      PA.setValue(this.parent, "privateFinalString", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalString"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a static final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfStaticFinalField() throws Exception {
+      int previousValue = (Integer) PA.getValue(this.parent, "privateStaticFinalInt");
+      assertTrue(previousValue != -3);
+
+      try {
+         PA.setValue(this.parent, "privateStaticFinalInt", -3);
+         assertEquals(-3, PA.getValue(this.parent, "privateStaticFinalInt"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+
+      try {
+         PA.setValue(this.parent, "privateStaticFinalInt", previousValue);
+         assertEquals(previousValue, PA.getValue(this.parent, "privateStaticFinalInt"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a static final object field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfStaticFinalObjectField() throws Exception {
+      String previousValue = (String) PA.getValue(this.parent, "privateStaticFinalString");
+      assertTrue(previousValue != "Herbert");
+
+      try {
+         PA.setValue(this.parent, "privateStaticFinalString", "Herbert");
+         assertEquals("Herbert", PA.getValue(this.parent, "privateStaticFinalString"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+
+      try {
+         PA.setValue(this.parent, "privateStaticFinalString", previousValue);
+         assertEquals(previousValue, PA.getValue(this.parent, "privateStaticFinalString"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
    }
 
    /**

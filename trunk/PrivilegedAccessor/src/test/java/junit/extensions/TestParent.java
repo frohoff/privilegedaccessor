@@ -4,22 +4,34 @@ package junit.extensions;
  * Test class with private methods to invoke via PrivilegedAccessor
  */
 public class TestParent {
-   private String     privateName;
-   private Object     privateObject;
-
-   private static int privateStaticInt;
+   private String           privateName;
+   private Object           privateObject;
+   private static int       privateStaticInt;
+   private final int        privateFinalInt;
+   private final String     privateFinalString;
+   private static final int privateStaticFinalInt;
+   private static final String privateStaticFinalString;
+   
+   static {
+      privateStaticFinalInt = 3;
+      privateStaticFinalString = "Tester";
+   }
 
    public TestParent(String name) {
+      this(name, "Brown");
+   }
+
+   private TestParent(String name, Object object) {
       this.privateName = name;
-      this.privateObject = "Brown";
+      this.privateObject = object;
       privateStaticInt = 1;
+      privateFinalInt = 2;
+      privateFinalString = "Tom";
    }
 
    @SuppressWarnings("unused")
    private TestParent() {
-      this.privateName = "Charlie";
-      this.privateObject = "Brown";
-      privateStaticInt = 0;
+      this("Charlie", "Brown");
    }
 
    private String getName() {
@@ -53,6 +65,22 @@ public class TestParent {
    private static int getStaticInt() {
       return TestParent.privateStaticInt;
    }
+   
+   private int getFinalInt() {
+      return privateFinalInt;
+   }
+   
+   private String getFinalString() {
+      return privateFinalString;
+   }
+   
+   private static int getStaticFinalInt() {
+      return TestParent.privateStaticFinalInt;
+   }
+   
+   private static String getStaticFinalString() {
+      return TestParent.privateStaticFinalString;
+   }
 
    public boolean equals(Object other) {
       if (!(other instanceof TestParent)) {
@@ -70,6 +98,6 @@ public class TestParent {
 
    public String toString() {
       return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
-         + TestParent.getStaticInt() + "}";
+         + TestParent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString() + ", privateStaticFinalInt=" + TestParent.getStaticFinalInt() + ", privateStaticFinalString=" + TestParent.getStaticFinalString() + "}";
    }
 }
