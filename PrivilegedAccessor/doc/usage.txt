@@ -1,6 +1,31 @@
-PrivilegedAccessor is a simple to use framework for accessing private methods, attributes, constructors via reflection.
-You are strongly advised NOT to use PrivilegedAccessor in production code - since it undermines the information hiding principle.
-Use it ONLY for testing or test setup purposes - e.g. for assigning mock objects to production code to work with.
+*PrivilegedAccessor* is a simple to use Java framework for accessing `private` methods, attributes, and constructors via reflection.
+
+= Introduction =
+In unit-testing you often need to prepare and later inspect the unit-under-test before you can test it. For instance you might need to inject mock-objects in your unit, so your unit-test does not access other units like backend systems. Or you might need to access a private attribute to assert a post-condition of a unit after the test.
+
+This could be easily done if Java had no modifiers like `private`. Accessing private (or `protected` or package private) methods, attributes, and constructors from outside is forbidden. And you should _never change the modifiers of your production code just for unit-testing purposes_!!!
+
+Fortunately we have reflection to access everything in our classes. Unfortunately reflection is somehow complicated:
+
+*Example:*
+Accessing the private (`float`) field `salary` of the object `boss` of class `Manager` via reflection:
+<code language="java">
+      try {
+         Field field = Manager.class.getDeclaredField(salary);
+         field.setAccessible(true);
+         float howMuchMyBossEarns = (float) field.get(boss);
+      } catch (NoSuchFieldException e) {
+         assert false: "class 'Manager' has no field 'salary'";
+      } catch (IllegalAccessException e) {
+         assert false : "could not access field 'salary'";
+         return null;
+      }
+</code>
+
+With PrivilegedAccessor the same task is much less work:
+<code language="java">
+float howMuchMyBossEarns = PA.getValue(boss, "salary");
+</code>
 
 == How does it work ==
 PrivilegedAccessor is based on Java reflection and the possibility to change access-rights via "setAccessible(true)".
@@ -9,30 +34,34 @@ PrivilegedAccessor tries to find the method, attribute, constructor you want to 
 == How can you use it ==
 The usage of PrivilegedAccessor is rather simple. Use the following to access your otherwise unaccessible code:
 
-* getValue(Object objectOrClass, String attribute-name) 						- to read a private attribute
-* setValue(Object objectOrClass, String attribute-name, Object new-value)		- to change a private attribute
-* instantiate(Class clazz)														- to instantiate a class via its private constructor
-* instantiate(Class clazz, Object... parameters)								- to instantiate a class via a private constructor with parameters
-* invokeMethod(Object objectOrClass, String methodSignature, Object... args)	- to invoke a private method
-* getFieldNames(Object objectOrClass)											- to get all fields of an object or class (including fields of super-classes)
-* getMethodSignatures(Object objectOrClass)										- to get all method signatures of an object or class (including super-classes)
+ * getValue(Object objectOrClass, String attribute-name) - to read a private attribute
+ * setValue(Object objectOrClass, String attribute-name, Object new-value) - to change a private attribute
+ * instantiate(Class clazz) - to instantiate a class via its private constructor
+ * instantiate(Class clazz, Object... parameters) - to instantiate a class via a private constructor with parameters
+ * invokeMethod(Object objectOrClass, String methodSignature, Object... args) - to invoke a private method
+ * getFieldNames(Object objectOrClass) - to get all fields of an object or class (including fields of super-classes)
+ * getMethodSignatures(Object objectOrClass) - to get all method signatures of an object or class (including super-classes)
 
 PA (the convenience short form for PrivilegedAccessor) works with varargs and autoboxing.
 
 == Examples ==
-* PA.getValue(myObject, "myAttribute");
-* PA.setValue(myObject, "myAttribute", 42);
-* PA.instantiate(MyClass.class);
-* PA.instantiate(MyClass.class, "Hello", "World", 42);
-* PA.invokeMethod(myObject, "sayHello(java.lang.Integer)", 42);
+ * `PA.getValue(myObject, "myAttribute");`
+ * `PA.setValue(myObject, "myAttribute", 42);`
+ * `PA.instantiate(MyClass.class);`
+ * `PA.instantiate(MyClass.class, "Hello", "World", 42);`
+ * `PA.invokeMethod(myObject, "sayHello(java.lang.Integer)", 42);`
 
 == Caveats ==
-* be sure to always use the full method signature for invokeMethod - i.e. including fully qualified parameter classes (e.g. PA.invokeMethod(myObject, "setName(java.lang.String)", "Tom");)
-* you can use all sorts of arguments (primitives, objects and arrays) - only Object[] will not work (but e.g. String[] will work)
-* you can access private member classes - but you need to add the surrounding object as first argument - e.g. PA.instantiate(Class.forName("MyClass$MyInnerClass"), myObject);
+ * be sure to always use the full method signature for invokeMethod - i.e. including fully qualified parameter classes (e.g. `PA.invokeMethod(myObject, "setName(*java.lang.String*)", "Tom");)`
+ * you can use all sorts of arguments (primitives, objects and arrays)
+ * you can access private member classes - but you need to add the surrounding object as first argument - e.g. `PA.instantiate(Class.forName("MyClass$MyInnerClass"), myObject);`
 
 == Compatibility ==
-* PrivilegedAccessor V 1.1 is downward compatible to Java 1.3 (tested), but should work as well with newer releases (tested up to Java 1.7)
-* PrivilegedAccessor V 1.2 is downward compatible to Java 1.5 (tested), but should work as well with newer releases (tested up to Java 1.7)
+ * PrivilegedAccessor V 1.1.X is downward compatible to Java 1.3 (tested), but should work as well with newer releases (tested up to Java 1.7)
+ * PrivilegedAccessor V 1.2 and onwards is downward compatible to Java 1.5 (tested), but should work as well with newer releases (tested up to Java 1.7)
 
 PrivilegedAccessor uses a lot of unit tests to check its functionality - if you find a bug or missing feature, please feel free to contact us.
+
+== Advise ==
+*Do not use PrivilegedAccessor in production code* - since it undermines the information hiding principle.
+Use it ONLY for testing or test setup/teardown purposes - e.g. for assigning mock objects, or asserting post-conditions.

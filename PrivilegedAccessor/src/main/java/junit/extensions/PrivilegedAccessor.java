@@ -5,9 +5,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -39,7 +42,9 @@ public final class PrivilegedAccessor {
    }
 
    /**
-    * Returns a string representation of the given object.
+    * Returns a string representation of the given object. The string has the following format: "<classname> {<attributes and values>}"
+    * whereas <attributes and values> is a comma separated list with <attributeName>=<attributeValue> <atributes and values> includes
+    * all attributes of the objects class followed by the attributes of its superclass (if any) and so on.
     * 
     * @param instanceOrClass the object or class to get a string representation of
     * @return a string representation of the given object
@@ -134,31 +139,6 @@ public final class PrivilegedAccessor {
    }
 
    /**
-    * Instantiates an object of the given class with the given arguments and the given argument types. If you want to instantiate a
-    * member class, you must provide the object it is a member of as first argument.
-    * 
-    * @param fromClass the class to instantiate an object from
-    * @param args the arguments to pass to the constructor
-    * @param argumentTypes the types of the arguments of the constructor
-    * @return an object of the given type
-    * @throws IllegalArgumentException if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
-    *            arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
-    *            parameter type by a method invocation conversion.
-    * @throws IllegalAccessException if this Constructor object enforces Java language access control and the underlying constructor is
-    *            inaccessible.
-    * @throws InvocationTargetException if the underlying constructor throws an exception.
-    * @throws NoSuchMethodException if the constructor could not be found
-    * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
-    * 
-    * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
-    */
-   public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object[] args)
-      throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
-      NoSuchMethodException {
-      return getConstructor(fromClass, argumentTypes).newInstance(args);
-   }
-
-   /**
     * Instantiates an object of the given class with the given arguments. If you want to instantiate a member class, you must provide
     * the object it is a member of as first argument.
     * 
@@ -174,11 +154,37 @@ public final class PrivilegedAccessor {
     * @throws NoSuchMethodException if the constructor could not be found
     * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
     * 
-    * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+    * @see PrivilegedAccessor#instantiate(Class,Class[],Object[])
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Object[] args) throws IllegalArgumentException,
       InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       return instantiate(fromClass, getParameterTypes(args), args);
+   }
+
+   /**
+    * Instantiates an object of the given class with the given arguments and the given argument types. If you want to instantiate a
+    * member class, you must provide the object it is a member of as first argument.
+    * 
+    * 
+    * @param fromClass the class to instantiate an object from
+    * @param args the arguments to pass to the constructor
+    * @param argumentTypes the fully qualified types of the arguments of the constructor
+    * @return an object of the given type
+    * @throws IllegalArgumentException if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
+    *            arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
+    *            parameter type by a method invocation conversion.
+    * @throws IllegalAccessException if this Constructor object enforces Java language access control and the underlying constructor is
+    *            inaccessible.
+    * @throws InvocationTargetException if the underlying constructor throws an exception.
+    * @throws NoSuchMethodException if the constructor could not be found
+    * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
+    * 
+    * @see PrivilegedAccessor#instantiate(Class,Object[])
+    */
+   public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object[] args)
+      throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
+      NoSuchMethodException {
+      return getConstructor(fromClass, argumentTypes).newInstance(args);
    }
 
    /**
@@ -205,7 +211,6 @@ public final class PrivilegedAccessor {
          getCorrectedArguments(parameterTypes, arguments));
    }
 
-   
    /**
     * Gets the given arguments corrected to math the given methodSignature. Correction is necessary for array arguments not to be
     * mistaken by varargs.
@@ -221,8 +226,8 @@ public final class PrivilegedAccessor {
       if (arguments == null) return arguments;
       if (parameterTypes.length > arguments.length) return arguments;
       if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
-      
-      Object[] correctedArguments = new Object[arguments.length];      
+
+      Object[] correctedArguments = new Object[arguments.length];
       int currentArgument = 0;
       for (Class<?> parameterType : parameterTypes) {
          if (parameterType.isArray() && arguments[currentArgument] != null && !arguments[currentArgument].getClass().isArray()) {
@@ -236,20 +241,36 @@ public final class PrivilegedAccessor {
    }
 
    /**
-    * Sets the value of the named field. If instanceOrClass is a class then a static field is returned.
+    * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
+    * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
+    * at other times than instantiation can have unpredictable effects.<br/>
+    * <br/>
+    * Example:<br/>
+    * <br/>
+    * <code>
+    * String myString = "Test"; <br/>
+    * <br/>
+    * //setting the private field value<br/>
+    * PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+    * <br/>
+    * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
+    * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+    * <br/>
+    * </code> 
     * 
     * @param instanceOrClass the instance or class to set the field
     * @param fieldName the name of the field
     * @param value the new value of the field
     * @throws NoSuchFieldException if no field with the given <code>fieldName</code> can be found
+    * @throws IllegalAccessException possibly if the field was final
     */
-   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException {
+   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException,
+      IllegalAccessException {
       Field field = getField(instanceOrClass, fieldName);
-      try {
-         field.set(instanceOrClass, value);
-      } catch (IllegalAccessException e) {
-         assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
+      if (Modifier.isFinal(field.getModifiers())) {
+         PrivilegedAccessor.setValue(field, "modifiers", field.getModifiers() ^ Modifier.FINAL);
       }
+      field.set(instanceOrClass, value);
    }
 
    /**
@@ -262,10 +283,6 @@ public final class PrivilegedAccessor {
    private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
       if (className.indexOf('[') > -1) {
          Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
-         // if (clazz == Object.class) {
-         // // TODO[7] fix this bug
-         // throw new IllegalArgumentException("java.lang.Object[] parameters currently not supported");
-         // }
          return Array.newInstance(clazz, 0).getClass();
       }
 
@@ -277,6 +294,25 @@ public final class PrivilegedAccessor {
    }
 
    /**
+    * Maps string representation of primitives to their corresponding classes.
+    */
+   private static final Map<String, Class<?>> PRIMITIVE_MAPPER = new HashMap<String, Class<?>>(8);
+
+   /**
+    * Fills the map with all java primitives and their corresponding classes.
+    */
+   static {
+      PRIMITIVE_MAPPER.put("int", Integer.TYPE);
+      PRIMITIVE_MAPPER.put("float", Float.TYPE);
+      PRIMITIVE_MAPPER.put("double", Double.TYPE);
+      PRIMITIVE_MAPPER.put("short", Short.TYPE);
+      PRIMITIVE_MAPPER.put("long", Long.TYPE);
+      PRIMITIVE_MAPPER.put("byte", Byte.TYPE);
+      PRIMITIVE_MAPPER.put("char", Character.TYPE);
+      PRIMITIVE_MAPPER.put("boolean", Boolean.TYPE);
+   }
+
+   /**
     * Gets special classes for the given className. Special classes are primitives and "standard" Java types (like String)
     * 
     * @param className the name of the class to get
@@ -284,30 +320,10 @@ public final class PrivilegedAccessor {
     * @throws ClassNotFoundException if the class could not be found
     */
    private static Class<?> getSpecialClassForName(final String className) throws ClassNotFoundException {
-      if (className.equals("int")) {
-         return Integer.TYPE;
+      if (PRIMITIVE_MAPPER.containsKey(className)) {
+         return PRIMITIVE_MAPPER.get(className);
       }
-      if (className.equals("float")) {
-         return Float.TYPE;
-      }
-      if (className.equals("double")) {
-         return Double.TYPE;
-      }
-      if (className.equals("short")) {
-         return Short.TYPE;
-      }
-      if (className.equals("long")) {
-         return Long.TYPE;
-      }
-      if (className.equals("byte")) {
-         return Byte.TYPE;
-      }
-      if (className.equals("char")) {
-         return Character.TYPE;
-      }
-      if (className.equals("boolean")) {
-         return Boolean.TYPE;
-      }
+
       if (missesPackageName(className)) {
          return getStandardClassForName(className);
       }

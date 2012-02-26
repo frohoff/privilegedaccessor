@@ -14,14 +14,14 @@ import java.util.Collection;
  * 
  * <pre>
  * public class MyClass {
- *    private String name; //private attribute
+ *    private String name; // private attribute
  * 
- *    //private constructor
+ *    // private constructor
  *    private MyClass() {
  *       super();
  *    }
  * 
- *    //private method
+ *    // private method
  *    private void setName(String newName) {
  *       this.name = newName;
  *    }
@@ -32,7 +32,7 @@ import java.util.Collection;
  * 
  * <pre>
  * MyClass myObj = PA.instantiate(MyClass.class);
- * PA.invokeMethod(myObj, &quot;setName(String)&quot;, &quot;myNewName&quot;);
+ * PA.invokeMethod(myObj, &quot;setName(java.lang.String)&quot;, &quot;myNewName&quot;);
  * String name = PA.getValue(myObj, &quot;name&quot;);
  * </pre>
  * 
@@ -46,7 +46,7 @@ public final class PA {
     * Private constructor to make it impossible to instantiate this class.
     */
    private PA() {
-      assert false: "You mustn't instantiate PA, use its methods statically";
+      assert false : "You mustn't instantiate PA, use its methods statically";
    }
 
    /**
@@ -148,8 +148,8 @@ public final class PA {
    }
 
    /**
-    * Calls a method on the given object instance with the given arguments. Arguments can be fully qualified object types or representations for
-    * primitives.
+    * Calls a method on the given object instance with the given arguments. Arguments can be fully qualified object types or
+    * representations for primitives.
     * 
     * @param instanceOrClass the instance or class to invoke the method on
     * @param methodSignature the name of the method and the parameters <br>
@@ -208,15 +208,32 @@ public final class PA {
    }
 
    /**
-    * Sets the value of the named field. If instanceOrClass is a class then a static field is returned.
+    * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
+    * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
+    * at other times than instantiation can have unpredictable effects.<br/>
+    * <br/>
+    * Example:<br/>
+    * <br/>
+    * <code>
+    * String myString = "Test"; <br/>
+    * <br/>
+    * //setting the private field value<br/>
+    * PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+    * <br/>
+    * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
+    * PA.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+    * <br/>
+    * </code> 
     * 
     * @param instanceOrClass the instance or class to set the field
     * @param fieldName the name of the field
     * @param value the new value of the field
     * @throws NoSuchFieldException if no field with the given <code>fieldName</code> can be found
+    * @throws IllegalAccessException possibly if the field was final
     */
    @SuppressWarnings("deprecation")
-   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException {
+   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException,
+      IllegalAccessException {
       PrivilegedAccessor.setValue(instanceOrClass, fieldName, value);
    }
 }

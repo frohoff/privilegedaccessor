@@ -6,7 +6,7 @@
 
 	<groupId>junit.extensions</groupId>
 	<artifactId>pa</artifactId>
-	<version>1.2</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>privileged accessor</name>
 	<description>
 		gives privileged access to private and protected methods and attributes.
@@ -90,6 +90,23 @@
 		</pluginManagement>
 
 		<plugins>
+			<!-- to automatically upload releases to google code - http://maven.riedelcastro.org/gcupload-maven-plugin/usage.html -->
+			<plugin>
+				<groupId>org.riedelcastro</groupId>
+				<artifactId>gcupload-maven-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<projectName>privilegedaccessor</projectName> <!-- googlecode name -->
+					<allowSnapshots>false</allowSnapshots> <!-- default: false -->
+					<dryrun>true</dryrun>
+					<uploads>
+						<upload>
+							<extension>jar</extension>
+						</upload>
+					</uploads>
+				</configuration>
+			</plugin>
+
 			<!-- to automatically upload releases to google code - see http://code.google.com/p/maven-gcu-plugin/wiki/Usage -->
 			<plugin>
 				<groupId>com.googlecode.maven-gcu-plugin</groupId>
@@ -97,7 +114,7 @@
 				<configuration>
 					<serverId>googlecode</serverId> <!-- default: googlecode -->
 					<failsOnError>false</failsOnError> <!-- default: false -->
-					<projectName>privilegedaccessor</projectName> <!-- default: ${project.artifactId} -->
+					<projectName>privilegedaccessor</projectName> <!-- googlecode name default: ${project.artifactId} -->
 					<uploads>
 						<upload>
 							<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>

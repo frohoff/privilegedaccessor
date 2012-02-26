@@ -1,8 +1,5 @@
 package junit.extensions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -101,6 +98,10 @@ public class PrivilegedAccessorTest extends TestCase {
       testFieldNames.add("privateName");
       testFieldNames.add("privateObject");
       testFieldNames.add("privateStaticInt");
+      testFieldNames.add("privateFinalInt");
+      testFieldNames.add("privateFinalString");
+      testFieldNames.add("privateStaticFinalInt");
+      testFieldNames.add("privateStaticFinalString");
       assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(this.parent));
 
       testFieldNames = Arrays.asList(new String[] {"privateInt", "privateLong", "privateShort", "privateByte", "privateChar",
@@ -214,7 +215,7 @@ public class PrivilegedAccessorTest extends TestCase {
     * Tests the method <code>instantiate</code>.
     * 
     * @throws Exception
-    * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
+    * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class, java.lang.Object[])
     */
    @Test
    @SuppressWarnings("deprecation")
@@ -224,6 +225,19 @@ public class PrivilegedAccessorTest extends TestCase {
       assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie"}));
       assertEquals(this.child, PrivilegedAccessor.instantiate(TestChild.class, new Object[] {"Charlie", 8}));
       assertEquals(this.childInParent, PrivilegedAccessor.instantiate(TestChild.class, new Object[] {"Charlie", 8}));
+   }
+
+   /**
+    * Tests the method <code>instantiate</code> with fully qualified types.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class, java.lang.Class[], java.lang.Object[])
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testInstantiateWithTypes() throws Exception {
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, new Class[] {String.class, Object.class},
+         new Object[] {"Charlie", "Brown"}));
       assertEquals(this.childInParent, PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, Integer.class},
          new Object[] {"Charlie", 8}));
    }
@@ -235,13 +249,27 @@ public class PrivilegedAccessorTest extends TestCase {
     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
     */
    @Test
-   @SuppressWarnings("deprecation")
+   @SuppressWarnings({"deprecation", "cast"})
    public void testInstantiateOnInvalidParameters() throws Exception {
       try {
          PrivilegedAccessor.instantiate(TestParent.class, new Object[] {21});
          fail("instantiating with wrong parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
+      }
+
+      try {
+         PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie", "Brown"});
+         fail("instantiating with wrong second parameter type should throw Exception");
+      } catch (Exception e) {
+         // this is what we expect - that's why we need a instantiate with types
+      }
+
+      try {
+         PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie", (Object) "Brown"});
+         fail("instantiating with wrong second parameter type should throw Exception");
+      } catch (Exception e) {
+         // this is what we expect - that's why we need a instantiate with types
       }
 
       try {
@@ -672,7 +700,7 @@ public class PrivilegedAccessorTest extends TestCase {
       Object[] objects = new Object[] {"Hello", new Integer(3)};
       PrivilegedAccessor.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", objects);
       assertEquals(objects, PrivilegedAccessor.getValue(this.child, "privateObjects"));
-      
+
       try {
          PrivilegedAccessor.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", objects);
          fail("invoking method with object array instead of string array should raise exception");
@@ -786,6 +814,28 @@ public class PrivilegedAccessorTest extends TestCase {
    }
 
    /**
+    * Tests the example given in javadoc of <code>setValue</code>.
+    * 
+    * This test could fail under some JVMs, since setting the value of final fields at other times than instantiation can have
+    * unpredictable effects.
+    * 
+    * @see java.lang.reflect.Field.set(java.lang.Object, java.lang.Object)
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testSetGetValueExample() throws Exception {
+      String myString = "Test";
+      PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'}); // sets the final field value
+      PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1); // sets the static final field serialVersionUID
+
+      assertTrue(Arrays.equals(new char[] {'T', 'e', 's', 't'}, (char[]) PrivilegedAccessor.getValue(myString, "value")));
+      assertEquals(1L, PrivilegedAccessor.getValue(String.class, "serialVersionUID"));
+   }
+
+   /**
     * Tests the method <code>setValue</code>.
     * 
     * @throws Exception
@@ -853,16 +903,113 @@ public class PrivilegedAccessorTest extends TestCase {
     * Tests the method <code>setValue</code> with a static field.
     * 
     * @throws Exception
-    * @see junit.extensions.PrivilegedAccessor#(java.lang.Object, java.lang.String, java.lang.String)
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
    @SuppressWarnings("deprecation")
    public void testSetValueOfStaticField() throws Exception {
-      PrivilegedAccessor.setValue(this.parent, "privateStaticInt", 6);
-      assertEquals(6, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
+      int previousValue = (Integer) PrivilegedAccessor.getValue(this.parent, "privateStaticInt");
+      assertTrue(previousValue != -1);
 
-      PrivilegedAccessor.setValue(TestParent.class, "privateStaticInt", 7);
-      assertEquals(7, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
+      PrivilegedAccessor.setValue(this.parent, "privateStaticInt", -1);
+      assertEquals(-1, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
+
+      PrivilegedAccessor.setValue(TestParent.class, "privateStaticInt", previousValue);
+      assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testSetValueOfFinalField() throws Exception {
+      int previousValue = (Integer) PrivilegedAccessor.getValue(this.parent, "privateFinalInt");
+      assertTrue(previousValue != -2);
+
+      PrivilegedAccessor.setValue(this.parent, "privateFinalInt", -2);
+      assertEquals(-2, PrivilegedAccessor.getValue(this.parent, "privateFinalInt"));
+
+      PrivilegedAccessor.setValue(this.parent, "privateFinalInt", previousValue);
+      assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateFinalInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testSetValueOfFinalStringField() throws Exception {
+      String previousValue = (String) PrivilegedAccessor.getValue(this.parent, "privateFinalString");
+      assertTrue(previousValue != "Test");
+
+      PrivilegedAccessor.setValue(this.parent, "privateFinalString", "Test");
+      assertEquals("Test", PrivilegedAccessor.getValue(this.parent, "privateFinalString"));
+
+      PrivilegedAccessor.setValue(this.parent, "privateFinalString", previousValue);
+      assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateFinalString"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a static final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testSetValueOfStaticFinalField() throws Exception {
+      int previousValue = (Integer) PrivilegedAccessor.getValue(this.parent, "privateStaticFinalInt");
+      assertTrue(previousValue != -3);
+
+      try {
+         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalInt", -3);
+         assertEquals(-3, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalInt"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+
+      try {
+         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalInt", previousValue);
+         assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalInt"));
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a static final object field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PrivilegedAccessor#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testSetValueOfStaticFinalObjectField() throws Exception {
+      String previousValue = (String) PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString");
+      assertTrue(previousValue != "Herbert");
+
+      try {
+         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalString", "Herbert");
+         assertEquals("Herbert", PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString"));
+         fail();
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
+
+      try {
+         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalString", previousValue);
+         assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString"));
+      } catch (IllegalAccessException e) {
+         // this is what we expect when accessing private static final fields of non java.lang classes
+      }
    }
 
    /**
