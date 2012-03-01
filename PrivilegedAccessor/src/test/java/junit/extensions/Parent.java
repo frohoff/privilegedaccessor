@@ -3,7 +3,7 @@ package junit.extensions;
 /**
  * Test class with private methods to invoke via PrivilegedAccessor
  */
-public class TestParent {
+public class Parent {
    private String           privateName;
    private Object           privateObject;
    private static int       privateStaticInt;
@@ -17,11 +17,11 @@ public class TestParent {
       privateStaticFinalString = "Tester";
    }
 
-   public TestParent(String name) {
+   public Parent(String name) {
       this(name, "Brown");
    }
 
-   private TestParent(String name, Object object) {
+   private Parent(String name, Object object) {
       this.privateName = name;
       this.privateObject = object;
       privateStaticInt = 1;
@@ -30,7 +30,7 @@ public class TestParent {
    }
 
    @SuppressWarnings("unused")
-   private TestParent() {
+   private Parent() {
       this("Charlie", "Brown");
    }
 
@@ -59,11 +59,11 @@ public class TestParent {
 
    @SuppressWarnings("unused")
    private static void setStaticInt(int number) {
-      TestParent.privateStaticInt = number;
+      Parent.privateStaticInt = number;
    }
 
    private static int getStaticInt() {
-      return TestParent.privateStaticInt;
+      return Parent.privateStaticInt;
    }
    
    private int getFinalInt() {
@@ -75,21 +75,21 @@ public class TestParent {
    }
    
    private static int getStaticFinalInt() {
-      return TestParent.privateStaticFinalInt;
+      return Parent.privateStaticFinalInt;
    }
    
    private static String getStaticFinalString() {
-      return TestParent.privateStaticFinalString;
+      return Parent.privateStaticFinalString;
    }
 
    public boolean equals(Object other) {
-      if (!(other instanceof TestParent)) {
+      if (!(other instanceof Parent)) {
          return false;
       }
 
-      TestParent otherTestParent = (TestParent) other;
+      Parent otherParent = (Parent) other;
 
-      if (this.privateName.equals(otherTestParent.privateName) && this.privateObject.equals(otherTestParent.privateObject)) {
+      if (this.privateName.equals(otherParent.privateName) && this.privateObject.equals(otherParent.privateObject)) {
          return true;
       }
 
@@ -98,6 +98,6 @@ public class TestParent {
 
    public String toString() {
       return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
-         + TestParent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString() + ", privateStaticFinalInt=" + TestParent.getStaticFinalInt() + ", privateStaticFinalString=" + TestParent.getStaticFinalString() + "}";
+         + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString() + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString() + "}";
    }
 }
