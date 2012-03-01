@@ -23,16 +23,16 @@ public class PATest {
    /**
     * An instance of a test-subclass.
     */
-   private TestChild  child;
+   private Child  child;
 
    /**
     * An instance of a test-subclass in a variable of type superclass.
     */
-   private TestParent childInParent;
+   private Parent childInParent;
    /**
     * an instance of a test-superclass.
     */
-   private TestParent parent;
+   private Parent parent;
 
    /**
     * Sets up the test-environment by instantiating the test-instances.
@@ -41,9 +41,9 @@ public class PATest {
     */
    @Before
    public final void setUp() {
-      this.parent = new TestParent("Charlie");
-      this.child = new TestChild("Charlie");
-      this.childInParent = new TestChild("Charlie");
+      this.parent = new Parent("Charlie");
+      this.child = new Child("Charlie");
+      this.childInParent = new Child("Charlie");
    }
 
    /**
@@ -148,7 +148,7 @@ public class PATest {
    @Test
    public void testGetValueOfStaticField() throws Exception {
       assertEquals(new Integer(1), PA.getValue(this.parent, "privateStaticInt"));
-      assertEquals(new Integer(1), PA.getValue(TestParent.class, "privateStaticInt"));
+      assertEquals(new Integer(1), PA.getValue(Parent.class, "privateStaticInt"));
    }
 
    /**
@@ -181,7 +181,7 @@ public class PATest {
       }
 
       try {
-         PA.getValue(TestParent.class, "noSuchField");
+         PA.getValue(Parent.class, "noSuchField");
          fail("should throw NoSuchFieldException");
       } catch (NoSuchFieldException e) {
          // that is what we expect
@@ -203,14 +203,14 @@ public class PATest {
     */
    @Test
    public void testInstantiate() throws Exception {
-      TestParent tp = PA.instantiate(TestParent.class);
+      Parent tp = PA.instantiate(Parent.class);
       assertEquals(this.parent, tp);
       assertNotSame(this.parent, tp);
-      assertEquals(this.parent, PA.instantiate(TestParent.class));
-      assertEquals(this.parent, PA.instantiate(TestParent.class, "Charlie"));
-      assertEquals(this.child, PA.instantiate(TestChild.class, "Charlie", 8));
-      assertEquals(this.childInParent, PA.instantiate(TestChild.class, "Charlie", 8));
-      assertEquals(this.childInParent, PA.instantiate(TestChild.class, new Class[] {String.class, Integer.class}, "Charlie", 8));
+      assertEquals(this.parent, PA.instantiate(Parent.class));
+      assertEquals(this.parent, PA.instantiate(Parent.class, "Charlie"));
+      assertEquals(this.child, PA.instantiate(Child.class, "Charlie", 8));
+      assertEquals(this.childInParent, PA.instantiate(Child.class, "Charlie", 8));
+      assertEquals(this.childInParent, PA.instantiate(Child.class, new Class[] {String.class, Integer.class}, "Charlie", 8));
    }
 
    /**
@@ -222,30 +222,30 @@ public class PATest {
    @Test
    public void testInstantiateOnInvalidParameters() throws Exception {
       try {
-         PA.instantiate(TestParent.class, 21);
+         PA.instantiate(Parent.class, 21);
          fail("instantiating with wrong parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PA.instantiate(TestChild.class, "Charlie", "Brown");
+         PA.instantiate(Child.class, "Charlie", "Brown");
          fail("instantiating with wrong second parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PA.instantiate(TestChild.class, new Class[] {String.class, String.class}, "Charlie", 8);
+         PA.instantiate(Child.class, new Class[] {String.class, String.class}, "Charlie", 8);
          fail("instantiating with unmatching parameter types should throw Exception");
-         PA.instantiate(TestChild.class, new Class[] {String.class, Integer.class}, "Charlie", "Brown");
+         PA.instantiate(Child.class, new Class[] {String.class, Integer.class}, "Charlie", "Brown");
          fail("instantiating with unmatching parameter types should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PA.instantiate(TestChild.class, new Class[] {String.class, Integer.class, String.class}, "Charlie", 8, "Brown");
+         PA.instantiate(Child.class, new Class[] {String.class, Integer.class, String.class}, "Charlie", 8, "Brown");
          fail("instantiating with wrong parameter count should throw Exception");
       } catch (Exception e) {
          // this is what we expect
@@ -402,7 +402,7 @@ public class PATest {
       }
 
       try {
-         PA.invokeMethod(TestParent.class, "noSuchMethod()", "Herbert");
+         PA.invokeMethod(Parent.class, "noSuchMethod()", "Herbert");
          fail("should throw NoSuchMethodException");
       } catch (NoSuchMethodException e) {
          // that is what we expect
@@ -566,7 +566,7 @@ public class PATest {
       }
 
       try {
-         PA.invokeMethod(TestParent.class, "setStaticInt(java.lang.String)", "Herbert");
+         PA.invokeMethod(Parent.class, "setStaticInt(java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
       } catch (NoSuchMethodException e) {
          // that is what we expect
@@ -878,8 +878,8 @@ public class PATest {
     */
    @Test
    public void testInvokeStaticMethod() throws Exception {
-      PA.invokeMethod(TestParent.class, "setStaticInt(int)", 3);
-      assertEquals(3, PA.getValue(TestParent.class, "privateStaticInt"));
+      PA.invokeMethod(Parent.class, "setStaticInt(int)", 3);
+      assertEquals(3, PA.getValue(Parent.class, "privateStaticInt"));
    }
 
    /**
@@ -979,7 +979,7 @@ public class PATest {
       PA.setValue(this.parent, "privateStaticInt", -1);
       assertEquals(-1, PA.getValue(this.parent, "privateStaticInt"));
 
-      PA.setValue(TestParent.class, "privateStaticInt", previousValue);
+      PA.setValue(Parent.class, "privateStaticInt", previousValue);
       assertEquals(previousValue, PA.getValue(this.parent, "privateStaticInt"));
    }
 
@@ -1105,7 +1105,7 @@ public class PATest {
       }
 
       try {
-         PA.setValue(TestParent.class, "noSuchField", "value");
+         PA.setValue(Parent.class, "noSuchField", "value");
          fail("should throw NoSuchFieldException");
       } catch (NoSuchFieldException e) {
          // that is what we expect
@@ -1120,8 +1120,8 @@ public class PATest {
     */
    @Test
    public void testInstantiateInnerClass() throws Exception {
-      Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
-      assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
+      Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
+      assertEquals(Class.forName("junit.extensions.Child$InnerChild"), tic.getClass());
    }
 
    /**
@@ -1132,7 +1132,7 @@ public class PATest {
     */
    @Test
    public void testAccessInnerClass() throws Exception {
-      Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
+      Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       PA.setValue(tic, "privateInnerInt", 5);
       assertEquals(5, PA.getValue(tic, "privateInnerInt"));
    }
@@ -1145,7 +1145,7 @@ public class PATest {
     */
    @Test
    public void testAccessInnerMethod() throws Exception {
-      Object tic = PA.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"), this.child);
+      Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       PA.invokeMethod(tic, "setPrivateInnerInt(int)", 7);
       assertEquals(7, PA.invokeMethod(tic, "getPrivateInnerInt()"));
    }

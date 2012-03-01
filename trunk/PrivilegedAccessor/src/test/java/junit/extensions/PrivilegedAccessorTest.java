@@ -20,16 +20,16 @@ public class PrivilegedAccessorTest extends TestCase {
    /**
     * An instance of a test-subclass.
     */
-   private TestChild  child;
+   private Child  child;
 
    /**
     * An instance of a test-subclass in a variable of type superclass.
     */
-   private TestParent childInParent;
+   private Parent childInParent;
    /**
     * an instance of a test-superclass.
     */
-   private TestParent parent;
+   private Parent parent;
 
    /**
     * Sets up the test-environment by instantiating the test-instances.
@@ -38,9 +38,9 @@ public class PrivilegedAccessorTest extends TestCase {
     */
    @Before
    public final void setUp() {
-      this.parent = new TestParent("Charlie");
-      this.child = new TestChild("Charlie");
-      this.childInParent = new TestChild("Charlie");
+      this.parent = new Parent("Charlie");
+      this.child = new Child("Charlie");
+      this.childInParent = new Child("Charlie");
    }
 
    /**
@@ -163,7 +163,7 @@ public class PrivilegedAccessorTest extends TestCase {
    @SuppressWarnings("deprecation")
    public void testGetValueOfStaticField() throws Exception {
       assertEquals(new Integer(1), PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
-      assertEquals(new Integer(1), PrivilegedAccessor.getValue(TestParent.class, "privateStaticInt"));
+      assertEquals(new Integer(1), PrivilegedAccessor.getValue(Parent.class, "privateStaticInt"));
    }
 
    /**
@@ -197,7 +197,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.getValue(TestParent.class, "noSuchField");
+         PrivilegedAccessor.getValue(Parent.class, "noSuchField");
          fail("should throw NoSuchFieldException");
       } catch (NoSuchFieldException e) {
          // that is what we expect
@@ -220,11 +220,11 @@ public class PrivilegedAccessorTest extends TestCase {
    @Test
    @SuppressWarnings("deprecation")
    public void testInstantiate() throws Exception {
-      assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, null));
-      assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, new Object[0]));
-      assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie"}));
-      assertEquals(this.child, PrivilegedAccessor.instantiate(TestChild.class, new Object[] {"Charlie", 8}));
-      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(TestChild.class, new Object[] {"Charlie", 8}));
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, null));
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new Object[0]));
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie"}));
+      assertEquals(this.child, PrivilegedAccessor.instantiate(Child.class, new Object[] {"Charlie", 8}));
+      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(Child.class, new Object[] {"Charlie", 8}));
    }
 
    /**
@@ -236,9 +236,9 @@ public class PrivilegedAccessorTest extends TestCase {
    @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateWithTypes() throws Exception {
-      assertEquals(this.parent, PrivilegedAccessor.instantiate(TestParent.class, new Class[] {String.class, Object.class},
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new Class[] {String.class, Object.class},
          new Object[] {"Charlie", "Brown"}));
-      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, Integer.class},
+      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class},
          new Object[] {"Charlie", 8}));
    }
 
@@ -252,44 +252,44 @@ public class PrivilegedAccessorTest extends TestCase {
    @SuppressWarnings({"deprecation", "cast"})
    public void testInstantiateOnInvalidParameters() throws Exception {
       try {
-         PrivilegedAccessor.instantiate(TestParent.class, new Object[] {21});
+         PrivilegedAccessor.instantiate(Parent.class, new Object[] {21});
          fail("instantiating with wrong parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie", "Brown"});
+         PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie", "Brown"});
          fail("instantiating with wrong second parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect - that's why we need a instantiate with types
       }
 
       try {
-         PrivilegedAccessor.instantiate(TestParent.class, new Object[] {"Charlie", (Object) "Brown"});
+         PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie", (Object) "Brown"});
          fail("instantiating with wrong second parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect - that's why we need a instantiate with types
       }
 
       try {
-         PrivilegedAccessor.instantiate(TestChild.class, new Object[] {"Charlie", "Brown"});
+         PrivilegedAccessor.instantiate(Child.class, new Object[] {"Charlie", "Brown"});
          fail("instantiating with wrong second parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, String.class}, new Object[] {"Charlie", 8});
+         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, String.class}, new Object[] {"Charlie", 8});
          fail("instantiating with unmatching parameter types should throw Exception");
-         PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, Integer.class}, new Object[] {"Charlie", "Brown"});
+         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class}, new Object[] {"Charlie", "Brown"});
          fail("instantiating with unmatching parameter types should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }
 
       try {
-         PrivilegedAccessor.instantiate(TestChild.class, new Class[] {String.class, Integer.class, String.class}, new Object[] {
+         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class, String.class}, new Object[] {
             "Charlie", 8, "Brown"});
          fail("instantiating with wrong parameter count should throw Exception");
       } catch (Exception e) {
@@ -422,7 +422,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.invokeMethod(TestParent.class, "noSuchMethod()", new Object[] {"Herbert"});
+         PrivilegedAccessor.invokeMethod(Parent.class, "noSuchMethod()", new Object[] {"Herbert"});
          fail("should throw NoSuchMethodException");
       } catch (NoSuchMethodException e) {
          // that is what we expect
@@ -604,7 +604,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.invokeMethod(TestParent.class, "setStaticInt(java.lang.String)", new Object[] {"Herbert"});
+         PrivilegedAccessor.invokeMethod(Parent.class, "setStaticInt(java.lang.String)", new Object[] {"Herbert"});
          fail("should throw NoSuchMethodException");
       } catch (NoSuchMethodException e) {
          // that is what we expect
@@ -809,8 +809,8 @@ public class PrivilegedAccessorTest extends TestCase {
    @Test
    @SuppressWarnings("deprecation")
    public void testInvokeStaticMethod() throws Exception {
-      PrivilegedAccessor.invokeMethod(TestParent.class, "setStaticInt(int)", new Object[] {3});
-      assertEquals(3, PrivilegedAccessor.getValue(TestParent.class, "privateStaticInt"));
+      PrivilegedAccessor.invokeMethod(Parent.class, "setStaticInt(int)", new Object[] {3});
+      assertEquals(3, PrivilegedAccessor.getValue(Parent.class, "privateStaticInt"));
    }
 
    /**
@@ -914,7 +914,7 @@ public class PrivilegedAccessorTest extends TestCase {
       PrivilegedAccessor.setValue(this.parent, "privateStaticInt", -1);
       assertEquals(-1, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
 
-      PrivilegedAccessor.setValue(TestParent.class, "privateStaticInt", previousValue);
+      PrivilegedAccessor.setValue(Parent.class, "privateStaticInt", previousValue);
       assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
    }
 
@@ -969,7 +969,7 @@ public class PrivilegedAccessorTest extends TestCase {
       assertTrue(previousValue != -3);
 
       try {
-         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalInt", -3);
+         PrivilegedAccessor.setValue(Parent.class, "privateStaticFinalInt", -3);
          assertEquals(-3, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalInt"));
          fail();
       } catch (IllegalAccessException e) {
@@ -977,7 +977,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalInt", previousValue);
+         PrivilegedAccessor.setValue(Parent.class, "privateStaticFinalInt", previousValue);
          assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalInt"));
       } catch (IllegalAccessException e) {
          // this is what we expect when accessing private static final fields of non java.lang classes
@@ -997,7 +997,7 @@ public class PrivilegedAccessorTest extends TestCase {
       assertTrue(previousValue != "Herbert");
 
       try {
-         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalString", "Herbert");
+         PrivilegedAccessor.setValue(Parent.class, "privateStaticFinalString", "Herbert");
          assertEquals("Herbert", PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString"));
          fail();
       } catch (IllegalAccessException e) {
@@ -1005,7 +1005,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.setValue(TestParent.class, "privateStaticFinalString", previousValue);
+         PrivilegedAccessor.setValue(Parent.class, "privateStaticFinalString", previousValue);
          assertEquals(previousValue, PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString"));
       } catch (IllegalAccessException e) {
          // this is what we expect when accessing private static final fields of non java.lang classes
@@ -1043,7 +1043,7 @@ public class PrivilegedAccessorTest extends TestCase {
       }
 
       try {
-         PrivilegedAccessor.setValue(TestParent.class, "noSuchField", "value");
+         PrivilegedAccessor.setValue(Parent.class, "noSuchField", "value");
          fail("should throw NoSuchFieldException");
       } catch (NoSuchFieldException e) {
          // that is what we expect
@@ -1053,15 +1053,15 @@ public class PrivilegedAccessorTest extends TestCase {
    @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateInnerClass() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
          new Object[] {this.child});
-      assertEquals(Class.forName("junit.extensions.TestChild$TestInnerChild"), tic.getClass());
+      assertEquals(Class.forName("junit.extensions.Child$InnerChild"), tic.getClass());
    }
 
    @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerClass() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
          new Object[] {this.child});
       PrivilegedAccessor.setValue(tic, "privateInnerInt", 5);
       assertEquals(5, PrivilegedAccessor.getValue(tic, "privateInnerInt"));
@@ -1070,7 +1070,7 @@ public class PrivilegedAccessorTest extends TestCase {
    @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerMethod() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.TestChild$TestInnerChild"),
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
          new Object[] {this.child});
       PrivilegedAccessor.invokeMethod(tic, "setPrivateInnerInt(int)", new Object[] {7});
       assertEquals(7, PrivilegedAccessor.invokeMethod(tic, "getPrivateInnerInt()", null));

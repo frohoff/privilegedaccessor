@@ -3,7 +3,7 @@ package junit.extensions;
 /**
  * Test class with private methods to invoke via PrivilegedAccessor.
  */
-public class TestChild extends TestParent {
+public class Child extends Parent {
    private int                          privateInt;
    private long                         privateLong;
    private short                        privateShort;
@@ -18,7 +18,7 @@ public class TestChild extends TestParent {
    private java.util.Collection<String> privateCollection;
 
    @SuppressWarnings("unused")
-   private class TestInnerChild {
+   private class InnerChild {
       private int privateInnerInt;
 
       private void setPrivateInnerInt(int privateInnerInt) {
@@ -30,12 +30,12 @@ public class TestChild extends TestParent {
       }
    }
 
-   private TestChild(String name, Integer number) {
+   private Child(String name, Integer number) {
       super(name);
       this.privateInt = number.intValue();
    }
 
-   public TestChild(String name) {
+   public Child(String name) {
       this(name, new Integer(8));
    }
 
