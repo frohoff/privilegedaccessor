@@ -303,7 +303,7 @@ public final class PrivilegedAccessor {
       }
 
       try {
-         return Class.forName(className);
+         return Class.forName(className, false, PrivilegedAccessor.class.getClassLoader());
       } catch (ClassNotFoundException e) {
          return getSpecialClassForName(className);
       }
@@ -356,10 +356,10 @@ public final class PrivilegedAccessor {
     */
    private static Class<?> getStandardClassForName(String className) throws ClassNotFoundException {
       try {
-         return Class.forName("java.lang." + className);
+         return Class.forName("java.lang." + className, false, ClassLoader.getSystemClassLoader());
       } catch (ClassNotFoundException e) {
          try {
-            return Class.forName("java.util." + className);
+            return Class.forName("java.util." + className, false, ClassLoader.getSystemClassLoader());
          } catch (ClassNotFoundException e1) {
             throw new ClassNotFoundException(className);
          }
