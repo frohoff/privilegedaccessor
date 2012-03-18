@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for the class <code>PA</code>.
+ * Tests for the class <code>StrictPA</code>.
  */
 public class StrictPATest {
 
@@ -127,14 +127,14 @@ public class StrictPATest {
 
       testMethodSignatures = Arrays.asList(new String[] {"hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)",
          "wait()", "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
-      assertTrue("getMethodSignatures didn't return correct signatures", StrictPA.getMethodSignatures(Object.class).containsAll(
-         testMethodSignatures));
+      assertTrue("getMethodSignatures didn't return correct signatures",
+         StrictPA.getMethodSignatures(Object.class).containsAll(testMethodSignatures));
 
       testMethodSignatures = Arrays.asList(new String[] {"equals(java.lang.Object)", "getName()", "setName(java.lang.String)",
          "setName()", "setStaticInt(int)", "hashCode()", "getClass()", "finalize()", "clone()", "wait(long, int)", "wait()",
          "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
-      assertTrue("getMethodSignatures didn't return correct signatures", StrictPA.getMethodSignatures(this.parent).containsAll(
-         testMethodSignatures));
+      assertTrue("getMethodSignatures didn't return correct signatures",
+         StrictPA.getMethodSignatures(this.parent).containsAll(testMethodSignatures));
    }
 
    /**
@@ -268,7 +268,7 @@ public class StrictPATest {
    }
 
    /**
-    * Tests the constructor of PA.
+    * Tests the constructor of StrictPA.
     * 
     * @throws Exception if something went wrong
     * @see junit.extensions.StrictPA#instantiate(java.lang.Class)
@@ -277,7 +277,7 @@ public class StrictPATest {
    public final void testInstantiationThrowsException() throws Exception {
       try {
          StrictPA.instantiate(StrictPA.class);
-         fail("Instantiating PA should throw Exception - you must have enabled assertions to run unit-tests");
+         fail("Instantiating StrictPA should throw Exception - you must have enabled assertions to run unit-tests");
       } catch (InvocationTargetException e) {
          // thats what we expect
       }
@@ -693,7 +693,7 @@ public class StrictPATest {
       StrictPA.invokeMethod(this.child, "setPrivateStringsAndInt(java.lang.String[], int)", strings, 3);
       assertEquals(strings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(3, StrictPA.getValue(this.child, "privateInt"));
-      StrictPA.invokeMethod(this.child, "setPrivateStringsAndInt(java.lang.String[], int)", (Object) emptyStrings, 0);
+      StrictPA.invokeMethod(this.child, "setPrivateStringsAndInt(java.lang.String[], int)", emptyStrings, 0);
       assertEquals(emptyStrings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(0, StrictPA.getValue(this.child, "privateInt"));
 
@@ -703,44 +703,44 @@ public class StrictPATest {
       StrictPA.invokeMethod(this.child, "setPrivateObjectsAndInt(java.lang.Object[], int)", objects, 4);
       assertEquals(objects, StrictPA.getValue(this.child, "privateObjects"));
       assertEquals(4, StrictPA.getValue(this.child, "privateInt"));
-      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndInt(java.lang.Object[], int)", (Object) emptyObjects, 0);
+      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndInt(java.lang.Object[], int)", emptyObjects, 0);
       assertEquals(emptyObjects, StrictPA.getValue(this.child, "privateObjects"));
       assertEquals(0, StrictPA.getValue(this.child, "privateInt"));
 
       StrictPA.invokeMethod(this.child, "setPrivateIntAndStrings(int, java.lang.String[])", 5, strings);
       assertEquals(strings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(5, StrictPA.getValue(this.child, "privateInt"));
-      StrictPA.invokeMethod(this.child, "setPrivateIntAndStrings(int, java.lang.String[])", 0, (Object) emptyStrings);
+      StrictPA.invokeMethod(this.child, "setPrivateIntAndStrings(int, java.lang.String[])", 0, emptyStrings);
       assertEquals(emptyStrings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(0, StrictPA.getValue(this.child, "privateInt"));
 
       StrictPA.invokeMethod(this.child, "setPrivateIntAndObjects(int, java.lang.Object[])", 6, objects);
       assertEquals(objects, StrictPA.getValue(this.child, "privateObjects"));
       assertEquals(6, StrictPA.getValue(this.child, "privateInt"));
-      StrictPA.invokeMethod(this.child, "setPrivateIntAndObjects(int, java.lang.Object[])", 0, (Object) emptyObjects);
+      StrictPA.invokeMethod(this.child, "setPrivateIntAndObjects(int, java.lang.Object[])", 0, emptyObjects);
       assertEquals(emptyObjects, StrictPA.getValue(this.child, "privateObjects"));
       assertEquals(0, StrictPA.getValue(this.child, "privateInt"));
 
       StrictPA.invokeMethod(this.child, "setPrivateStringsAndObjects(java.lang.String[],java.lang.Object[])", strings, objects);
       assertEquals(strings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(objects, StrictPA.getValue(this.child, "privateObjects"));
-      StrictPA.invokeMethod(this.child, "setPrivateStringsAndObjects(java.lang.String[],java.lang.Object[])", (Object) emptyStrings,
-         (Object) emptyObjects);
+      StrictPA.invokeMethod(this.child, "setPrivateStringsAndObjects(java.lang.String[],java.lang.Object[])", emptyStrings,
+         emptyObjects);
       assertEquals(emptyStrings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(emptyObjects, StrictPA.getValue(this.child, "privateObjects"));
 
       StrictPA.invokeMethod(this.child, "setPrivateObjectsAndStrings(java.lang.Object[],java.lang.String[])", objects, strings);
       assertEquals(strings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(objects, StrictPA.getValue(this.child, "privateObjects"));
-      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndStrings(java.lang.Object[],java.lang.String[])", (Object) emptyObjects,
-         (Object) emptyStrings);
+      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndStrings(java.lang.Object[],java.lang.String[])", emptyObjects,
+         emptyStrings);
       assertEquals(emptyStrings, StrictPA.getValue(this.child, "privateStrings"));
       assertEquals(emptyObjects, StrictPA.getValue(this.child, "privateObjects"));
 
       StrictPA.invokeMethod(this.child, "setPrivateObjectsAndObjects(java.lang.Object[],java.lang.Object[])", objects, objects);
       assertEquals(objects, StrictPA.getValue(this.child, "privateObjects"));
-      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndObjects(java.lang.Object[],java.lang.Object[])", (Object) emptyObjects,
-         (Object) emptyObjects);
+      StrictPA.invokeMethod(this.child, "setPrivateObjectsAndObjects(java.lang.Object[],java.lang.Object[])", emptyObjects,
+         emptyObjects);
       assertEquals(emptyObjects, StrictPA.getValue(this.child, "privateObjects"));
    }
 
