@@ -61,7 +61,7 @@ public final class StrictPA {
     * Private constructor to make it impossible to instantiate this class.
     */
    private StrictPA() {
-      assert false : "You mustn't instantiate PA, use its methods statically";
+      assert false : "You mustn't instantiate StrictPA, use its methods statically";
    }
 
    /**
