@@ -478,7 +478,7 @@ public class PrivilegedAccessorTest {
     * Tests the method <code>invokeMethod</code> with a typed collection.
     * 
     * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @see junit.extensions.StrictPA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
    @SuppressWarnings("deprecation")

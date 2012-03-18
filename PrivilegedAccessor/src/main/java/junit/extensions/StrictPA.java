@@ -46,8 +46,8 @@ import java.util.Collection;
  * We now want to access the class: <br>
  * 
  * <pre>
- * MyClass myObj = PA.instantiate(MyClass.class);
- * PA.invokeMethod(myObj, &quot;setName(java.lang.String)&quot;, &quot;myNewName&quot;);
+ * MyClass myObj = StrictPA.instantiate(MyClass.class);
+ * StrictPA.invokeMethod(myObj, &quot;setName(java.lang.String)&quot;, &quot;myNewName&quot;);
  * String name = PA.getValue(myObj, &quot;name&quot;);
  * </pre>
  * 
@@ -56,11 +56,11 @@ import java.util.Collection;
  * 
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
  */
-public final class PA {
+public final class StrictPA {
    /**
     * Private constructor to make it impossible to instantiate this class.
     */
-   private PA() {
+   private StrictPA() {
       assert false : "You mustn't instantiate PA, use its methods statically";
    }
 
@@ -129,7 +129,7 @@ public final class PA {
     * @throws NoSuchMethodException if the constructor could not be found
     * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
     * 
-    * @see PA#invokeMethod(Object,String,Object)
+    * @see StrictPA#invokeMethod(Object,String,Object)
     */
    @SuppressWarnings("deprecation")
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... args)
@@ -154,7 +154,7 @@ public final class PA {
     * @throws NoSuchMethodException if the constructor could not be found
     * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
     * 
-    * @see PA#invokeMethod(Object,String,Object)
+    * @see StrictPA#invokeMethod(Object,String,Object)
     */
    @SuppressWarnings("deprecation")
    public static <T> T instantiate(final Class<? extends T> fromClass, final Object... args) throws IllegalArgumentException,
@@ -233,12 +233,12 @@ public final class PA {
     * String myString = "Test"; <br/>
     * <br/>
     * //setting the private field value<br/>
-    * PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+    * StrictPA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
     * <br/>
     * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
-    * PA.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+    * StrictPA.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
     * <br/>
-    * </code> 
+    * </code>
     * 
     * @param instanceOrClass the instance or class to set the field
     * @param fieldName the name of the field
