@@ -509,7 +509,6 @@ public class PATest {
          thrownException = e;
       }
       assertEquals(IllegalArgumentException.class, thrownException.getCause().getClass());
-      assertNotNull(thrownException.getMessage());
 
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Integer[] {4, 3});
@@ -518,7 +517,6 @@ public class PATest {
          thrownException = e;
       }
       assertEquals(IllegalArgumentException.class, thrownException.getCause().getClass());
-      assertNotNull(thrownException.getMessage());
    }
 
    /**
@@ -538,7 +536,6 @@ public class PATest {
          thrownException = e;
       }
       assertEquals(IllegalArgumentException.class, thrownException.getCause().getClass());
-      assertNotNull(thrownException.getMessage());
 
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Integer[] {2});
@@ -548,7 +545,6 @@ public class PATest {
          thrownException = e;
       }
       assertEquals(IllegalArgumentException.class, thrownException.getCause().getClass());
-      assertNotNull(thrownException.getMessage());
 
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Object[] {3});
@@ -558,7 +554,6 @@ public class PATest {
          thrownException = e;
       }
       assertEquals(IllegalArgumentException.class, thrownException.getCause().getClass());
-      assertNotNull(thrownException.getMessage());
    }
 
    /**
