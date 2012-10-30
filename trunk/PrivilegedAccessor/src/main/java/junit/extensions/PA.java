@@ -50,10 +50,10 @@ import java.util.Collection;
  * String name = PA.getValue(myObj, &quot;name&quot;);
  * </pre>
  * 
- * This class extends {@link StrictPA} by re-throwing checked {@link Exception}s as {@link RuntimeException}s.
+ * This class extends {@link PrivilegedAccessor} by re-throwing checked {@link Exception}s as {@link RuntimeException}s.
  * 
  * 
- * @see StrictPA
+ * @see PrivilegedAccessor
  * 
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
  * @author Lubos Bistak (lubos@bistak.sk)
@@ -67,76 +67,116 @@ public class PA {
    }
 
    /**
-    * @see StrictPA#toString(Object)
+    * @see PrivilegedAccessor#toString(Object)
     */
    public static String toString(final Object instanceOrClass) {
-      return StrictPA.toString(instanceOrClass);
+      return PrivilegedAccessor.toString(instanceOrClass);
    }
 
    /**
-    * @see StrictPA#getFieldNames(Object)
+    * @see PrivilegedAccessor#getFieldNames(Object)
     */
    public static Collection<String> getFieldNames(final Object instanceOrClass) {
-      return StrictPA.getFieldNames(instanceOrClass);
+      return PrivilegedAccessor.getFieldNames(instanceOrClass);
    }
 
    /**
-    * @see StrictPA#getMethodSignatures(Object)
+    * @see PrivilegedAccessor#getMethodSignatures(Object)
     */
    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
-      return StrictPA.getMethodSignatures(instanceOrClass);
+      return PrivilegedAccessor.getMethodSignatures(instanceOrClass);
    }
 
    /**
-    * @see StrictPA#getValue(Object, String)
+    * @see PrivilegedAccessor#getValue(Object, String)
     */
    public static Object getValue(final Object instanceOrClass, final String fieldName) {
       try {
-         return StrictPA.getValue(instanceOrClass, fieldName);
+         return PrivilegedAccessor.getValue(instanceOrClass, fieldName);
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
    }
 
    /**
-    * @see StrictPA#invokeMethod(Object,String,Object)
+    * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... args) {
       try {
-         return StrictPA.instantiate(fromClass, argumentTypes, args);
+         return PrivilegedAccessor.instantiate(fromClass, argumentTypes, args);
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
    }
 
    /**
-    * @see StrictPA#instantiate(Class, Class[], Object...)
+    * @see PrivilegedAccessor#instantiate(Class, Class[], Object...)
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Object... args) {
       try {
-         return StrictPA.instantiate(fromClass, args);
+         return PrivilegedAccessor.instantiate(fromClass, args);
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
    }
 
    /**
-    * @see StrictPA#invokeMethod(Object, String, Object...)
+    * @see PrivilegedAccessor#invokeMethod(Object, String, Object...)
     */
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object... arguments) {
       try {
-         return StrictPA.invokeMethod(instanceOrClass, methodSignature, arguments);
+         return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
    }
 
    /**
-    * @see StrictPA#setValue(Object, String, Object)
+    * Corrects varargs to their initial form. If you call a method with an object-array as last argument the Java varargs mechanism
+    * converts this array in single arguments. This method returns an object array if the arguments are all of the same type.
+    * 
+    * @param arguments the possibly converted arguments of a vararg method
+    * @return arguments possibly converted
+    */
+   private static Object[] correctVarargs(final Object... arguments) {
+      if (arguments == null || changedByVararg(arguments)) {
+         return new Object[] {arguments};
+      }
+      return arguments;
+   }
+
+   /**
+    * Tests if the arguments were changed by vararg. Arguments are changed by vararg if they are of a non primitive array type. E.g.
+    * arguments[] = Object[String[]] is converted to String[] while e.g. arguments[] = Object[int[]] is not converted and stays
+    * Object[int[]]
+    * 
+    * Unfortunately we can't detect the difference for arg = Object[primitive] since arguments[] = Object[Object[primitive]] which is
+    * converted to Object[primitive] and arguments[] = Object[primitive] which stays Object[primitive]
+    * 
+    * and we can't detect the difference for arg = Object[non primitive] since arguments[] = Object[Object[non primitive]] is converted
+    * to Object[non primitive] and arguments[] = Object[non primitive] stays Object[non primitive]
+    * 
+    * @param parameters the parameters
+    * @return true if parameters were changes by varargs, false otherwise
+    */
+   private static boolean changedByVararg(final Object[] parameters) {
+      if (parameters.length == 0 || parameters[0] == null) {
+         return false;
+      }
+
+      if (parameters.getClass() == Object[].class) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * @see PrivilegedAccessor#setValue(Object, String, Object)
     */
    public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) {
       try {
-         StrictPA.setValue(instanceOrClass, fieldName, value);
+         PrivilegedAccessor.setValue(instanceOrClass, fieldName, value);
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }

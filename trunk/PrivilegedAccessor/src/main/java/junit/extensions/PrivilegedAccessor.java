@@ -46,7 +46,8 @@ import java.util.StringTokenizer;
  * @author Prashant Dhokte (pdhokte@iss.net)
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
  * 
- * @deprecated use PA instead. PA improves the functionality of PrivilegedAccessor by introducing support for varargs.
+ * @deprecated use PA instead. PA improves the functionality of PrivilegedAccessor by introducing support for varargs, removes the
+ *             necessity to catch exceptions.
  */
 @Deprecated
 public final class PrivilegedAccessor {
@@ -239,9 +240,15 @@ public final class PrivilegedAccessor {
     */
    private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) throws NoSuchMethodException,
       IllegalArgumentException {
-      if (arguments == null) return arguments;
-      if (parameterTypes.length > arguments.length) return arguments;
-      if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
+      if (arguments == null) {
+         return arguments;
+      }
+      if (parameterTypes.length > arguments.length) {
+         return arguments;
+      }
+      if (parameterTypes.length < arguments.length) {
+         return getCorrectedArguments(parameterTypes, new Object[] {arguments});
+      }
 
       Object[] correctedArguments = new Object[arguments.length];
       int currentArgument = 0;
@@ -272,7 +279,7 @@ public final class PrivilegedAccessor {
     * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
     * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
     * <br/>
-    * </code> 
+    * </code>
     * 
     * @param instanceOrClass the instance or class to set the field
     * @param fieldName the name of the field
