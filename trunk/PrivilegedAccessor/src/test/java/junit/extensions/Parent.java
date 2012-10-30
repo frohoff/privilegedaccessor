@@ -19,14 +19,14 @@ package junit.extensions;
  * Test class with private methods to invoke via PrivilegedAccessor
  */
 public class Parent {
-   private String           privateName;
-   private Object           privateObject;
-   private static int       privateStaticInt;
-   private final int        privateFinalInt;
-   private final String     privateFinalString;
-   private static final int privateStaticFinalInt;
+   private String              privateName;
+   private Object              privateObject;
+   private static int          privateStaticInt;
+   private final int           privateFinalInt;
+   private final String        privateFinalString;
+   private static final int    privateStaticFinalInt;
    private static final String privateStaticFinalString;
-   
+
    static {
       privateStaticFinalInt = 3;
       privateStaticFinalString = "Tester";
@@ -80,23 +80,29 @@ public class Parent {
    private static int getStaticInt() {
       return Parent.privateStaticInt;
    }
-   
+
    private int getFinalInt() {
       return privateFinalInt;
    }
-   
+
    private String getFinalString() {
       return privateFinalString;
    }
-   
+
    private static int getStaticFinalInt() {
       return Parent.privateStaticFinalInt;
    }
-   
+
    private static String getStaticFinalString() {
       return Parent.privateStaticFinalString;
    }
 
+   @Override
+   public int hashCode() {
+      return this.privateName.hashCode() + this.privateObject.hashCode();
+   }
+
+   @Override
    public boolean equals(Object other) {
       if (!(other instanceof Parent)) {
          return false;
@@ -111,8 +117,11 @@ public class Parent {
       return false;
    }
 
+   @Override
    public String toString() {
       return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
-         + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString() + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString() + "}";
+         + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString()
+         + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString()
+         + "}";
    }
 }
