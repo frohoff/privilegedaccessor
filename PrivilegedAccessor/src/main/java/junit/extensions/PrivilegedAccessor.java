@@ -46,8 +46,8 @@ import java.util.StringTokenizer;
  * @author Prashant Dhokte (pdhokte@iss.net)
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
  * 
- * @deprecated use PA instead. PA improves the functionality of PrivilegedAccessor by introducing support for varargs, removes the
- *             necessity to catch exceptions.
+ * @deprecated use PA instead. PA improves the functionality of PrivilegedAccessor by introducing support for varargs and removal of
+ *             the necessity to catch exceptions.
  */
 @Deprecated
 public final class PrivilegedAccessor {
