@@ -59,11 +59,15 @@ import java.util.Collection;
  * @author Lubos Bistak (lubos@bistak.sk)
  */
 public class PA {
+   private final Object instanceOrClass;
+
    /**
-    * Private constructor to make it impossible to instantiate this class.
+    * Private constructor to make it impossible to instantiate this class from outside of PA.
+    * 
+    * @param instanceOrClass
     */
-   private PA() {
-      assert false : "You mustn't instantiate PA, use its methods statically";
+   private PA(Object instanceOrClass) {
+      this.instanceOrClass = instanceOrClass;
    }
 
    /**
@@ -99,6 +103,13 @@ public class PA {
    }
 
    /**
+    * @see PrivilegedAccessor#getValue(Object, String)
+    */
+   public Object getValue(final String fieldName) {
+      return PA.getValue(instanceOrClass, fieldName);
+   }
+
+   /**
     * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... args) {
@@ -129,6 +140,13 @@ public class PA {
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
+   }
+
+   /**
+    * @see PrivilegedAccessor#invokeMethod(Object, String, Object...)
+    */
+   public Object invokeMethod(final String methodSignature, final Object... arguments) {
+      return PA.invokeMethod(instanceOrClass, methodSignature, arguments);
    }
 
    /**
@@ -174,11 +192,40 @@ public class PA {
    /**
     * @see PrivilegedAccessor#setValue(Object, String, Object)
     */
-   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) {
+   public static PA setValue(final Object instanceOrClass, final String fieldName, final Object value) {
       try {
          PrivilegedAccessor.setValue(instanceOrClass, fieldName, value);
       } catch (Exception e) {
          throw new RuntimeException(e.getMessage(), e);
       }
+      return new PA(instanceOrClass);
+   }
+
+   /**
+    * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
+    * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
+    * at other times than instantiation can have unpredictable effects.<br/>
+    * <br/>
+    * Example:<br/>
+    * <br/>
+    * <code>
+    * String myString = "Test"; <br/>
+    * <br/>
+    * //setting the private field value<br/>
+    * PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+    * <br/>
+    * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
+    * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+    * <br/>
+    * </code>
+    * 
+    * @param fieldName the name of the field
+    * @param value the new value of the field
+    * @throws NoSuchFieldException if no field with the given <code>fieldName</code> can be found
+    * @throws IllegalAccessException possibly if the field was final
+    */
+   public PA setValue(final String fieldName, final Object value) {
+      PA.setValue(instanceOrClass, fieldName, value);
+      return this;
    }
 }

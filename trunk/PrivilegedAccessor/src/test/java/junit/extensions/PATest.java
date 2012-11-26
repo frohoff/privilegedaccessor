@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,10 +155,10 @@ public class PATest {
    public void testInstantiationThrowsException() throws Exception {
       try {
          PA.instantiate(PA.class);
-         fail("Instantiating PA should throw Exception - you must have enabled assertions to run unit-tests");
+         fail("Instantiating PA withoud parameters should throw Exception - you must have enabled assertions to run unit-tests");
       } catch (RuntimeException e) {
          // thats what we expect
-         assertEquals(InvocationTargetException.class, e.getCause().getClass());
+         assertEquals(NoSuchMethodException.class, e.getCause().getClass());
       }
    }
 
@@ -285,7 +284,238 @@ public class PATest {
          assertEquals(NoSuchFieldException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
+   }
 
+   /**
+    * Tests the example given in javadoc of <code>setValue</code>.
+    * 
+    * This test could fail under some JVMs, since setting the value of final fields at other times than instantiation can have
+    * unpredictable effects.
+    * 
+    * @see java.lang.reflect.Field.set(java.lang.Object, java.lang.Object)
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetGetValueExample() throws Exception {
+      String myString = "Test";
+      PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'}); // sets the final field value
+      PA.setValue(myString.getClass(), "serialVersionUID", 1); // sets the static final field serialVersionUID
+
+      assertTrue(Arrays.equals(new char[] {'T', 'e', 's', 't'}, (char[]) PA.getValue(myString, "value")));
+      assertEquals(1L, PA.getValue(String.class, "serialVersionUID"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code>.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetGetValueWithPrimitives() throws Exception {
+      PA.setValue(this.child, "privateInt", 6);
+      assertEquals(6, PA.getValue(this.child, "privateInt"));
+
+      PA.setValue(this.childInParent, "privateInt", 6);
+      assertEquals(6, PA.getValue(this.childInParent, "privateInt"));
+
+      PA.setValue(this.child, "privateLong", 8L);
+      assertEquals(8L, PA.getValue(this.child, "privateLong"));
+
+      PA.setValue(this.child, "privateShort", (short) 6);
+      assertEquals((short) 6, PA.getValue(this.child, "privateShort"));
+
+      PA.setValue(this.child, "privateByte", (byte) 2);
+      assertEquals((byte) 2, PA.getValue(this.child, "privateByte"));
+
+      PA.setValue(this.child, "privateChar", 'F');
+      assertEquals('F', PA.getValue(this.child, "privateChar"));
+
+      PA.setValue(this.child, "privateBoolean", true);
+      assertEquals(true, PA.getValue(this.child, "privateBoolean"));
+
+      PA.setValue(this.child, "privateFloat", 1.5f);
+      assertEquals(1.5f, PA.getValue(this.child, "privateFloat"));
+
+      PA.setValue(this.child, "privateDouble", 1.175);
+      assertEquals(1.175, PA.getValue(this.child, "privateDouble"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code>.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetGetValueWithObjectsAndArrays() throws Exception {
+      PA.setValue(this.parent, "privateName", "Hubert");
+      assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
+
+      PA.setValue(this.child, "privateName", "Hubert");
+      assertEquals("Hubert", PA.getValue(this.child, "privateName"));
+
+      PA.setValue(this.childInParent, "privateName", "Hubert");
+      assertEquals("Hubert", PA.getValue(this.childInParent, "privateName"));
+
+      int[] Ints = new int[] {1, 2, 3};
+      PA.setValue(this.child, "privateInts", Ints);
+      assertEquals(Ints, PA.getValue(this.child, "privateInts"));
+
+      String[] strings = new String[] {"Happy", "Birthday"};
+      PA.setValue(this.child, "privateStrings", strings);
+      assertEquals(strings, PA.getValue(this.child, "privateStrings"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a static field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfStaticField() throws Exception {
+      int previousValue = (Integer) PA.getValue(this.parent, "privateStaticInt");
+      assertTrue(previousValue != -1);
+
+      PA.setValue(this.parent, "privateStaticInt", -1);
+      assertEquals(-1, PA.getValue(this.parent, "privateStaticInt"));
+
+      PA.setValue(Parent.class, "privateStaticInt", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateStaticInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfFinalField() throws Exception {
+      int previousValue = (Integer) PA.getValue(this.parent, "privateFinalInt");
+      assertTrue(previousValue != -2);
+
+      PA.setValue(this.parent, "privateFinalInt", -2);
+      assertEquals(-2, PA.getValue(this.parent, "privateFinalInt"));
+
+      PA.setValue(this.parent, "privateFinalInt", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalInt"));
+   }
+
+   /**
+    * Tests the method <code>setValue</code> with a final field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    */
+   @Test
+   public void testSetValueOfFinalStringField() throws Exception {
+      String previousValue = (String) PA.getValue(this.parent, "privateFinalString");
+      assertTrue(previousValue != "Test");
+
+      PA.setValue(this.parent, "privateFinalString", "Test");
+      assertEquals("Test", PA.getValue(this.parent, "privateFinalString"));
+
+      PA.setValue(this.parent, "privateFinalString", previousValue);
+      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalString"));
+   }
+
+   /**
+    * Tests the method <code>getValue</code>.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    */
+   @Test
+   public final void testGetValue() throws Exception {
+      assertEquals("Charlie", PA.getValue(this.parent, "privateName"));
+
+      assertEquals("Charlie", PA.getValue(this.child, "privateName"));
+      assertEquals(new Integer(8), PA.getValue(this.child, "privateInt"));
+
+      assertEquals("Charlie", PA.getValue(this.childInParent, "privateName"));
+      assertEquals(new Integer(8), PA.getValue(this.childInParent, "privateInt"));
+   }
+
+   /**
+    * Tests the method <code>getValue</code> with a non-existing field.
+    * 
+    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    */
+   @Test
+   public void testGetValueOnInvalidField() throws Exception {
+      try {
+         PA.getValue(this.parent, "noSuchField");
+         fail("should throw RuntimeException");
+      } catch (RuntimeException e) {
+         // that is what we expect
+         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
+         assertEquals("noSuchField", e.getCause().getMessage());
+      }
+
+      try {
+         PA.getValue(this.child, "noSuchField");
+         fail("should throw RuntimeException");
+      } catch (RuntimeException e) {
+         // that is what we expect
+         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
+         assertEquals("noSuchField", e.getCause().getMessage());
+      }
+
+      try {
+         PA.getValue(this.childInParent, "noSuchField");
+         fail("should throw RuntimeException");
+      } catch (RuntimeException e) {
+         // that is what we expect
+         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
+         assertEquals("noSuchField", e.getCause().getMessage());
+      }
+
+      try {
+         PA.getValue(Parent.class, "noSuchField");
+         fail("should throw RuntimeException");
+      } catch (RuntimeException e) {
+         // that is what we expect
+         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
+         assertEquals("noSuchField", e.getCause().getMessage());
+      }
+
+      try {
+         PA.getValue(null, "noSuchField");
+         fail("should throw RuntimeException");
+      } catch (RuntimeException e) {
+         // that is what we expect
+         assertEquals(InvalidParameterException.class, e.getCause().getClass());
+         assertEquals("Can't get field on null object/class", e.getCause().getMessage());
+      }
+
+   }
+
+   /**
+    * Tests the method <code>getValue</code> with a static field.
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    */
+   @Test
+   public void testGetValueOfStaticField() throws Exception {
+      assertEquals(new Integer(1), PA.getValue(this.parent, "privateStaticInt"));
+      assertEquals(new Integer(1), PA.getValue(Parent.class, "privateStaticInt"));
+   }
+
+   @Test
+   public final void testMethodChaining() {
+      PA.setValue(this.child, "privateInt", 6).setValue("privateLong", 8L);
+      assertEquals(6, PA.getValue(this.child, "privateInt"));
+      assertEquals(8L, PA.getValue(this.child, "privateLong"));
+
+      assertEquals(8, PA.setValue(this.child, "privateInt", 8).getValue("privateInt"));
+
+      PA.setValue(this.child, "privateInt", 6).invokeMethod("setInt(int)", 3);
+      assertEquals(3, PA.getValue(this.child, "privateInt"));
    }
 
    /**
@@ -350,89 +580,6 @@ public class PATest {
          "wait(long)", "registerNatives()", "equals(java.lang.Object)", "toString()", "notify()", "notifyAll()"});
       assertTrue("getMethodSignatures didn't return correct signatures",
          PA.getMethodSignatures(this.parent).containsAll(testMethodSignatures));
-   }
-
-   /**
-    * Tests the method <code>getValue</code>.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
-    */
-   @Test
-   public final void testGetValue() throws Exception {
-      assertEquals("Charlie", PA.getValue(this.parent, "privateName"));
-
-      assertEquals("Charlie", PA.getValue(this.child, "privateName"));
-      assertEquals(new Integer(8), PA.getValue(this.child, "privateInt"));
-
-      assertEquals("Charlie", PA.getValue(this.childInParent, "privateName"));
-      assertEquals(new Integer(8), PA.getValue(this.childInParent, "privateInt"));
-   }
-
-   /**
-    * Tests the method <code>getValue</code> with a non-existing field.
-    * 
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
-    */
-   @Test
-   public void testGetValueOnInvalidField() throws Exception {
-      try {
-         PA.getValue(this.parent, "noSuchField");
-         fail("should throw RuntimeException");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
-         assertEquals("noSuchField", e.getCause().getMessage());
-      }
-   
-      try {
-         PA.getValue(this.child, "noSuchField");
-         fail("should throw RuntimeException");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
-         assertEquals("noSuchField", e.getCause().getMessage());
-      }
-   
-      try {
-         PA.getValue(this.childInParent, "noSuchField");
-         fail("should throw RuntimeException");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
-         assertEquals("noSuchField", e.getCause().getMessage());
-      }
-   
-      try {
-         PA.getValue(Parent.class, "noSuchField");
-         fail("should throw RuntimeException");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(NoSuchFieldException.class, e.getCause().getClass());
-         assertEquals("noSuchField", e.getCause().getMessage());
-      }
-   
-      try {
-         PA.getValue(null, "noSuchField");
-         fail("should throw RuntimeException");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(InvalidParameterException.class, e.getCause().getClass());
-         assertEquals("Can't get field on null object/class", e.getCause().getMessage());
-      }
-   
-   }
-
-   /**
-    * Tests the method <code>getValue</code> with a static field.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
-    */
-   @Test
-   public void testGetValueOfStaticField() throws Exception {
-      assertEquals(new Integer(1), PA.getValue(this.parent, "privateStaticInt"));
-      assertEquals(new Integer(1), PA.getValue(Parent.class, "privateStaticInt"));
    }
 
    /**
@@ -720,7 +867,7 @@ public class PATest {
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", "Hello", "Bruno");
          fail("invoking method with single values instead of array as parameters should raise exception");
@@ -746,7 +893,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setInt)(", 5);
          fail("should throw NoSuchMethodException");
@@ -755,7 +902,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "getInt)");
          fail("should throw NoSuchMethodException");
@@ -764,7 +911,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "noSuchMethod()", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -773,7 +920,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.parent, "noSuchMethod()", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -782,7 +929,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.childInParent, "noSuchMethod()", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -791,7 +938,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(Parent.class, "noSuchMethod()", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -817,7 +964,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -826,7 +973,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(java.lang.String", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -835,7 +982,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(java.lang.SString)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -861,7 +1008,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setData(non.existing.package.NonExistingClass)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -870,7 +1017,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setData()");
          fail("should throw NoSuchMethodException");
@@ -879,7 +1026,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.parent, "setData(java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -888,7 +1035,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.childInParent, "setData(java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -897,7 +1044,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(java.lang.String)", 2);
          fail("should throw IllegalArgumentException");
@@ -906,7 +1053,7 @@ public class PATest {
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(.String)", "Heribert");
          fail("should throw NoSuchMethodException");
@@ -915,7 +1062,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(string)", "Heribert");
          fail("should throw NoSuchMethodException");
@@ -924,7 +1071,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setName(NotAString)", "Heribert");
          fail("should throw NoSuchMethodException");
@@ -933,7 +1080,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setData(Integer)", 2);
          fail("should throw NoSuchMethodException");
@@ -942,7 +1089,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setInt(java.lang.String)", (Object[]) null);
          fail("should throw NoSuchMethodException");
@@ -951,7 +1098,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setInt(int)", "Herbert");
          fail("should throw IllegalArgumentException");
@@ -960,7 +1107,7 @@ public class PATest {
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(Parent.class, "setStaticInt(java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -969,7 +1116,7 @@ public class PATest {
          assertEquals(NoSuchMethodException.class, e.getCause().getClass());
          assertNotNull(e.getMessage());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setInt(int)", (Object[]) null);
          fail("should throw IllegalArgumentException");
@@ -996,7 +1143,7 @@ public class PATest {
          // that is what we expect
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Integer[] {4, 3});
       } catch (RuntimeException e) {
@@ -1019,7 +1166,7 @@ public class PATest {
          // that is what we expect
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Integer[] {2});
          fail("invoking method with array of wrong size should raise exception");
@@ -1027,7 +1174,7 @@ public class PATest {
          // that is what we expect
          assertEquals(IllegalArgumentException.class, e.getCause().getClass());
       }
-   
+
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Object[] {3});
          fail("invoking method with array of wrong size should raise exception");
@@ -1080,143 +1227,6 @@ public class PATest {
    public void testInvokeStaticMethod() throws Exception {
       PA.invokeMethod(Parent.class, "setStaticInt(int)", 3);
       assertEquals(3, PA.getValue(Parent.class, "privateStaticInt"));
-   }
-
-   /**
-    * Tests the example given in javadoc of <code>setValue</code>.
-    * 
-    * This test could fail under some JVMs, since setting the value of final fields at other times than instantiation can have
-    * unpredictable effects.
-    * 
-    * @see java.lang.reflect.Field.set(java.lang.Object, java.lang.Object)
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetGetValueExample() throws Exception {
-      String myString = "Test";
-      PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'}); // sets the final field value
-      PA.setValue(myString.getClass(), "serialVersionUID", 1); // sets the static final field serialVersionUID
-
-      assertTrue(Arrays.equals(new char[] {'T', 'e', 's', 't'}, (char[]) PA.getValue(myString, "value")));
-      assertEquals(1L, PA.getValue(String.class, "serialVersionUID"));
-   }
-
-   /**
-    * Tests the method <code>setValue</code>.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetGetValueWithPrimitives() throws Exception {
-      PA.setValue(this.child, "privateInt", 6);
-      assertEquals(6, PA.getValue(this.child, "privateInt"));
-
-      PA.setValue(this.childInParent, "privateInt", 6);
-      assertEquals(6, PA.getValue(this.childInParent, "privateInt"));
-
-      PA.setValue(this.child, "privateLong", 8L);
-      assertEquals(8L, PA.getValue(this.child, "privateLong"));
-
-      PA.setValue(this.child, "privateShort", (short) 6);
-      assertEquals((short) 6, PA.getValue(this.child, "privateShort"));
-
-      PA.setValue(this.child, "privateByte", (byte) 2);
-      assertEquals((byte) 2, PA.getValue(this.child, "privateByte"));
-
-      PA.setValue(this.child, "privateChar", 'F');
-      assertEquals('F', PA.getValue(this.child, "privateChar"));
-
-      PA.setValue(this.child, "privateBoolean", true);
-      assertEquals(true, PA.getValue(this.child, "privateBoolean"));
-
-      PA.setValue(this.child, "privateFloat", 1.5f);
-      assertEquals(1.5f, PA.getValue(this.child, "privateFloat"));
-
-      PA.setValue(this.child, "privateDouble", 1.175);
-      assertEquals(1.175, PA.getValue(this.child, "privateDouble"));
-   }
-
-   /**
-    * Tests the method <code>setValue</code>.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetGetValueWithObjectsAndArrays() throws Exception {
-      PA.setValue(this.parent, "privateName", "Hubert");
-      assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
-
-      PA.setValue(this.child, "privateName", "Hubert");
-      assertEquals("Hubert", PA.getValue(this.child, "privateName"));
-
-      PA.setValue(this.childInParent, "privateName", "Hubert");
-      assertEquals("Hubert", PA.getValue(this.childInParent, "privateName"));
-
-      int[] Ints = new int[] {1, 2, 3};
-      PA.setValue(this.child, "privateInts", Ints);
-      assertEquals(Ints, PA.getValue(this.child, "privateInts"));
-
-      String[] strings = new String[] {"Happy", "Birthday"};
-      PA.setValue(this.child, "privateStrings", strings);
-      assertEquals(strings, PA.getValue(this.child, "privateStrings"));
-   }
-
-   /**
-    * Tests the method <code>setValue</code> with a static field.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetValueOfStaticField() throws Exception {
-      int previousValue = (Integer) PA.getValue(this.parent, "privateStaticInt");
-      assertTrue(previousValue != -1);
-
-      PA.setValue(this.parent, "privateStaticInt", -1);
-      assertEquals(-1, PA.getValue(this.parent, "privateStaticInt"));
-
-      PA.setValue(Parent.class, "privateStaticInt", previousValue);
-      assertEquals(previousValue, PA.getValue(this.parent, "privateStaticInt"));
-   }
-
-   /**
-    * Tests the method <code>setValue</code> with a final field.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetValueOfFinalField() throws Exception {
-      int previousValue = (Integer) PA.getValue(this.parent, "privateFinalInt");
-      assertTrue(previousValue != -2);
-
-      PA.setValue(this.parent, "privateFinalInt", -2);
-      assertEquals(-2, PA.getValue(this.parent, "privateFinalInt"));
-
-      PA.setValue(this.parent, "privateFinalInt", previousValue);
-      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalInt"));
-   }
-
-   /**
-    * Tests the method <code>setValue</code> with a final field.
-    * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
-    */
-   @Test
-   public void testSetValueOfFinalStringField() throws Exception {
-      String previousValue = (String) PA.getValue(this.parent, "privateFinalString");
-      assertTrue(previousValue != "Test");
-
-      PA.setValue(this.parent, "privateFinalString", "Test");
-      assertEquals("Test", PA.getValue(this.parent, "privateFinalString"));
-
-      PA.setValue(this.parent, "privateFinalString", previousValue);
-      assertEquals(previousValue, PA.getValue(this.parent, "privateFinalString"));
    }
 
    /**
