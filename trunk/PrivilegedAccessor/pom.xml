@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.emovimento.tinylibs</groupId>
+	<groupId>com.e-movimento.tinylibs</groupId>
 	<artifactId>privilegedaccessor</artifactId>
 	<version>1.2.1-SNAPSHOT</version>
 	<name>privileged accessor</name>
