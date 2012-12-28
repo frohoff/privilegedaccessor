@@ -4,8 +4,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>junit.extensions</groupId>
-	<artifactId>pa</artifactId>
+	<groupId>com.emovimento.tinylibs</groupId>
+	<artifactId>privilegedaccessor</artifactId>
 	<version>1.2.1-SNAPSHOT</version>
 	<name>privileged accessor</name>
 	<description>
@@ -66,13 +66,22 @@
 				<role>developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>lubos.bistak</id>
+			<name>Lubos Bistak</name>
+			<email>lubos.bistak@gmail.com</email>
+			<timezone>+1</timezone>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
 	</developers>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.9</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -348,4 +357,12 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	<organization>
+		<name>e-movimento</name>
+		<url>http://www.e-movimento.com</url>
+	</organization>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://privileged-accessor.ci.cloudbees.com/</url>
+	</ciManagement>
 </project>
