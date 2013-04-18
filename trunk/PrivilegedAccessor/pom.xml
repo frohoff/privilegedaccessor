@@ -81,12 +81,12 @@
 			</roles>
 		</developer>
 	</developers>
-	
+
 	<organization>
 		<name>e-movimento</name>
 		<url>http://www.e-movimento.com</url>
 	</organization>
-	
+
 	<ciManagement>
 		<system>Jenkins</system>
 		<url>https://privileged-accessor.ci.cloudbees.com/</url>
@@ -124,7 +124,7 @@
 					</uploads>
 				</configuration>
 			</plugin>
-			
+
 			<!-- to set the version for the compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +134,35 @@
 					<target>${version.java}</target>
 				</configuration>
 			</plugin>
-			
+
+			<!-- to generate sources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- to generate javadocs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -159,7 +187,7 @@
 					<locales>en</locales>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>clirr-maven-plugin</artifactId>
@@ -217,11 +245,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 
 			<plugin>
