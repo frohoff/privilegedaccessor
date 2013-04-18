@@ -98,7 +98,7 @@ public class PA {
       try {
          return PrivilegedAccessor.getValue(instanceOrClass, fieldName);
       } catch (Exception e) {
-         throw new RuntimeException(e.getMessage(), e);
+         throw new IllegalArgumentException("Can't get value of " + fieldName + " from " + instanceOrClass, e);
       }
    }
 
@@ -116,7 +116,7 @@ public class PA {
       try {
          return PrivilegedAccessor.instantiate(fromClass, argumentTypes, args);
       } catch (Exception e) {
-         throw new RuntimeException(e.getMessage(), e);
+         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + args, e);
       }
    }
 
@@ -127,7 +127,7 @@ public class PA {
       try {
          return PrivilegedAccessor.instantiate(fromClass, args);
       } catch (Exception e) {
-         throw new RuntimeException(e.getMessage(), e);
+         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + args, e);
       }
    }
 
@@ -138,7 +138,8 @@ public class PA {
       try {
          return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
       } catch (Exception e) {
-         throw new RuntimeException(e.getMessage(), e);
+         throw new IllegalArgumentException("Can't invoke method " + methodSignature + " on " + instanceOrClass + " with arguments "
+            + arguments, e);
       }
    }
 
@@ -157,9 +158,7 @@ public class PA {
     * @return arguments possibly converted
     */
    private static Object[] correctVarargs(final Object... arguments) {
-      if (arguments == null || changedByVararg(arguments)) {
-         return new Object[] {arguments};
-      }
+      if ((arguments == null) || changedByVararg(arguments)) return new Object[] {arguments};
       return arguments;
    }
 
@@ -178,13 +177,9 @@ public class PA {
     * @return true if parameters were changes by varargs, false otherwise
     */
    private static boolean changedByVararg(final Object[] parameters) {
-      if (parameters.length == 0 || parameters[0] == null) {
-         return false;
-      }
+      if ((parameters.length == 0) || (parameters[0] == null)) return false;
 
-      if (parameters.getClass() == Object[].class) {
-         return false;
-      }
+      if (parameters.getClass() == Object[].class) return false;
 
       return true;
    }
@@ -196,7 +191,7 @@ public class PA {
       try {
          PrivilegedAccessor.setValue(instanceOrClass, fieldName, value);
       } catch (Exception e) {
-         throw new RuntimeException(e.getMessage(), e);
+         throw new IllegalArgumentException("Can't set value " + value + " at " + fieldName + " in " + instanceOrClass, e);
       }
       return new PA(instanceOrClass);
    }

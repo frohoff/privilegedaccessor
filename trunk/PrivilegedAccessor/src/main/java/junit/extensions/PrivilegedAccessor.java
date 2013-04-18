@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -69,24 +70,22 @@ public final class PrivilegedAccessor {
    public static String toString(final Object instanceOrClass) {
       Collection<String> fields = getFieldNames(instanceOrClass);
 
-      if (fields.size() == 0) {
-         return getClass(instanceOrClass).getName();
-      }
+      if (fields.isEmpty()) return getClass(instanceOrClass).getName();
 
-      StringBuffer sb = new StringBuffer();
+      StringBuffer stringBuffer = new StringBuffer();
 
-      sb.append(getClass(instanceOrClass).getName() + " {");
+      stringBuffer.append(getClass(instanceOrClass).getName() + " {");
 
       for (String fieldName : fields) {
          try {
-            sb.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
+            stringBuffer.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
          } catch (NoSuchFieldException e) {
             assert false : "It should always be possible to get a field that was just here";
          }
       }
 
-      sb.replace(sb.lastIndexOf(", "), sb.length(), "}");
-      return sb.toString();
+      stringBuffer.replace(stringBuffer.lastIndexOf(", "), stringBuffer.length(), "}");
+      return stringBuffer.toString();
    }
 
    /**
@@ -97,9 +96,7 @@ public final class PrivilegedAccessor {
     * @return the collection of field names of the given instance or class
     */
    public static Collection<String> getFieldNames(final Object instanceOrClass) {
-      if (instanceOrClass == null) {
-         return new ArrayList<String>();
-      }
+      if (instanceOrClass == null) return Collections.EMPTY_LIST;
 
       Class<?> clazz = getClass(instanceOrClass);
       Field[] fields = clazz.getDeclaredFields();
@@ -121,9 +118,7 @@ public final class PrivilegedAccessor {
     * @return the collection of method signatures of the given instance or class
     */
    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
-      if (instanceOrClass == null) {
-         return new ArrayList<String>();
-      }
+      if (instanceOrClass == null) return Collections.EMPTY_LIST;
 
       Class<?> clazz = getClass(instanceOrClass);
       Method[] methods = clazz.getDeclaredMethods();
@@ -220,9 +215,8 @@ public final class PrivilegedAccessor {
     */
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object[] arguments)
       throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-      if (methodSignature.indexOf('(') == -1 || methodSignature.indexOf('(') >= methodSignature.indexOf(')')) {
+      if ((methodSignature.indexOf('(') == -1) || (methodSignature.indexOf('(') >= methodSignature.indexOf(')')))
          throw new NoSuchMethodException(methodSignature);
-      }
       Class<?>[] parameterTypes = getParameterTypes(methodSignature);
       return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
          getCorrectedArguments(parameterTypes, arguments));
@@ -240,20 +234,14 @@ public final class PrivilegedAccessor {
     */
    private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) throws NoSuchMethodException,
       IllegalArgumentException {
-      if (arguments == null) {
-         return arguments;
-      }
-      if (parameterTypes.length > arguments.length) {
-         return arguments;
-      }
-      if (parameterTypes.length < arguments.length) {
-         return getCorrectedArguments(parameterTypes, new Object[] {arguments});
-      }
+      if (arguments == null) return arguments;
+      if (parameterTypes.length > arguments.length) return arguments;
+      if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
 
       Object[] correctedArguments = new Object[arguments.length];
       int currentArgument = 0;
       for (Class<?> parameterType : parameterTypes) {
-         if (parameterType.isArray() && arguments[currentArgument] != null && !arguments[currentArgument].getClass().isArray()) {
+         if (parameterType.isArray() && (arguments[currentArgument] != null) && !arguments[currentArgument].getClass().isArray()) {
             correctedArguments[currentArgument] = new Object[] {arguments[currentArgument]};
          } else {
             correctedArguments[currentArgument] = arguments[currentArgument];
@@ -310,7 +298,7 @@ public final class PrivilegedAccessor {
       }
 
       try {
-         return Class.forName(className, false, PrivilegedAccessor.class.getClassLoader());
+         return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
       } catch (ClassNotFoundException e) {
          return getSpecialClassForName(className);
       }
@@ -343,13 +331,9 @@ public final class PrivilegedAccessor {
     * @throws ClassNotFoundException if the class could not be found
     */
    private static Class<?> getSpecialClassForName(final String className) throws ClassNotFoundException {
-      if (PRIMITIVE_MAPPER.containsKey(className)) {
-         return PRIMITIVE_MAPPER.get(className);
-      }
+      if (PRIMITIVE_MAPPER.containsKey(className)) return PRIMITIVE_MAPPER.get(className);
 
-      if (missesPackageName(className)) {
-         return getStandardClassForName(className);
-      }
+      if (missesPackageName(className)) return getStandardClassForName(className);
 
       throw new ClassNotFoundException(className);
    }
@@ -363,10 +347,10 @@ public final class PrivilegedAccessor {
     */
    private static Class<?> getStandardClassForName(String className) throws ClassNotFoundException {
       try {
-         return Class.forName("java.lang." + className, false, ClassLoader.getSystemClassLoader());
+         return Class.forName("java.lang." + className, false, Thread.currentThread().getContextClassLoader());
       } catch (ClassNotFoundException e) {
          try {
-            return Class.forName("java.util." + className, false, ClassLoader.getSystemClassLoader());
+            return Class.forName("java.util." + className, false, Thread.currentThread().getContextClassLoader());
          } catch (ClassNotFoundException e1) {
             throw new ClassNotFoundException(className);
          }
@@ -380,12 +364,8 @@ public final class PrivilegedAccessor {
     * @return true if the className might miss its package name, otherwise false
     */
    private static boolean missesPackageName(String className) {
-      if (className.contains(".")) {
-         return false;
-      }
-      if (className.startsWith(className.substring(0, 1).toUpperCase())) {
-         return true;
-      }
+      if (className.contains(".")) return false;
+      if (className.startsWith(className.substring(0, 1).toUpperCase())) return true;
       return false;
    }
 
@@ -414,9 +394,7 @@ public final class PrivilegedAccessor {
     */
    private static Field getField(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
       InvalidParameterException {
-      if (instanceOrClass == null) {
-         throw new InvalidParameterException("Can't get field on null object/class");
-      }
+      if (instanceOrClass == null) throw new InvalidParameterException("Can't get field on null object/class");
 
       Class<?> type = getClass(instanceOrClass);
 
@@ -425,9 +403,7 @@ public final class PrivilegedAccessor {
          field.setAccessible(true);
          return field;
       } catch (NoSuchFieldException e) {
-         if (type.getSuperclass() == null) {
-            throw new NoSuchFieldException(fieldName);
-         }
+         if (type.getSuperclass() == null) throw e;
          return getField(type.getSuperclass(), fieldName);
       }
    }
@@ -439,9 +415,7 @@ public final class PrivilegedAccessor {
     * @return the class of the given parameter
     */
    private static Class<?> getClass(final Object instanceOrClass) {
-      if (instanceOrClass instanceof Class) {
-         return (Class<?>) instanceOrClass;
-      }
+      if (instanceOrClass instanceof Class) return (Class<?>) instanceOrClass;
 
       return instanceOrClass.getClass();
    }
@@ -460,9 +434,7 @@ public final class PrivilegedAccessor {
       try {
          return type.getDeclaredMethod(methodName, parameterTypes);
       } catch (NoSuchMethodException e) {
-         if (type.getSuperclass() == null) {
-            throw new NoSuchMethodException(type.getName() + "." + methodName + "(" + getParameterTypesAsString(parameterTypes) + ")");
-         }
+         if (type.getSuperclass() == null) throw e;
          return getMethod(type.getSuperclass(), methodName, parameterTypes);
       }
    }
@@ -510,9 +482,7 @@ public final class PrivilegedAccessor {
     * @return the class-types of the arguments
     */
    private static Class<?>[] getParameterTypes(final Object[] parameters) {
-      if (parameters == null) {
-         return new Class[0];
-      }
+      if (parameters == null) return new Class[0];
 
       Class<?>[] typesOfParameters = new Class[parameters.length];
 
@@ -542,7 +512,9 @@ public final class PrivilegedAccessor {
          try {
             typesInSignature[x] = getClassForName(className);
          } catch (ClassNotFoundException e) {
-            throw new NoSuchMethodException(methodSignature);
+            NoSuchMethodException noSuchMethodException = new NoSuchMethodException(methodSignature);
+            noSuchMethodException.initCause(e);
+            throw noSuchMethodException;
          }
       }
       return typesInSignature;
@@ -558,9 +530,7 @@ public final class PrivilegedAccessor {
     */
    private static String getParameterTypesAsString(final Class<?>[] classTypes) {
       assert classTypes != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
-      if (classTypes.length == 0) {
-         return "";
-      }
+      if (classTypes.length == 0) return "";
 
       StringBuilder parameterTypes = new StringBuilder();
       for (Class<?> clazz : classTypes) {
