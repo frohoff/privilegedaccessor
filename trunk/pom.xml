@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.e-movimento.tinytools</groupId>
 	<artifactId>privilegedaccessor</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 	<name>privileged accessor</name>
 	<description>
 		gives privileged access to private and protected methods and attributes.
@@ -36,9 +35,9 @@
 	</properties>
 
 	<scm>
-		<url>http://privilegedaccessor.googlecode.com/svn/trunk/</url>
-		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</url>
+		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</connection>
+		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</developerConnection>
 	</scm>
 
 	<!-- Used to upload artifacts to google code - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
