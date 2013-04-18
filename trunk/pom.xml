@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.e-movimento.tinytools</groupId>
 	<artifactId>privilegedaccessor</artifactId>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>privileged accessor</name>
 	<description>
 		gives privileged access to private and protected methods and attributes.
@@ -41,12 +42,12 @@
 	</scm>
 
 	<!-- Used to upload artifacts to google code - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
-	<distributionManagement>
-		<repository>
-			<id>privilegedaccessor-release</id>
-			<url>dav:https://privilegedaccessor.googlecode.com/svn/maven2/releases</url>
-		</repository>
-	</distributionManagement>
+	<!-- <distributionManagement> -->
+	<!-- <repository> -->
+	<!-- <id>sonatype-nexus-staging</id> -->
+	<!-- <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url> -->
+	<!-- </repository> -->
+	<!-- </distributionManagement> -->
 
 	<!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
 	<!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
@@ -121,6 +122,18 @@
 							</labels>
 						</upload>
 					</uploads>
+				</configuration>
+			</plugin>
+
+			<!-- to automatically deploy releases to nexus - see http://www.sonatype.com/books/nexus-book/reference/staging-sect-deployment.html#staging-sect-deployment-nexus-staging-maven-plugin -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.2</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>local-nexus</serverId>
+					<nexusUrl>http://localhost:8081/nexus/</nexusUrl>
 				</configuration>
 			</plugin>
 
