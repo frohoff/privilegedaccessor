@@ -5,7 +5,7 @@
 
 	<groupId>com.e-movimento.tinytools</groupId>
 	<artifactId>privilegedaccessor</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2-SNAPSHOT</version>
 	<name>privileged accessor</name>
 	<description>
 		gives privileged access to private and protected methods and attributes.
@@ -35,9 +35,9 @@
 	</properties>
 
 	<scm>
-		<url>http://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</url>
-		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</connection>
-		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/tags/privilegedaccessor-1.2.1</developerConnection>
+		<url>http://privilegedaccessor.googlecode.com/svn/trunk/</url>
+		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/trunk/</developerConnection>
 	</scm>
 
 	<!-- Used to upload artifacts to google code - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
