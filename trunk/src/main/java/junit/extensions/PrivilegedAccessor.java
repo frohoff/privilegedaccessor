@@ -226,14 +226,11 @@ public final class PrivilegedAccessor {
     * Gets the given arguments corrected to math the given methodSignature. Correction is necessary for array arguments not to be
     * mistaken by varargs.
     * 
-    * @param methodSignature
-    * @param arguments
-    * @return
-    * @throws IllegalArgumentException
-    * @throws NoSuchMethodException
+    * @param parameterTypes the method signatue the given arguments should match
+    * @param arguments the arguments that should be corrected
+    * @return the corrected arguments
     */
-   private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) throws NoSuchMethodException,
-      IllegalArgumentException {
+   private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) {
       if (arguments == null) return arguments;
       if (parameterTypes.length > arguments.length) return arguments;
       if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
@@ -526,7 +523,7 @@ public final class PrivilegedAccessor {
     * @param classTypes the types to get as names.
     * @return the parameter types as a string
     * 
-    * @see java.lang.Class#argumentTypesAsString()
+    * @see java.lang.Class#argumentTypesToString(Class[])
     */
    private static String getParameterTypesAsString(final Class<?>[] classTypes) {
       assert classTypes != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
