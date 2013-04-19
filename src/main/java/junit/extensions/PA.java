@@ -71,6 +71,13 @@ public class PA {
    }
 
    /**
+    * Returns a string representation of the given object. The string has the following format: "<classname> {<attributes and values>}"
+    * whereas <attributes and values> is a comma separated list with <attributeName>=<attributeValue> <atributes and values> includes
+    * all attributes of the objects class followed by the attributes of its superclass (if any) and so on.
+    * 
+    * @param instanceOrClass the object or class to get a string representation of
+    * @return a string representation of the given object
+    * 
     * @see PrivilegedAccessor#toString(Object)
     */
    public static String toString(final Object instanceOrClass) {
@@ -78,6 +85,12 @@ public class PA {
    }
 
    /**
+    * Gets the name of all fields (public, private, protected, default) of the given instance or class. This includes as well all
+    * fields (public, private, protected, default) of all its super classes.
+    * 
+    * @param instanceOrClass the instance or class to get the fields of
+    * @return the collection of field names of the given instance or class
+    * 
     * @see PrivilegedAccessor#getFieldNames(Object)
     */
    public static Collection<String> getFieldNames(final Object instanceOrClass) {
@@ -85,6 +98,12 @@ public class PA {
    }
 
    /**
+    * Gets the signatures of all methods (public, private, protected, default) of the given instance or class. This includes as well
+    * all methods (public, private, protected, default) of all its super classes. This does not include constructors.
+    * 
+    * @param instanceOrClass the instance or class to get the method signatures of
+    * @return the collection of method signatures of the given instance or class
+    * 
     * @see PrivilegedAccessor#getMethodSignatures(Object)
     */
    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
@@ -92,7 +111,14 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#getValue(Object, String)
+    * Gets the value of the named field and returns it as an object. If instanceOrClass is a class then a static field is returned.
+    * 
+    * @param instanceOrClass the instance or class to get the field from
+    * @param fieldName the name of the field
+    * @return an object representing the value of the field
+    * @throws IllegalArgumentException if the field does not exist
+    * 
+    * @see PrivilegedAccessor#getValue(Object,String)
     */
    public static Object getValue(final Object instanceOrClass, final String fieldName) {
       try {
@@ -103,14 +129,34 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#getValue(Object, String)
+    * Gets the value of the named field and returns it as an object.
+    * 
+    * @param fieldName the name of the field
+    * @return an object representing the value of the field
+    * @throws IllegalArgumentException if the field does not exist
+    * 
+    * @see PA#getValue(Object,String)
     */
    public Object getValue(final String fieldName) {
       return PA.getValue(instanceOrClass, fieldName);
    }
 
    /**
-    * @see PrivilegedAccessor#invokeMethod(Object,String,Object)
+    * Instantiates an object of the given class with the given arguments and the given argument types. If you want to instantiate a
+    * member class, you must provide the object it is a member of as first argument.
+    * 
+    * @param fromClass the class to instantiate an object from
+    * @param args the arguments to pass to the constructor
+    * @param argumentTypes the fully qualified types of the arguments of the constructor
+    * @return an object of the given type
+    * @throws IllegalArgumentException if the class can't be instantiated. This could be the case if the number of actual and formal
+    *            parameters differ; if an unwrapping conversion for primitive arguments fails; if, after possible unwrapping, a
+    *            parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion; if
+    *            this Constructor object enforces Java language access control and the underlying constructor is inaccessible; if the
+    *            underlying constructor throws an exception; if the constructor could not be found; or if the class that declares the
+    *            underlying constructor represents an abstract class.
+    * 
+    * @see PrivilegedAccessor#instantiate(Class,Class[],Object[])
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... args) {
       try {
@@ -121,7 +167,20 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#instantiate(Class, Class[], Object...)
+    * Instantiates an object of the given class with the given arguments. If you want to instantiate a member class, you must provide
+    * the object it is a member of as first argument.
+    * 
+    * @param fromClass the class to instantiate an object from
+    * @param args the arguments to pass to the constructor
+    * @return an object of the given type
+    * @throws IllegalArgumentException if the class can't be instantiated. This could be the case if the number of actual and formal
+    *            parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a
+    *            parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion; if
+    *            this Constructor object enforces Java language access control and the underlying constructor is inaccessible; if the
+    *            underlying constructor throws an exception; if the constructor could not be found; or if the class that declares the
+    *            underlying constructor represents an abstract class.
+    * 
+    * @see PrivilegedAccessor#instantiate(Class,Object[])
     */
    public static <T> T instantiate(final Class<? extends T> fromClass, final Object... args) {
       try {
@@ -132,7 +191,19 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#invokeMethod(Object, String, Object...)
+    * Calls a method on the given object instance with the given arguments. Arguments can be object types or representations for
+    * primitives.
+    * 
+    * @param instanceOrClass the instance or class to invoke the method on
+    * @param methodSignature the name of the method and the parameters <br>
+    *           (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
+    * @param arguments an array of objects to pass as arguments
+    * @return the return value of this method or null if void
+    * @throws IllegalArgumentException if the method could not be invoked. This could be the case if the method is inaccessible; if the
+    *            underlying method throws an exception; if no method with the given <code>methodSignature</code> could be found; or if
+    *            an argument couldn't be converted to match the expected type
+    * 
+    * @see PrivilegedAccessor#invokeMethod(Object,String,Object[])
     */
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object... arguments) {
       try {
@@ -144,7 +215,16 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#invokeMethod(Object, String, Object...)
+    * Calls a method with the given arguments. Arguments can be object types or representations for primitives.
+    * 
+    * @param methodSignature the name of the method and the parameters <br>
+    *           (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
+    * @param arguments an array of objects to pass as arguments
+    * @return the return value of this method or null if void
+    * @throws IllegalArgumentException if the method could not be invoked. This could be the case if the method is inaccessible; if the
+    *            underlying method throws an exception; if no method with the given <code>methodSignature</code> could be found; or if
+    *            an argument couldn't be converted to match the expected type
+    * @see PA#invokeMethod(Object, String, Object...)
     */
    public Object invokeMethod(final String methodSignature, final Object... arguments) {
       return PA.invokeMethod(instanceOrClass, methodSignature, arguments);
@@ -185,7 +265,30 @@ public class PA {
    }
 
    /**
-    * @see PrivilegedAccessor#setValue(Object, String, Object)
+    * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
+    * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
+    * at other times than instantiation can have unpredictable effects.<br/>
+    * <br/>
+    * Example:<br/>
+    * <br/>
+    * <code>
+    * String myString = "Test"; <br/>
+    * <br/>
+    * //setting the private field value<br/>
+    * PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+    * <br/>
+    * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
+    * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+    * <br/>
+    * </code>
+    * 
+    * @param instanceOrClass the instance or class to set the field
+    * @param fieldName the name of the field
+    * @param value the new value of the field
+    * @throws IllegalArgumentException if the value could not be set. This could be the case if no field with the given
+    *            <code>fieldName</code> can be found; or if the field was final
+    * 
+    * @see PrivilegedAccessor.setValue(Object,String,Object)
     */
    public static PA setValue(final Object instanceOrClass, final String fieldName, final Object value) {
       try {
@@ -216,8 +319,10 @@ public class PA {
     * 
     * @param fieldName the name of the field
     * @param value the new value of the field
-    * @throws NoSuchFieldException if no field with the given <code>fieldName</code> can be found
-    * @throws IllegalAccessException possibly if the field was final
+    * @throws IllegalArgumentException if the value could not be set. This could be the case if no field with the given
+    *            <code>fieldName</code> can be found; or if the field was final
+    * 
+    * @see PA.setValue(Object,String,Object)
     */
    public PA setValue(final String fieldName, final Object value) {
       PA.setValue(instanceOrClass, fieldName, value);

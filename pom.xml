@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -22,11 +23,18 @@
 		</license>
 	</licenses>
 
+	<!-- Used to upload artifacts to maven central - provides e.g. distributionManagement -->
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+	
+	<!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
+	<!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
+	<!-- <repositories></repositories> -->
+	<!-- <pluginRepositories></pluginRepositories> -->
+	
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,19 +47,6 @@
 		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/trunk/</connection>
 		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/trunk/</developerConnection>
 	</scm>
-
-	<!-- Used to upload artifacts to google code - see http://docs.codehaus.org/display/MAVENUSER/MavenAndSourceforge -->
-	<!-- <distributionManagement> -->
-	<!-- <repository> -->
-	<!-- <id>sonatype-nexus-staging</id> -->
-	<!-- <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url> -->
-	<!-- </repository> -->
-	<!-- </distributionManagement> -->
-
-	<!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
-	<!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
-	<!-- <repositories></repositories> -->
-	<!-- <pluginRepositories></pluginRepositories> -->
 
 	<issueManagement>
 		<system>Google Code</system>
