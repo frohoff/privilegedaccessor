@@ -64,7 +64,7 @@ public class Parent {
    }
 
    @SuppressWarnings("unused")
-   private void setNameWithVarargs(String... name) {
+   private void setNamesWithVarargs(String... name) {
       this.privateName = name[0];
       this.privateObject = name[1];
    }
