@@ -126,8 +126,8 @@ public class PrivilegedAccessorTest {
          "privateObject", "privateStaticInt"});
       assertTrue("getFieldNames() returned wrong field names", PrivilegedAccessor.getFieldNames(this.child)
          .containsAll(testFieldNames));
-      assertTrue("getFieldNames() returned wrong field names", PrivilegedAccessor.getFieldNames(this.childInParent).containsAll(
-         testFieldNames));
+      assertTrue("getFieldNames() returned wrong field names",
+         PrivilegedAccessor.getFieldNames(this.childInParent).containsAll(testFieldNames));
    }
 
    /**
@@ -253,10 +253,10 @@ public class PrivilegedAccessorTest {
    @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateWithTypes() throws Exception {
-      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new Class[] {String.class, Object.class},
-         new Object[] {"Charlie", "Brown"}));
-      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class},
-         new Object[] {"Charlie", 8}));
+      assertEquals(this.parent,
+         PrivilegedAccessor.instantiate(Parent.class, new Class[] {String.class, Object.class}, new Object[] {"Charlie", "Brown"}));
+      assertEquals(this.childInParent,
+         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class}, new Object[] {"Charlie", 8}));
    }
 
    /**
@@ -306,8 +306,8 @@ public class PrivilegedAccessorTest {
       }
 
       try {
-         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class, String.class}, new Object[] {
-            "Charlie", 8, "Brown"});
+         PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class, String.class}, new Object[] {"Charlie",
+            8, "Brown"});
          fail("instantiating with wrong parameter count should throw Exception");
       } catch (Exception e) {
          // this is what we expect
@@ -692,12 +692,14 @@ public class PrivilegedAccessorTest {
     */
    @Test
    @SuppressWarnings("deprecation")
-   public void testAutoboxingNotSupported() throws Exception {
-      try {
-         PrivilegedAccessor.invokeMethod(this.child, "setPrivateInts(int[])", new Integer[] {1, 2});
-         fail("invoking method with single values instead of array as parameters should raise exception");
-      } catch (IllegalArgumentException e) {
-         // that is what we expect
+   public void testAutoboxing() throws Exception {
+      Integer[] integers = new Integer[] {1, 2, 3};
+      PrivilegedAccessor.invokeMethod(this.child, "setPrivateInts(int[])", integers);
+      int[] ints = (int[]) PA.getValue(this.child, "privateInts");
+
+      assertEquals(ints.length, integers.length);
+      for (int x = 0; x < ints.length; x++) {
+         assertEquals((Integer) ints[x], integers[x]);
       }
    }
 
@@ -1070,16 +1072,14 @@ public class PrivilegedAccessorTest {
    @Test
    @SuppressWarnings("deprecation")
    public void testInstantiateInnerClass() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
-         new Object[] {this.child});
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"), new Object[] {this.child});
       assertEquals(Class.forName("junit.extensions.Child$InnerChild"), tic.getClass());
    }
 
    @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerClass() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
-         new Object[] {this.child});
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"), new Object[] {this.child});
       PrivilegedAccessor.setValue(tic, "privateInnerInt", 5);
       assertEquals(5, PrivilegedAccessor.getValue(tic, "privateInnerInt"));
    }
@@ -1087,8 +1087,7 @@ public class PrivilegedAccessorTest {
    @Test
    @SuppressWarnings("deprecation")
    public void testAccessInnerMethod() throws Exception {
-      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"),
-         new Object[] {this.child});
+      Object tic = PrivilegedAccessor.instantiate(Class.forName("junit.extensions.Child$InnerChild"), new Object[] {this.child});
       PrivilegedAccessor.invokeMethod(tic, "setPrivateInnerInt(int)", new Object[] {7});
       assertEquals(7, PrivilegedAccessor.invokeMethod(tic, "getPrivateInnerInt()", null));
    }

@@ -223,7 +223,7 @@ public final class PrivilegedAccessor {
    }
 
    /**
-    * Gets the given arguments corrected to math the given methodSignature. Correction is necessary for array arguments not to be
+    * Gets the given arguments corrected to match the given methodSignature. Correction is necessary for array arguments not to be
     * mistaken by varargs.
     * 
     * @param parameterTypes the method signatue the given arguments should match
@@ -238,14 +238,46 @@ public final class PrivilegedAccessor {
       Object[] correctedArguments = new Object[arguments.length];
       int currentArgument = 0;
       for (Class<?> parameterType : parameterTypes) {
-         if (parameterType.isArray() && (arguments[currentArgument] != null) && !arguments[currentArgument].getClass().isArray()) {
-            correctedArguments[currentArgument] = new Object[] {arguments[currentArgument]};
-         } else {
-            correctedArguments[currentArgument] = arguments[currentArgument];
-         }
+         correctedArguments[currentArgument] = getCorrectedArgument(parameterType, arguments[currentArgument]);
          currentArgument++;
       }
       return correctedArguments;
+   }
+
+   /**
+    * Gets the given argument corrected to match the given parameterType. Correction is necessary for array arguments not to be
+    * mistaken by varargs.
+    * 
+    * @param parameterType the type to match the given argument upon
+    * @param argument the argument to match the given parameterType
+    * @return the corrected argument
+    */
+   private static Object getCorrectedArgument(Class<?> parameterType, Object argument) {
+      if (!parameterType.isArray() || (argument == null)) {
+         return argument; // normal argument for normal parameterType
+      }
+
+      if (!argument.getClass().isArray()) {
+         return new Object[] {argument};
+      }
+
+      if (parameterType.equals(argument.getClass())) return argument; // no need to cast
+
+      // (typed) array argument for (object) array parameterType, elements need to be casted
+      Object correctedArrayArgument = Array.newInstance(parameterType.getComponentType(), Array.getLength(argument));
+      for (int index = 0; index < Array.getLength(argument); index++) {
+         if (parameterType.getComponentType().isPrimitive()) { // rely on autoboxing
+            Array.set(correctedArrayArgument, index, Array.get(argument, index));
+         } else { // cast to expected type
+            try {
+               Array.set(correctedArrayArgument, index, parameterType.getComponentType().cast(Array.get(argument, index)));
+            } catch (ClassCastException e) {
+               throw new IllegalArgumentException("Argument " + argument + " of type " + argument.getClass()
+                  + " does not match expected argument type " + parameterType + ".");
+            }
+         }
+      }
+      return correctedArrayArgument;
    }
 
    /**
@@ -291,6 +323,11 @@ public final class PrivilegedAccessor {
    private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
       if (className.indexOf('[') > -1) {
          Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
+         return Array.newInstance(clazz, 0).getClass();
+      }
+
+      if (className.indexOf("...") > -1) {
+         Class<?> clazz = getClassForName(className.substring(0, className.indexOf("...")));
          return Array.newInstance(clazz, 0).getClass();
       }
 

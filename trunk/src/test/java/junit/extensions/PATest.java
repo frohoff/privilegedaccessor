@@ -174,19 +174,19 @@ public class PATest {
    }
 
    /**
-    * Tests Autoboxing not supported
+    * Tests Autoboxing
     * 
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testAutoboxingNotSupported() throws Exception {
-      try {
-         PA.invokeMethod(this.child, "setPrivateInts(int[])", new Integer[] {1, 2});
-         fail("invoking method with single values instead of array as parameters should raise exception");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-         assertNotNull(e.getMessage());
+   public void testAutoboxing() throws Exception {
+      Integer[] integers = new Integer[] {1, 2, 3};
+      PA.invokeMethod(this.child, "setPrivateInts(int[])", integers);
+      int[] ints = (int[]) PA.getValue(this.child, "privateInts");
+
+      assertEquals(ints.length, integers.length);
+      for (int x = 0; x < ints.length; x++) {
+         assertEquals((Integer) ints[x], integers[x]);
       }
    }
 
@@ -883,23 +883,15 @@ public class PATest {
     */
    @Test
    public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
-      try {
-         PA.invokeMethod(this.child, "setPrivateInts(int[])", 1, 2);
-         fail("invoking method with single values instead of array as parameters should raise exception");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-         assertNotNull(e.getMessage());
-      }
+      PA.invokeMethod(this.child, "setPrivateInts(int[])", 1, 2);
+      int[] ints = (int[]) PA.getValue(this.child, "privateInts");
+      assertEquals(1, ints[0]);
+      assertEquals(2, ints[1]);
 
-      try {
-         PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", "Hello", "Bruno");
-         fail("invoking method with single values instead of array as parameters should raise exception");
-      } catch (RuntimeException e) {
-         // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-         assertNotNull(e.getMessage());
-      }
+      PA.invokeMethod(this.child, "setPrivateStrings(java.lang.String[])", "Hello", "Bruno");
+      String[] strings = (String[]) PA.getValue(this.child, "privateStrings");
+      assertEquals("Hello", strings[0]);
+      assertEquals("Bruno", strings[1]);
    }
 
    /**
