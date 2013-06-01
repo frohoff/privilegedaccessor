@@ -92,6 +92,18 @@ public class PATest {
    }
 
    /**
+    * Tests the method <code>instantiate</code> with arrays. See https://code.google.com/p/privilegedaccessor/issues/detail?id=17
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#instantiate(java.lang.Class)
+    */
+   @Test
+   public void testInstantiateWithArray() throws Exception {
+      assertEquals(this.child, PA.instantiate(Child.class, new String[] {"Charlie", "Browne"}));
+      assertEquals(this.child, PA.instantiate(Child.class, new Class[] {String[].class}, new String[] {"Charlie", "Browne"}));
+   }
+
+   /**
     * Tests the method <code>instantiate</code>.
     * 
     * @see junit.extensions.PA#instantiate(java.lang.Class)
@@ -688,6 +700,19 @@ public class PATest {
       Collection<String> testCollection = new ArrayList<String>();
       PA.invokeMethod(this.child, "setPrivateCollection(java.util.Collection)", testCollection);
       assertEquals(testCollection, PA.getValue(this.child, "privateCollection"));
+   }
+
+   /**
+    * Tests the method <code>invokeMethod</code> with a varargs. See https://code.google.com/p/privilegedaccessor/issues/detail?id=16
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    */
+   @Test
+   public void testInvokeMethodWithVarargs() throws Exception {
+      PA.invokeMethod(this.parent, "setNamesWithVarargs(String...)", "Charly", "Browne");
+      assertEquals("Charly", PA.getValue(this.parent, "privateName"));
+      assertEquals("Browne", PA.getValue(this.parent, "privateObject"));
    }
 
    /**

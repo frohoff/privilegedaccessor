@@ -50,6 +50,12 @@ public class Child extends Parent {
       this.privateInt = number.intValue();
    }
 
+   @SuppressWarnings("unused")
+   private Child(String[] strings) {
+      this(strings[0]);
+      this.privateStrings = strings;
+   }
+
    public Child(String name) {
       this(name, new Integer(8));
    }
@@ -143,43 +149,43 @@ public class Child extends Parent {
    private void setPrivateStrings(String[] privateStrings) {
       this.privateStrings = privateStrings;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateStringsAndInt(String[] privateStrings, int privateInt) {
       this.privateStrings = privateStrings;
       this.privateInt = privateInt;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateObjectsAndInt(Object[] privateObjects, int privateInt) {
       this.privateObjects = privateObjects;
       this.privateInt = privateInt;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateIntAndStrings(int privateInt, String[] privateStrings) {
       this.privateStrings = privateStrings;
       this.privateInt = privateInt;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateIntAndObjects(int privateInt, Object[] privateObjects) {
       this.privateObjects = privateObjects;
       this.privateInt = privateInt;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateStringsAndObjects(String[] privateStrings, Object[] privateObjects) {
       this.privateStrings = privateStrings;
       this.privateObjects = privateObjects;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateObjectsAndStrings(Object[] privateObjects, String[] privateStrings) {
       this.privateStrings = privateStrings;
       this.privateObjects = privateObjects;
    }
-   
+
    @SuppressWarnings("unused")
    private void setPrivateObjectsAndObjects(Object[] privateObjects1, Object[] privateObjects2) {
       this.privateObjects = privateObjects1;
@@ -215,6 +221,7 @@ public class Child extends Parent {
       this.privateInt = number;
    }
 
+   @Override
    public String toString() {
       return this.getClass().getName() + " {privateInt=" + getInt() + ", privateLong=" + getPrivateLong() + ", privateShort="
          + getPrivateShort() + ", privateByte=" + getPrivateByte() + ", privateChar=" + getPrivateChar() + ", privateBoolean="
