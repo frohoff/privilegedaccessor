@@ -63,6 +63,12 @@ public class Parent {
       this.privateName = "Chaplin";
    }
 
+   @SuppressWarnings("unused")
+   private void setNameWithVarargs(String... name) {
+      this.privateName = name[0];
+      this.privateObject = name[1];
+   }
+
    private Object getObject() {
       return this.privateObject;
    }

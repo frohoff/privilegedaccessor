@@ -146,7 +146,7 @@ public class PA {
     * member class, you must provide the object it is a member of as first argument.
     * 
     * @param fromClass the class to instantiate an object from
-    * @param args the arguments to pass to the constructor
+    * @param arguments the arguments to pass to the constructor
     * @param argumentTypes the fully qualified types of the arguments of the constructor
     * @return an object of the given type
     * @throws IllegalArgumentException if the class can't be instantiated. This could be the case if the number of actual and formal
@@ -158,11 +158,11 @@ public class PA {
     * 
     * @see PrivilegedAccessor#instantiate(Class,Class[],Object[])
     */
-   public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... args) {
+   public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... arguments) {
       try {
-         return PrivilegedAccessor.instantiate(fromClass, argumentTypes, args);
+         return PrivilegedAccessor.instantiate(fromClass, argumentTypes, correctVarargs(arguments));
       } catch (Exception e) {
-         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + args, e);
+         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + arguments, e);
       }
    }
 
@@ -171,7 +171,7 @@ public class PA {
     * the object it is a member of as first argument.
     * 
     * @param fromClass the class to instantiate an object from
-    * @param args the arguments to pass to the constructor
+    * @param arguments the arguments to pass to the constructor
     * @return an object of the given type
     * @throws IllegalArgumentException if the class can't be instantiated. This could be the case if the number of actual and formal
     *            parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a
@@ -182,11 +182,11 @@ public class PA {
     * 
     * @see PrivilegedAccessor#instantiate(Class,Object[])
     */
-   public static <T> T instantiate(final Class<? extends T> fromClass, final Object... args) {
+   public static <T> T instantiate(final Class<? extends T> fromClass, final Object... arguments) {
       try {
-         return PrivilegedAccessor.instantiate(fromClass, args);
+         return PrivilegedAccessor.instantiate(fromClass, correctVarargs(arguments));
       } catch (Exception e) {
-         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + args, e);
+         throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + arguments, e);
       }
    }
 
