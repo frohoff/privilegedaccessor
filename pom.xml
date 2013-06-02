@@ -109,10 +109,10 @@
 					<uploads>
 						<upload>
 							<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
-							<summary>${project.name} sources bundle ${project.version}</summary>
+							<summary>${project.name} bundle ${project.version}</summary>
 							<labels>
 								<label>Featured</label>
-								<label>Type-Archive</label>
+								<label>Type-Jar</label>
 							</labels>
 						</upload>
 					</uploads>
