@@ -4,15 +4,17 @@ How to publish a SNAPSHOT release to maven central:
 * simply run "mvn clean package deploy" (e.g. from eclipse)
 
 How to publish a SNAPSHOT release to google code:
-* simply run "mvn clean install gcu:upload" (e.g. from eclipse)
+* simply run "mvn clean install gcu:upload" (e.g. from eclipse) - cannot overwrite files (i.e. you need to manually delete the file in google code)
+- will not work after 1.1.2014 (since google shuts down file downloads - http://google-opensource.blogspot.co.at/2013/05/a-change-to-google-code-download-service.html)
 
 How to release a final release to maven central:
 * be sure to have maven, svn and gpg in path (see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-5.Prerequisites)
 * run the following commands from command-line, since they need manual input of password for signing the jars
+* CD to this projects directory and run:
 ** "mvn release:clean"
 ** "mvn release:prepare"
 ** "mvn release:perform" did not work for me, so I had to manually sign and deploy the jars:
-*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=privilegedaccessor-1.2.1.pom -Dfile=privilegedaccessor-1.2.1.jar
-*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=privilegedaccessor-1.2.1.pom -Dfile=privilegedaccessor-1.2.1-sources.jar -Dclassifier=sources
-*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=privilegedaccessor-1.2.1.pom -Dfile=privilegedaccessor-1.2.1-javadoc.jar -Dclassifier=javadoc
+*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=target\privilegedaccessor-1.2.2.pom -Dfile=target\privilegedaccessor-1.2.2.jar
+*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=target\privilegedaccessor-1.2.2.pom -Dfile=target\privilegedaccessor-1.2.2-sources.jar -Dclassifier=sources
+*** mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=target\privilegedaccessor-1.2.2.pom -Dfile=target\privilegedaccessor-1.2.2-javadoc.jar -Dclassifier=javadoc
 * release it as described in https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt
