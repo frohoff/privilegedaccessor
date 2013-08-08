@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.security.InvalidParameterException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1066,7 +1067,7 @@ public class PATest {
          fail("should throw IllegalArgumentException");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
          assertNotNull(e.getMessage());
       }
 
@@ -1120,7 +1121,7 @@ public class PATest {
          fail("should throw IllegalArgumentException");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
          assertNotNull(e.getMessage());
       }
 
@@ -1138,8 +1139,7 @@ public class PATest {
          fail("should throw IllegalArgumentException");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
-         assertTrue(e.getMessage().startsWith("Can't invoke method setInt(int)"));
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
    }
 
@@ -1157,14 +1157,14 @@ public class PATest {
          fail("invoking method with an array of primitives instead of single primitives should raise exception");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
 
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new Integer[] {4, 3});
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
    }
 
@@ -1180,7 +1180,7 @@ public class PATest {
          fail("invoking method with array of wrong size should raise exception");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
 
       try {
@@ -1188,7 +1188,7 @@ public class PATest {
          fail("invoking method with array of wrong size should raise exception");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
 
       try {
@@ -1196,7 +1196,7 @@ public class PATest {
          fail("invoking method with array of wrong size should raise exception");
       } catch (RuntimeException e) {
          // that is what we expect
-         assertEquals(IllegalArgumentException.class, e.getCause().getClass());
+         assertEquals(IllegalArgumentException.class, e.getClass());
       }
    }
 
@@ -1281,5 +1281,22 @@ public class PATest {
       Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       PA.invokeMethod(tic, "setPrivateInnerInt(int)", 7);
       assertEquals(7, PA.invokeMethod(tic, "getPrivateInnerInt()"));
+   }
+
+   @Test(expected = NullPointerException.class)
+   public void testMethodThrowingRuntimeException() throws Exception {
+      PA.invokeMethod(parent, "methodThrowingRuntimeException()");
+   }
+
+   @Test
+   public void testMethodThrowingException() throws Exception {
+      try {
+         PA.invokeMethod(parent, "methodThrowingException()");
+         fail("should throw exception");
+      } catch (IllegalArgumentException e) {
+         assertEquals(CertificateException.class, e.getCause().getClass());
+      } catch (RuntimeException e) {
+         fail("wront exception thrown");
+      }
    }
 }

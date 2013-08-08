@@ -209,17 +209,22 @@ public final class PrivilegedAccessor {
     * @param arguments an array of objects to pass as arguments
     * @return the return value of this method or null if void
     * @throws IllegalAccessException if the method is inaccessible
-    * @throws InvocationTargetException if the underlying method throws an exception.
     * @throws NoSuchMethodException if no method with the given <code>methodSignature</code> could be found
     * @throws IllegalArgumentException if an argument couldn't be converted to match the expected type
+    * @throws Throwable if the underlying method throws a non-runtime exception.
     */
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object[] arguments)
-      throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+      throws Throwable {
       if ((methodSignature.indexOf('(') == -1) || (methodSignature.indexOf('(') >= methodSignature.indexOf(')')))
          throw new NoSuchMethodException(methodSignature);
       Class<?>[] parameterTypes = getParameterTypes(methodSignature);
-      return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
-         getCorrectedArguments(parameterTypes, arguments));
+
+      try {
+         return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
+            getCorrectedArguments(parameterTypes, arguments));
+      } catch (InvocationTargetException e) {
+         throw e.getCause();
+      }
    }
 
    /**
