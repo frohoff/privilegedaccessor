@@ -199,18 +199,26 @@ public class PA {
     *           (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
     * @param arguments an array of objects to pass as arguments
     * @return the return value of this method or null if void
-    * @throws IllegalArgumentException if the method could not be invoked. This could be the case if the method is inaccessible; if the
-    *            underlying method throws an exception; if no method with the given <code>methodSignature</code> could be found; or if
-    *            an argument couldn't be converted to match the expected type
+    * @throws RuntimeException any runtime exception the invoked method has thrown
+    * @throws IllegalArgumentException if the method could not be invoked or the method threw a non-runtime exception or error. This
+    *            could be the case if the method is inaccessible; if the underlying method throws an exception; if no method with the
+    *            given <code>methodSignature</code> could be found; or if an argument couldn't be converted to match the expected type
     * 
     * @see PrivilegedAccessor#invokeMethod(Object,String,Object[])
     */
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object... arguments) {
       try {
          return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
-      } catch (Exception e) {
-         throw new IllegalArgumentException("Can't invoke method " + methodSignature + " on " + instanceOrClass + " with arguments "
+      } catch (IllegalAccessException e) {
+         throw new IllegalArgumentException("Can't access method " + methodSignature + " of " + instanceOrClass + " with arguments "
             + arguments, e);
+      } catch (NoSuchMethodException e) {
+         throw new IllegalArgumentException("Can't find method " + methodSignature + " in " + instanceOrClass, e);
+      } catch (RuntimeException e) {
+         throw e;
+      } catch (Throwable e) {
+         throw new IllegalArgumentException("Invoking method " + methodSignature + " on " + instanceOrClass + " with arguments "
+            + arguments + " threw the non-runtime exception " + e.getClass().getName(), e);
       }
    }
 
@@ -221,9 +229,10 @@ public class PA {
     *           (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
     * @param arguments an array of objects to pass as arguments
     * @return the return value of this method or null if void
-    * @throws IllegalArgumentException if the method could not be invoked. This could be the case if the method is inaccessible; if the
-    *            underlying method throws an exception; if no method with the given <code>methodSignature</code> could be found; or if
-    *            an argument couldn't be converted to match the expected type
+    * @throws RuntimeException any runtime exception the invoked method has thrown
+    * @throws IllegalArgumentException if the method could not be invoked or threw a non-runtime exception or error. This could be the
+    *            case if the method is inaccessible; if the underlying method throws an exception; if no method with the given
+    *            <code>methodSignature</code> could be found; or if an argument couldn't be converted to match the expected type
     * @see PA#invokeMethod(Object, String, Object...)
     */
    public Object invokeMethod(final String methodSignature, final Object... arguments) {

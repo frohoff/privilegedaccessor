@@ -15,6 +15,8 @@
  */
 package junit.extensions;
 
+import java.security.cert.CertificateException;
+
 /**
  * Test class with private methods to invoke via PrivilegedAccessor
  */
@@ -101,6 +103,16 @@ public class Parent {
 
    private static String getStaticFinalString() {
       return Parent.privateStaticFinalString;
+   }
+
+   @SuppressWarnings("unused")
+   private void methodThrowingRuntimeException() throws NullPointerException {
+      throw new NullPointerException("thrown exception");
+   }
+
+   @SuppressWarnings("unused")
+   private void methodThrowingException() throws CertificateException {
+      throw new CertificateException("thrown exception");
    }
 
    @Override
