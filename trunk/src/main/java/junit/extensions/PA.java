@@ -80,6 +80,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#toString(Object)
     */
+   @SuppressWarnings("deprecation")
    public static String toString(final Object instanceOrClass) {
       return PrivilegedAccessor.toString(instanceOrClass);
    }
@@ -93,6 +94,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#getFieldNames(Object)
     */
+   @SuppressWarnings("deprecation")
    public static Collection<String> getFieldNames(final Object instanceOrClass) {
       return PrivilegedAccessor.getFieldNames(instanceOrClass);
    }
@@ -106,6 +108,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#getMethodSignatures(Object)
     */
+   @SuppressWarnings("deprecation")
    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
       return PrivilegedAccessor.getMethodSignatures(instanceOrClass);
    }
@@ -120,6 +123,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#getValue(Object,String)
     */
+   @SuppressWarnings("deprecation")
    public static Object getValue(final Object instanceOrClass, final String fieldName) {
       try {
          return PrivilegedAccessor.getValue(instanceOrClass, fieldName);
@@ -158,6 +162,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#instantiate(Class,Class[],Object[])
     */
+   @SuppressWarnings("deprecation")
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object... arguments) {
       try {
          return PrivilegedAccessor.instantiate(fromClass, argumentTypes, correctVarargs(arguments));
@@ -182,6 +187,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#instantiate(Class,Object[])
     */
+   @SuppressWarnings("deprecation")
    public static <T> T instantiate(final Class<? extends T> fromClass, final Object... arguments) {
       try {
          return PrivilegedAccessor.instantiate(fromClass, correctVarargs(arguments));
@@ -206,6 +212,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor#invokeMethod(Object,String,Object[])
     */
+   @SuppressWarnings("deprecation")
    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object... arguments) {
       try {
          return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
@@ -299,6 +306,7 @@ public class PA {
     * 
     * @see PrivilegedAccessor.setValue(Object,String,Object)
     */
+   @SuppressWarnings("deprecation")
    public static PA setValue(final Object instanceOrClass, final String fieldName, final Object value) {
       try {
          PrivilegedAccessor.setValue(instanceOrClass, fieldName, value);
