@@ -92,6 +92,20 @@ public class PATest {
       assertEquals(this.childInParent, PA.instantiate(Child.class, new Class[] {String.class, Integer.class}, "Charlie", 8));
    }
 
+   @Test
+   public void testInstantiateWithPrimitives() throws Exception {
+      // works when primitives are explicitely declared
+      Child child = PA.instantiate(Child.class, new Class[] {Integer.TYPE, Float.TYPE}, 3, 5f);
+
+      assertEquals(3, PA.getValue(child, "privateInt"));
+      assertEquals(5f, PA.getValue(child, "privateFloat"));
+
+      child = PA.instantiate(Child.class, 3, 5f);
+
+      assertEquals(3, PA.getValue(child, "privateInt"));
+      assertEquals(5f, PA.getValue(child, "privateFloat"));
+   }
+
    /**
     * Tests the method <code>instantiate</code> with arrays. See https://code.google.com/p/privilegedaccessor/issues/detail?id=17
     * 

@@ -253,11 +253,19 @@ public class PrivilegedAccessorTest {
     */
    @Test
    @SuppressWarnings("deprecation")
-   public void testInstantiateWithTypes() throws Throwable {
+   public void testInstantiateWithFullyQualifiedTypes() throws Throwable {
       assertEquals(this.parent,
          PrivilegedAccessor.instantiate(Parent.class, new Class[] {String.class, Object.class}, new Object[] {"Charlie", "Brown"}));
       assertEquals(this.childInParent,
          PrivilegedAccessor.instantiate(Child.class, new Class[] {String.class, Integer.class}, new Object[] {"Charlie", 8}));
+   }
+
+   @Test
+   @SuppressWarnings("deprecation")
+   public void testInstantiateWithoutFullyQualifiedTypes() throws Throwable {
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie", "Brown"}));
+      assertEquals(this.parent, PrivilegedAccessor.instantiate(Parent.class, new String[] {"Charlie", "Brown"}));
+      assertEquals(this.childInParent, PrivilegedAccessor.instantiate(Child.class, new Object[] {"Charlie", 8}));
    }
 
    /**
@@ -267,32 +275,11 @@ public class PrivilegedAccessorTest {
     * @see junit.extensions.PrivilegedAccessor#instantiate(java.lang.Class)
     */
    @Test
-   @SuppressWarnings({"deprecation", "cast"})
+   @SuppressWarnings({"deprecation"})
    public void testInstantiateOnInvalidParameters() throws Throwable {
       try {
          PrivilegedAccessor.instantiate(Parent.class, new Object[] {21});
          fail("instantiating with wrong parameter type should throw Exception");
-      } catch (Exception e) {
-         // this is what we expect
-      }
-
-      try {
-         PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie", "Brown"});
-         fail("instantiating with wrong second parameter type should throw Exception");
-      } catch (Exception e) {
-         // this is what we expect - that's why we need a instantiate with types
-      }
-
-      try {
-         PrivilegedAccessor.instantiate(Parent.class, new Object[] {"Charlie", (Object) "Brown"});
-         fail("instantiating with wrong second parameter type should throw Exception");
-      } catch (Exception e) {
-         // this is what we expect - that's why we need a instantiate with types
-      }
-
-      try {
-         PrivilegedAccessor.instantiate(Child.class, new Object[] {"Charlie", "Brown"});
-         fail("instantiating with wrong second parameter type should throw Exception");
       } catch (Exception e) {
          // this is what we expect
       }

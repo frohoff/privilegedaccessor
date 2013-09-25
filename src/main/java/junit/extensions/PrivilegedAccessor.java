@@ -196,7 +196,7 @@ public final class PrivilegedAccessor {
    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object[] args)
       throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
       NoSuchMethodException {
-      return getConstructor(fromClass, argumentTypes).newInstance(args);
+      return (T) getConstructor(fromClass, argumentTypes).newInstance(args);
    }
 
    /**
@@ -319,7 +319,7 @@ public final class PrivilegedAccessor {
    }
 
    /**
-    * Gets the class with the given className.
+    * Gets the class with the given className. Can handle arrays, varargs, primitives, ...
     * 
     * @param className the name of the class to get
     * @return the class for the given className
@@ -416,10 +416,71 @@ public final class PrivilegedAccessor {
     * @return the constructor
     * @throws NoSuchMethodException if the method could not be found
     */
-   private static <T> Constructor<T> getConstructor(final Class<T> type, final Class<?>[] parameterTypes) throws NoSuchMethodException {
-      Constructor<T> constructor = type.getDeclaredConstructor(parameterTypes);
-      constructor.setAccessible(true);
-      return constructor;
+   private static <T> Constructor<?> getConstructor(final Class<T> type, final Class<?>[] parameterTypes) throws NoSuchMethodException {
+      for (Constructor<?> constructor : type.getDeclaredConstructors()) {
+         if (autoboxingEquals(constructor.getParameterTypes(), parameterTypes)) {
+            constructor.setAccessible(true);
+            return constructor;
+         }
+      }
+      throw new NoSuchMethodException(type.getName() + ".<init>" + argumentTypesToString(parameterTypes));
+   }
+
+   private static String argumentTypesToString(Class<?>[] argTypes) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("(");
+      if (argTypes != null) {
+         for (int i = 0; i < argTypes.length; i++) {
+            if (i > 0) {
+               buf.append(", ");
+            }
+            Class<?> c = argTypes[i];
+            buf.append((c == null) ? "null" : c.getName());
+         }
+      }
+      buf.append(")");
+      return buf.toString();
+   }
+
+   /**
+    * Check if the given objectTypes match the given possiblyPrimitiveTypes. Considers autoboxing.
+    */
+   private static boolean autoboxingEquals(Class<?>[] possiblyPrimitiveTypes, Class<?>[] objectTypes) {
+      int length = possiblyPrimitiveTypes.length;
+      if (objectTypes.length != length) return false;
+
+      for (int i = 0; i < length; i++) {
+         Class<?> possiblyPrimitiveType = possiblyPrimitiveTypes[i];
+         Class<?> objectType = objectTypes[i];
+         if (!isAssignableFrom(possiblyPrimitiveType, objectType)) return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * Checks if the given type1 is assignable from the given other type2. Consideres autoboxing - i.e. on the contrary to
+    * Class.isAssignableFrom an int is assignable from an integer
+    */
+   private static boolean isAssignableFrom(final Class<?> type1, final Class<?> type2) {
+      if (type1.equals(Integer.class) || type1.equals(int.class)) {
+         return type2.equals(Integer.class) || type2.equals(int.class);
+      } else if (type1.equals(Float.class) || type1.equals(float.class)) {
+         return type2.equals(Float.class) || type2.equals(float.class);
+      } else if (type1.equals(Double.class) || type1.equals(double.class)) {
+         return type2.equals(Double.class) || type2.equals(double.class);
+      } else if (type1.equals(Character.class) || type1.equals(char.class)) {
+         return type2.equals(Character.class) || type2.equals(char.class);
+      } else if (type1.equals(Long.class) || type1.equals(long.class)) {
+         return type2.equals(Long.class) || type2.equals(long.class);
+      } else if (type1.equals(Short.class) || type1.equals(short.class)) {
+         return type2.equals(Short.class) || type2.equals(short.class);
+      } else if (type1.equals(Boolean.class) || type1.equals(boolean.class)) {
+         return type2.equals(Boolean.class) || type2.equals(boolean.class);
+      } else if (type1.equals(Byte.class) || type1.equals(byte.class)) {
+         return type2.equals(Byte.class) || type2.equals(byte.class);
+      }
+      return type1.isAssignableFrom(type2);
    }
 
    /**

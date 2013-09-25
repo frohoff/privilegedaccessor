@@ -60,6 +60,12 @@ public class Child extends Parent {
       this(name, new Integer(8));
    }
 
+   private Child(int privateInt, float privateFloat) {
+      super("Charlie");
+      this.privateInt = privateInt;
+      this.privateFloat = privateFloat;
+   }
+
    private int getInt() {
       return this.privateInt;
    }
