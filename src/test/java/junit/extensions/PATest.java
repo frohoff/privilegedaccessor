@@ -93,17 +93,22 @@ public class PATest {
    }
 
    @Test
-   public void testInstantiateWithPrimitives() throws Exception {
-      // works when primitives are explicitely declared
+   public void testAutoboxingInConstructor() throws Exception {
       Child child = PA.instantiate(Child.class, new Class[] {Integer.TYPE, Float.TYPE}, 3, 5f);
-
       assertEquals(3, PA.getValue(child, "privateInt"));
       assertEquals(5f, PA.getValue(child, "privateFloat"));
 
-      child = PA.instantiate(Child.class, 3, 5f);
+      child = PA.instantiate(Child.class, 4, 6f);
+      assertEquals(4, PA.getValue(child, "privateInt"));
+      assertEquals(6f, PA.getValue(child, "privateFloat"));
 
-      assertEquals(3, PA.getValue(child, "privateInt"));
-      assertEquals(5f, PA.getValue(child, "privateFloat"));
+      child = PA.instantiate(Child.class, "Andreas", 0);
+      assertEquals(0, PA.getValue(child, "privateInt"));
+      assertEquals("Andreas", PA.getValue(child, "privateName"));
+
+      child = PA.instantiate(Child.class, new Class[] {String.class, Integer.TYPE}, "Sebastian", 1);
+      assertEquals(1, PA.getValue(child, "privateInt"));
+      assertEquals("Sebastian", PA.getValue(child, "privateName"));
    }
 
    /**
@@ -116,6 +121,37 @@ public class PATest {
    public void testInstantiateWithArray() throws Exception {
       assertEquals(this.child, PA.instantiate(Child.class, new String[] {"Charlie", "Browne"}));
       assertEquals(this.child, PA.instantiate(Child.class, new Class[] {String[].class}, new String[] {"Charlie", "Browne"}));
+
+      int[] ints = new int[] {1, 2};
+      Child child = PA.instantiate(Child.class, ints);
+      assertEquals(ints, PA.getValue(child, "privateInts"));
+
+      child = PA.instantiate(Child.class, new Class[] {int[].class}, ints);
+      assertEquals(ints, PA.getValue(child, "privateInts"));
+   }
+
+   /**
+    * Tests the method <code>instantiate(int[])</code> with Integer[] arrays. Should throw IllegalArgumentException like when calling
+    * the method directly
+    * 
+    * @throws Exception
+    * @see junit.extensions.PA#instantiate(java.lang.Class)
+    */
+   @Test
+   public void testInstantiateWithArrayOfWrongType() throws Exception {
+      try {
+         PA.instantiate(Child.class, new Integer[] {1, 2});
+         fail();
+      } catch (IllegalArgumentException e) {
+         // expected
+      }
+
+      try {
+         PA.instantiate(Child.class, new Class[] {int[].class}, new Integer[] {1, 2});
+         fail();
+      } catch (IllegalArgumentException e) {
+         // expected
+      }
    }
 
    /**
@@ -170,6 +206,16 @@ public class PATest {
          assertEquals(Child.class.getName() + ".<init>(java.lang.String, java.lang.Integer, java.lang.String)", e.getCause()
             .getMessage());
       }
+
+      try {
+         PA.instantiate(Child.class, "Charlie", 8, "Brown");
+         fail("instantiating with wrong parameter count should throw Exception");
+      } catch (Exception e) {
+         // this is what we expect
+         assertEquals(NoSuchMethodException.class, e.getCause().getClass());
+         assertEquals(Child.class.getName() + ".<init>(java.lang.String, java.lang.Integer, java.lang.String)", e.getCause()
+            .getMessage());
+      }
    }
 
    /**
@@ -195,6 +241,9 @@ public class PATest {
     */
    @Test
    public void testAutoboxing() throws Exception {
+      PA.invokeMethod(this.child, "setInt(int)", Integer.valueOf(4));
+      assertEquals(4, PA.getValue(this.child, "privateInt"));
+
       Integer[] integers = new Integer[] {1, 2, 3};
       PA.invokeMethod(this.child, "setPrivateInts(int[])", integers);
       int[] ints = (int[]) PA.getValue(this.child, "privateInts");

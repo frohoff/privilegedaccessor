@@ -56,6 +56,12 @@ public class Child extends Parent {
       this.privateStrings = strings;
    }
 
+   @SuppressWarnings("unused")
+   private Child(int[] ints) {
+      this("Charlie");
+      this.privateInts = ints;
+   }
+
    public Child(String name) {
       this(name, new Integer(8));
    }
