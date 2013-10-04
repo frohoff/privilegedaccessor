@@ -173,7 +173,7 @@ public class PA {
 
    /**
     * Instantiates an object of the given class with the given arguments. If you want to instantiate a member class, you must provide
-    * the object it is a member of as first argument.
+    * the object it is a member of as first argument (like Class.forName("mypackage.MyClass$MyInnerClass")).
     * 
     * @param fromClass the class to instantiate an object from
     * @param arguments the arguments to pass to the constructor
