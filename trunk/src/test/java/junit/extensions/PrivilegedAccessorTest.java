@@ -1080,11 +1080,13 @@ public class PrivilegedAccessorTest {
       assertEquals(7, PrivilegedAccessor.invokeMethod(tic, "getPrivateInnerInt()", null));
    }
 
+   @SuppressWarnings("deprecation")
    @Test(expected = NullPointerException.class)
    public void testMethodThrowingRuntimeException() throws Throwable {
       PrivilegedAccessor.invokeMethod(parent, "methodThrowingRuntimeException()", null);
    }
 
+   @SuppressWarnings("deprecation")
    @Test(expected = CertificateException.class)
    public void testMethodThrowingException() throws Throwable {
       PrivilegedAccessor.invokeMethod(parent, "methodThrowingException()", null);
