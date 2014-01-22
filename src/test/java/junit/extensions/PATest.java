@@ -77,11 +77,10 @@ public class PATest {
    /**
     * Tests the method <code>instantiate</code>.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#instantiate(java.lang.Class)
+    * @ * @see junit.extensions.PA#instantiate(java.lang.Class)
     */
    @Test
-   public void testInstantiate() throws Exception {
+   public void testInstantiate() {
       Parent tp = PA.instantiate(Parent.class);
       assertEquals(this.parent, tp);
       assertNotSame(this.parent, tp);
@@ -93,8 +92,8 @@ public class PATest {
    }
 
    @Test
-   public void testAutoboxingInConstructor() throws Exception {
-      Child child = PA.instantiate(Child.class, new Class[] {Integer.TYPE, Float.TYPE}, 3, 5f);
+   public void testAutoboxingInConstructor() {
+      child = PA.instantiate(Child.class, new Class[] {Integer.TYPE, Float.TYPE}, 3, 5f);
       assertEquals(3, PA.getValue(child, "privateInt"));
       assertEquals(5f, PA.getValue(child, "privateFloat"));
 
@@ -114,16 +113,15 @@ public class PATest {
    /**
     * Tests the method <code>instantiate</code> with arrays. See https://code.google.com/p/privilegedaccessor/issues/detail?id=17
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#instantiate(java.lang.Class)
+    * @ * @see junit.extensions.PA#instantiate(java.lang.Class)
     */
    @Test
-   public void testInstantiateWithArray() throws Exception {
+   public void testInstantiateWithArray() {
       assertEquals(this.child, PA.instantiate(Child.class, new String[] {"Charlie", "Browne"}));
       assertEquals(this.child, PA.instantiate(Child.class, new Class[] {String[].class}, new String[] {"Charlie", "Browne"}));
 
       int[] ints = new int[] {1, 2};
-      Child child = PA.instantiate(Child.class, ints);
+      child = PA.instantiate(Child.class, ints);
       assertEquals(ints, PA.getValue(child, "privateInts"));
 
       child = PA.instantiate(Child.class, new Class[] {int[].class}, ints);
@@ -160,7 +158,7 @@ public class PATest {
     * @see junit.extensions.PA#instantiate(java.lang.Class)
     */
    @Test
-   public void testInstantiateOnInvalidParameters() throws Exception {
+   public void testInstantiateOnInvalidParameters() {
       try {
          PA.instantiate(Parent.class, 21);
          fail("instantiating with wrong parameter type should throw Exception");
@@ -224,7 +222,7 @@ public class PATest {
     * @see junit.extensions.PA#instantiate(java.lang.Class)
     */
    @Test
-   public void testInstantiationThrowsException() throws Exception {
+   public void testInstantiationThrowsException() {
       try {
          PA.instantiate(PA.class);
          fail("Instantiating PA withoud parameters should throw Exception - you must have enabled assertions to run unit-tests");
@@ -240,7 +238,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testAutoboxing() throws Exception {
+   public void testAutoboxing() {
       PA.invokeMethod(this.child, "setInt(int)", Integer.valueOf(4));
       assertEquals(4, PA.getValue(this.child, "privateInt"));
 
@@ -260,7 +258,7 @@ public class PATest {
     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOfStaticFinalField() throws Exception {
+   public void testSetValueOfStaticFinalField() {
       int previousValue = (Integer) PA.getValue(this.parent, "privateStaticFinalInt");
       assertTrue(previousValue != -3);
 
@@ -292,7 +290,7 @@ public class PATest {
     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOfStaticFinalObjectField() throws Exception {
+   public void testSetValueOfStaticFinalObjectField() {
       String previousValue = (String) PA.getValue(this.parent, "privateStaticFinalString");
       assertTrue(previousValue != "Herbert");
 
@@ -324,7 +322,7 @@ public class PATest {
     * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOnInvalidField() throws Exception {
+   public void testSetValueOnInvalidField() {
       try {
          PA.setValue(this.parent, "noSuchField", "value");
          fail("should throw NoSuchFieldException");
@@ -369,11 +367,10 @@ public class PATest {
     * 
     * @see java.lang.reflect.Field.set(java.lang.Object, java.lang.Object)
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    *      @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetGetValueExample() throws Exception {
+   public void testSetGetValueExample() {
       String myString = "Test";
       PA.setValue(myString, "value", new char[] {'T', 'e', 's', 't'}); // sets the final field value
       PA.setValue(myString.getClass(), "serialVersionUID", 1); // sets the static final field serialVersionUID
@@ -385,11 +382,10 @@ public class PATest {
    /**
     * Tests the method <code>setValue</code>.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    * @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetGetValueWithPrimitives() throws Exception {
+   public void testSetGetValueWithPrimitives() {
       PA.setValue(this.child, "privateInt", 6);
       assertEquals(6, PA.getValue(this.child, "privateInt"));
 
@@ -421,11 +417,10 @@ public class PATest {
    /**
     * Tests the method <code>setValue</code>.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    * @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetGetValueWithObjectsAndArrays() throws Exception {
+   public void testSetGetValueWithObjectsAndArrays() {
       PA.setValue(this.parent, "privateName", "Hubert");
       assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
 
@@ -447,11 +442,10 @@ public class PATest {
    /**
     * Tests the method <code>setValue</code> with a static field.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    * @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOfStaticField() throws Exception {
+   public void testSetValueOfStaticField() {
       int previousValue = (Integer) PA.getValue(this.parent, "privateStaticInt");
       assertTrue(previousValue != -1);
 
@@ -465,11 +459,10 @@ public class PATest {
    /**
     * Tests the method <code>setValue</code> with a final field.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    * @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOfFinalField() throws Exception {
+   public void testSetValueOfFinalField() {
       int previousValue = (Integer) PA.getValue(this.parent, "privateFinalInt");
       assertTrue(previousValue != -2);
 
@@ -483,11 +476,10 @@ public class PATest {
    /**
     * Tests the method <code>setValue</code> with a final field.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
+    * @ * @see junit.extensions.PA#setValue(java.lang.Object, java.lang.String, java.lang.String)
     */
    @Test
-   public void testSetValueOfFinalStringField() throws Exception {
+   public void testSetValueOfFinalStringField() {
       String previousValue = (String) PA.getValue(this.parent, "privateFinalString");
       assertTrue(previousValue != "Test");
 
@@ -501,11 +493,10 @@ public class PATest {
    /**
     * Tests the method <code>getValue</code>.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    * @ * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
     */
    @Test
-   public final void testGetValue() throws Exception {
+   public final void testGetValue() {
       assertEquals("Charlie", PA.getValue(this.parent, "privateName"));
 
       assertEquals("Charlie", PA.getValue(this.child, "privateName"));
@@ -521,7 +512,7 @@ public class PATest {
     * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
     */
    @Test
-   public void testGetValueOnInvalidField() throws Exception {
+   public void testGetValueOnInvalidField() {
       try {
          PA.getValue(this.parent, "noSuchField");
          fail("should throw RuntimeException");
@@ -572,11 +563,10 @@ public class PATest {
    /**
     * Tests the method <code>getValue</code> with a static field.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    * @ * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
     */
    @Test
-   public void testGetValueOfStaticField() throws Exception {
+   public void testGetValueOfStaticField() {
       assertEquals(new Integer(1), PA.getValue(this.parent, "privateStaticInt"));
       assertEquals(new Integer(1), PA.getValue(Parent.class, "privateStaticInt"));
    }
@@ -597,7 +587,7 @@ public class PATest {
     * Tests the method <code>toString</code>
     */
    @Test
-   public final void testToString() throws Exception {
+   public final void testToString() {
       assertEquals("java.lang.Object", PA.toString(new Object()));
       assertEquals(this.parent.toString(), PA.toString(this.parent));
       assertEquals(this.child.toString(), PA.toString(this.child));
@@ -610,7 +600,7 @@ public class PATest {
     * @see junit.extensions.PA#getFieldNames(java.lang.Object)
     */
    @Test
-   public final void testGetFieldNames() throws Exception {
+   public final void testGetFieldNames() {
       Collection<String> testFieldNames = new ArrayList<String>();
 
       assertEquals(testFieldNames, PA.getFieldNames(null));
@@ -640,7 +630,7 @@ public class PATest {
     * @see junit.PA.PA#getMethodSigantures(java.lang.Object)
     */
    @Test
-   public final void testGetMethodsignatures() throws Exception {
+   public final void testGetMethodsignatures() {
       Collection<String> testMethodSignatures = new ArrayList<String>();
 
       assertEquals(testMethodSignatures, PA.getMethodSignatures(null));
@@ -660,11 +650,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code>.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethod() throws Exception {
+   public void testInvokeMethod() {
       assertEquals("Charlie", PA.invokeMethod(this.parent, "getName()"));
 
       PA.invokeMethod(this.parent, "setName(java.lang.String)", "Herbert");
@@ -691,11 +680,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with not fully declared types.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithNotFullyDeclaredTypes() throws Exception {
+   public void testInvokeMethodWithNotFullyDeclaredTypes() {
       PA.invokeMethod(this.parent, "setName(String)", "Hubert");
       assertEquals("Hubert", PA.getValue(this.parent, "privateName"));
 
@@ -710,11 +698,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with different primitives.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithPrimitives() throws Exception {
+   public void testInvokeMethodWithPrimitives() {
       PA.invokeMethod(this.child, "setInt(int)", 3);
       assertEquals(3, PA.invokeMethod(this.child, "getInt()"));
 
@@ -743,11 +730,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with an array.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithArray() throws Exception {
+   public void testInvokeMethodWithArray() {
       Object[] args = {5};
       PA.invokeMethod(this.childInParent, "setInt(int)", args);
       assertEquals(5, PA.getValue(this.childInParent, "privateInt"));
@@ -756,11 +742,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with a typed collection.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithTypedCollection() throws Exception {
+   public void testInvokeMethodWithTypedCollection() {
       Collection<String> testCollection = new ArrayList<String>();
       PA.invokeMethod(this.child, "setPrivateCollection(java.util.Collection)", testCollection);
       assertEquals(testCollection, PA.getValue(this.child, "privateCollection"));
@@ -769,11 +754,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with a varargs. See https://code.google.com/p/privilegedaccessor/issues/detail?id=16
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithVarargs() throws Exception {
+   public void testInvokeMethodWithVarargs() {
       PA.invokeMethod(this.parent, "setNamesWithVarargs(String...)", "Charly", "Browne");
       assertEquals("Charly", PA.getValue(this.parent, "privateName"));
       assertEquals("Browne", PA.getValue(this.parent, "privateObject"));
@@ -782,11 +766,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with several primitive arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithMoreThanOnePrimitive() throws Exception {
+   public void testInvokeMethodWithMoreThanOnePrimitive() {
       PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", 5, 3);
       assertEquals(8, PA.getValue(this.child, "privateInt"));
 
@@ -797,11 +780,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with arrays as arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithArrays() throws Exception {
+   public void testInvokeMethodWithArrays() {
       int[] ints = new int[] {5, 3};
       PA.invokeMethod(this.child, "setPrivateInts(int[])", ints);
       assertEquals(ints, PA.getValue(this.child, "privateInts"));
@@ -822,11 +804,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with empty arrays as arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithEmptyArrays() throws Exception {
+   public void testInvokeMethodWithEmptyArrays() {
       PA.invokeMethod(this.child, "setPrivateInts(int[])", (int[]) null);
       assertEquals(null, PA.getValue(this.child, "privateInts"));
 
@@ -845,11 +826,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with filled arrays as arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodThatRequireArrays() throws Exception {
+   public void testInvokeMethodThatRequireArrays() {
       PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[] {new Integer(1)});
       PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {new Integer(1)});
 
@@ -866,11 +846,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with filled arrays and something else as arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodThatRequireArraysAndSomethingElse() throws Exception {
+   public void testInvokeMethodThatRequireArraysAndSomethingElse() {
       String[] strings = new String[] {"Mike"};
       String[] emptyStrings = new String[0];
 
@@ -930,11 +909,10 @@ public class PATest {
     * reasons: a) downward compatibility - since this was the only way prior to varargs b) using varargs there is no possibility to
     * distinquish arrays from several arguments.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithArrayInsteadOfSingleValues() throws Exception {
+   public void testInvokeMethodWithArrayInsteadOfSingleValues() {
       Object[] oInts = new Object[] {3, 3};
       PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", oInts);
       assertEquals(6, PA.getValue(this.child, "privateInt"));
@@ -946,7 +924,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithSingleValuesInsteadOfArray() throws Exception {
+   public void testInvokeMethodWithSingleValuesInsteadOfArray() {
       PA.invokeMethod(this.child, "setPrivateInts(int[])", 1, 2);
       int[] ints = (int[]) PA.getValue(this.child, "privateInts");
       assertEquals(1, ints[0]);
@@ -964,7 +942,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodOnInvalidMethodName() throws Exception {
+   public void testInvokeMethodOnInvalidMethodName() {
       try {
          PA.invokeMethod(this.child, "getInt");
          fail("should throw NoSuchMethodException");
@@ -1035,7 +1013,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithInvalidSignature() throws Exception {
+   public void testInvokeMethodWithInvalidSignature() {
       try {
          PA.invokeMethod(this.child, "setName", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -1079,7 +1057,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithInvalidArguments() throws Exception {
+   public void testInvokeMethodWithInvalidArguments() {
       try {
          PA.invokeMethod(this.child, "setData(java.lang.String)", "Herbert");
          fail("should throw NoSuchMethodException");
@@ -1214,7 +1192,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() throws Exception {
+   public void testInvokeMethodWithPrimitiveArrayInsteadOfSingleValues() {
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new int[] {5, 3});
          fail("invoking method with an array of primitives instead of single primitives should raise exception");
@@ -1237,7 +1215,7 @@ public class PATest {
     * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() throws Exception {
+   public void testInvokeMethodWithArraysOfWrongLengthInsteadOfSingleValues() {
       try {
          PA.invokeMethod(this.child, "setSumOfTwoInts(int, int)", new int[] {1});
          fail("invoking method with array of wrong size should raise exception");
@@ -1266,11 +1244,10 @@ public class PATest {
    /**
     * Tests varargs and Object[] can't be distinquished. See http://code.google.com/p/privilegedaccessor/issues/detail?id=11
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testVarargsCantBeDistinquishedFromObjectArray() throws Exception {
+   public void testVarargsCantBeDistinquishedFromObjectArray() {
       PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[] {"Hello", new Integer(3)});
 
       // [Issue 11] the next method should fail with IllegalArgumentException, but since we can't distinquish varargs from Object[] it
@@ -1281,11 +1258,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with arguments of type object and primitive.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeMethodWithObjectAndPrimitive() throws Exception {
+   public void testInvokeMethodWithObjectAndPrimitive() {
       Object[] args = {"Marcus", 5};
       PA.invokeMethod(this.child, "setData(java.lang.String, int)", args);
       assertEquals("Marcus", PA.getValue(this.child, "privateName"));
@@ -1299,11 +1275,10 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> on a static method.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testInvokeStaticMethod() throws Exception {
+   public void testInvokeStaticMethod() {
       PA.invokeMethod(Parent.class, "setStaticInt(int)", 3);
       assertEquals(3, PA.getValue(Parent.class, "privateStaticInt"));
    }
@@ -1311,11 +1286,12 @@ public class PATest {
    /**
     * Tests the method <code>instantiate</code> on an inner class.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#instantiate(java.lang.Class)
+    * @throws ClassNotFoundException
+    * 
+    *            @ * @see junit.extensions.PA#instantiate(java.lang.Class)
     */
    @Test
-   public void testInstantiateInnerClass() throws Exception {
+   public void testInstantiateInnerClass() throws ClassNotFoundException {
       Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       assertEquals(Class.forName("junit.extensions.Child$InnerChild"), tic.getClass());
    }
@@ -1323,11 +1299,12 @@ public class PATest {
    /**
     * Tests the method <code>getValue</code> with a field of an inner class.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
+    * @throws ClassNotFoundException
+    * 
+    *            @ * @see junit.extensions.PA#getValue(java.lang.Object, java.lang.String)
     */
    @Test
-   public void testAccessInnerClass() throws Exception {
+   public void testAccessInnerClass() throws ClassNotFoundException {
       Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       PA.setValue(tic, "privateInnerInt", 5);
       assertEquals(5, PA.getValue(tic, "privateInnerInt"));
@@ -1336,23 +1313,24 @@ public class PATest {
    /**
     * Tests the method <code>invokeMethod</code> with a method of an inner class.
     * 
-    * @throws Exception
-    * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
+    * @throws ClassNotFoundException
+    * 
+    *            @ * @see junit.extensions.PA#invokeMethod(java.lang.Object, java.lang.String, java.lang.Object)
     */
    @Test
-   public void testAccessInnerMethod() throws Exception {
+   public void testAccessInnerMethod() throws ClassNotFoundException {
       Object tic = PA.instantiate(Class.forName("junit.extensions.Child$InnerChild"), this.child);
       PA.invokeMethod(tic, "setPrivateInnerInt(int)", 7);
       assertEquals(7, PA.invokeMethod(tic, "getPrivateInnerInt()"));
    }
 
    @Test(expected = NullPointerException.class)
-   public void testMethodThrowingRuntimeException() throws Exception {
+   public void testMethodThrowingRuntimeException() {
       PA.invokeMethod(parent, "methodThrowingRuntimeException()");
    }
 
    @Test
-   public void testMethodThrowingException() throws Exception {
+   public void testMethodThrowingException() {
       try {
          PA.invokeMethod(parent, "methodThrowingException()");
          fail("should throw exception");
