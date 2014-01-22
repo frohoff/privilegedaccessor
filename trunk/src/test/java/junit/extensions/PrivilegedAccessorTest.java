@@ -94,7 +94,7 @@ public class PrivilegedAccessorTest {
     */
    @Test
    @SuppressWarnings("deprecation")
-   public final void testToString() throws Throwable {
+   public final void testToString() {
       assertEquals("java.lang.Object", PrivilegedAccessor.toString(new Object()));
       assertEquals(this.parent.toString(), PrivilegedAccessor.toString(this.parent));
       assertEquals(this.child.toString(), PrivilegedAccessor.toString(this.child));
@@ -106,7 +106,7 @@ public class PrivilegedAccessorTest {
     */
    @Test
    @SuppressWarnings("deprecation")
-   public final void testGetFieldNames() throws Throwable {
+   public final void testGetFieldNames() {
       Collection<String> testFieldNames = new ArrayList<String>();
 
       assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(null));
@@ -136,7 +136,7 @@ public class PrivilegedAccessorTest {
     */
    @Test
    @SuppressWarnings("deprecation")
-   public final void testGetMethodsignatures() throws Throwable {
+   public final void testGetMethodsignatures() {
       Collection<String> testMethodSignatures = new ArrayList<String>();
 
       assertEquals(testMethodSignatures, PrivilegedAccessor.getMethodSignatures(null));
