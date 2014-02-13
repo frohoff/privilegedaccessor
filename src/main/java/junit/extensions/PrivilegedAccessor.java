@@ -508,6 +508,20 @@ public final class PrivilegedAccessor {
       }
    }
 
+   public static Class<?> getFieldType(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
+      InvalidParameterException {
+      if (instanceOrClass == null) throw new InvalidParameterException("Can't get field type on null object/class");
+      Class<?> type = getClass(instanceOrClass);
+
+      try {
+         Field field = type.getDeclaredField(fieldName);
+         return field.getType();
+      } catch (NoSuchFieldException e) {
+         if (type.getSuperclass() == null) throw e;
+         return getFieldType(type.getSuperclass(), fieldName);
+      }
+   }
+
    /**
     * Gets the class of the given parameter. If the parameter is a class, it is returned, if it is an object, its class is returned
     * 
