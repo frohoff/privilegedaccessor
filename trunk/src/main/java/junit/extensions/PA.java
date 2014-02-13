@@ -100,6 +100,25 @@ public class PA {
    }
 
    /**
+    * Gets the type of the field with the given fieldName in the given instance or class. If not found in the given instance or class
+    * checks as well its super classes.
+    * 
+    * @param instanceOrClass the instance or class to get the field type of
+    * @param fieldName the name of the field to get the type of
+    * @return the collection of field names of the given instance or class
+    * 
+    * @see PrivilegedAccessor#getFieldType(Object, String)
+    */
+   @SuppressWarnings("deprecation")
+   public static Class<?> getFieldType(final Object instanceOrClass, final String fieldName) {
+      try {
+         return PrivilegedAccessor.getFieldType(instanceOrClass, fieldName);
+      } catch (NoSuchFieldException e) {
+         throw new IllegalArgumentException("Can't get type of " + fieldName + " from " + instanceOrClass, e);
+      }
+   }
+
+   /**
     * Gets the signatures of all methods (public, private, protected, default) of the given instance or class. This includes as well
     * all methods (public, private, protected, default) of all its super classes. This does not include constructors.
     * 

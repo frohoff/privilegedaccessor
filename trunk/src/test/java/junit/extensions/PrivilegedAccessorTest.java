@@ -132,6 +132,53 @@ public class PrivilegedAccessorTest {
    }
 
    /**
+    * Tests the method <code>getFieldTpyes</code>.
+    * 
+    * @see junit.extensions.PA#getFieldType(java.lang.Object, java.lang.String)
+    */
+   @SuppressWarnings("deprecation")
+   @Test
+   public final void testGetFieldType() throws Exception {
+      assertEquals(String.class, PrivilegedAccessor.getFieldType(this.parent, "privateName"));
+      assertEquals(Object.class, PrivilegedAccessor.getFieldType(this.parent, "privateObject"));
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.parent, "privateStaticInt"));
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.parent, "privateFinalInt"));
+      assertEquals(String.class, PrivilegedAccessor.getFieldType(this.parent, "privateFinalString"));
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.parent, "privateStaticFinalInt"));
+      assertEquals(String.class, PrivilegedAccessor.getFieldType(this.parent, "privateStaticFinalString"));
+
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateInt"));
+      assertEquals(Object.class, PrivilegedAccessor.getFieldType(this.child, "privateObject"));
+      assertEquals(Long.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateLong"));
+      assertEquals(Short.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateShort"));
+      assertEquals(Byte.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateByte"));
+      assertEquals(Character.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateChar"));
+      assertEquals(Boolean.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateBoolean"));
+      assertEquals(Float.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateFloat"));
+      assertEquals(Double.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateDouble"));
+      assertEquals((new int[1]).getClass(), PrivilegedAccessor.getFieldType(this.child, "privateInts"));
+      assertEquals((new String[1]).getClass(), PrivilegedAccessor.getFieldType(this.child, "privateStrings"));
+      assertEquals((new Object[1]).getClass(), PrivilegedAccessor.getFieldType(this.child, "privateObjects"));
+      assertEquals(String.class, PrivilegedAccessor.getFieldType(this.child, "privateName"));
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.child, "privateStaticInt"));
+
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateInt"));
+      assertEquals(Object.class, PrivilegedAccessor.getFieldType(this.childInParent, "privateObject"));
+      assertEquals(Long.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateLong"));
+      assertEquals(Short.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateShort"));
+      assertEquals(Byte.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateByte"));
+      assertEquals(Character.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateChar"));
+      assertEquals(Boolean.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateBoolean"));
+      assertEquals(Float.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateFloat"));
+      assertEquals(Double.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateDouble"));
+      assertEquals((new int[1]).getClass(), PrivilegedAccessor.getFieldType(this.childInParent, "privateInts"));
+      assertEquals((new String[1]).getClass(), PrivilegedAccessor.getFieldType(this.childInParent, "privateStrings"));
+      assertEquals((new Object[1]).getClass(), PrivilegedAccessor.getFieldType(this.childInParent, "privateObjects"));
+      assertEquals(String.class, PrivilegedAccessor.getFieldType(this.childInParent, "privateName"));
+      assertEquals(Integer.TYPE, PrivilegedAccessor.getFieldType(this.childInParent, "privateStaticInt"));
+   }
+
+   /**
     * Tests the method <code>getMethodSignatures</code>.
     */
    @Test

@@ -625,6 +625,52 @@ public class PATest {
    }
 
    /**
+    * Tests the method <code>getFieldTpye</code>.
+    * 
+    * @see junit.extensions.PA#getFieldType(java.lang.Object, java.lang.String)
+    */
+   @Test
+   public final void testGetFieldType() {
+      assertEquals(String.class, PA.getFieldType(this.parent, "privateName"));
+      assertEquals(Object.class, PA.getFieldType(this.parent, "privateObject"));
+      assertEquals(Integer.TYPE, PA.getFieldType(this.parent, "privateStaticInt"));
+      assertEquals(Integer.TYPE, PA.getFieldType(this.parent, "privateFinalInt"));
+      assertEquals(String.class, PA.getFieldType(this.parent, "privateFinalString"));
+      assertEquals(Integer.TYPE, PA.getFieldType(this.parent, "privateStaticFinalInt"));
+      assertEquals(String.class, PA.getFieldType(this.parent, "privateStaticFinalString"));
+
+      assertEquals(Integer.TYPE, PA.getFieldType(this.child, "privateInt"));
+      assertEquals(Object.class, PA.getFieldType(this.child, "privateObject"));
+      assertEquals(Long.TYPE, PA.getFieldType(this.child, "privateLong"));
+      assertEquals(Short.TYPE, PA.getFieldType(this.child, "privateShort"));
+      assertEquals(Byte.TYPE, PA.getFieldType(this.child, "privateByte"));
+      assertEquals(Character.TYPE, PA.getFieldType(this.child, "privateChar"));
+      assertEquals(Boolean.TYPE, PA.getFieldType(this.child, "privateBoolean"));
+      assertEquals(Float.TYPE, PA.getFieldType(this.child, "privateFloat"));
+      assertEquals(Double.TYPE, PA.getFieldType(this.child, "privateDouble"));
+      assertEquals((new int[1]).getClass(), PA.getFieldType(this.child, "privateInts"));
+      assertEquals((new String[1]).getClass(), PA.getFieldType(this.child, "privateStrings"));
+      assertEquals((new Object[1]).getClass(), PA.getFieldType(this.child, "privateObjects"));
+      assertEquals(String.class, PA.getFieldType(this.child, "privateName"));
+      assertEquals(Integer.TYPE, PA.getFieldType(this.child, "privateStaticInt"));
+
+      assertEquals(Integer.TYPE, PA.getFieldType(this.childInParent, "privateInt"));
+      assertEquals(Object.class, PA.getFieldType(this.childInParent, "privateObject"));
+      assertEquals(Long.TYPE, PA.getFieldType(this.childInParent, "privateLong"));
+      assertEquals(Short.TYPE, PA.getFieldType(this.childInParent, "privateShort"));
+      assertEquals(Byte.TYPE, PA.getFieldType(this.childInParent, "privateByte"));
+      assertEquals(Character.TYPE, PA.getFieldType(this.childInParent, "privateChar"));
+      assertEquals(Boolean.TYPE, PA.getFieldType(this.childInParent, "privateBoolean"));
+      assertEquals(Float.TYPE, PA.getFieldType(this.childInParent, "privateFloat"));
+      assertEquals(Double.TYPE, PA.getFieldType(this.childInParent, "privateDouble"));
+      assertEquals((new int[1]).getClass(), PA.getFieldType(this.childInParent, "privateInts"));
+      assertEquals((new String[1]).getClass(), PA.getFieldType(this.childInParent, "privateStrings"));
+      assertEquals((new Object[1]).getClass(), PA.getFieldType(this.childInParent, "privateObjects"));
+      assertEquals(String.class, PA.getFieldType(this.childInParent, "privateName"));
+      assertEquals(Integer.TYPE, PA.getFieldType(this.childInParent, "privateStaticInt"));
+   }
+
+   /**
     * Tests the method <code>getMethodSignatures</code>.
     * 
     * @see junit.PA.PA#getMethodSigantures(java.lang.Object)
