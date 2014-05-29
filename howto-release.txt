@@ -1,7 +1,8 @@
 See https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-How to publish a SNAPSHOT release to maven central:
+How to publish a SNAPSHOT release to sonatype central:
 * simply run "mvn clean package deploy" (e.g. from eclipse)
+remember that sonatype snapshots are not deployed to maven central. You need to add the snapshot repository to your Nexus, settings.xml, or pom.xml
 
 How to publish a SNAPSHOT release to google code:
 * simply run "mvn clean install gcu:upload" (e.g. from eclipse) - cannot overwrite files (i.e. you need to manually delete the file in google code)

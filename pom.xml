@@ -1,321 +1,328 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.e-movimento.tinytools</groupId>
-	<artifactId>privilegedaccessor</artifactId>
-	<version>1.2.3-SNAPSHOT</version>
-	<name>privileged accessor</name>
-	<description>
-		gives privileged access to private and protected methods and attributes.
-		Use it in testing scenarios to set up your objects under test.
-	</description>
-	<url>http://code.google.com/p/privilegedaccessor/</url>
-	<packaging>jar</packaging>
-	<inceptionYear>2005</inceptionYear>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <groupId>com.e-movimento.tinytools</groupId>
+    <artifactId>privilegedaccessor</artifactId>
+    <version>1.2.3-SNAPSHOT</version>
+    <name>privileged accessor</name>
+    <description>
+        gives privileged access to private and protected methods and attributes.
+        Use it in testing scenarios to set up your objects under test.
+    </description>
+    <url>http://code.google.com/p/privilegedaccessor/</url>
+    <packaging>jar</packaging>
+    <inceptionYear>2005</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-	<!-- Used to upload artifacts to maven central - provides e.g. distributionManagement -->
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
-	
-	<!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
-	<!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
-	<!-- <repositories></repositories> -->
-	<!-- <pluginRepositories></pluginRepositories> -->
-	
+    <!-- Used to upload artifacts to maven central - provides e.g. distributionManagement -->
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<version.java>1.5</version.java>
-	</properties>
+    <!-- Do NOT provide release or plugin repositories, otherwise automatic deployment of artifacts to public repositories fails -->
+    <!-- see https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
+    <!-- <repositories></repositories> -->
+    <!-- <pluginRepositories></pluginRepositories> -->
 
-	<scm>
-		<url>http://privilegedaccessor.googlecode.com/svn/trunk/</url>
-		<connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/trunk/</developerConnection>
-	</scm>
 
-	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/privilegedaccessor/issues/list</url>
-	</issueManagement>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <version.java>1.5</version.java>
+    </properties>
 
-	<developers>
-		<developer>
-			<id>sebidietrich</id>
-			<name>Sebastian Dietrich</name>
-			<email>Sebastian.Dietrich at e-movimento.com</email>
-			<organization>e-movimento Software Design &amp; Beratung GmbH</organization>
-			<timezone>+1</timezone>
-			<roles>
-				<role>lead</role>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>lubos.bistak</id>
-			<name>Lubos Bistak</name>
-			<email>lubos.bistak@gmail.com</email>
-			<timezone>+1</timezone>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-	</developers>
+    <scm>
+        <url>http://privilegedaccessor.googlecode.com/svn/trunk/</url>
+        <connection>scm:svn:http://privilegedaccessor.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://privilegedaccessor.googlecode.com/svn/trunk/</developerConnection>
+    </scm>
 
-	<organization>
-		<name>e-movimento</name>
-		<url>http://www.e-movimento.com</url>
-	</organization>
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/privilegedaccessor/issues/list</url>
+    </issueManagement>
 
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://privileged-accessor.ci.cloudbees.com/</url>
-	</ciManagement>
+    <developers>
+        <developer>
+            <id>sebidietrich</id>
+            <name>Sebastian Dietrich</name>
+            <email>Sebastian.Dietrich at e-movimento.com</email>
+            <organization>e-movimento Software Design &amp; Beratung GmbH</organization>
+            <timezone>+1</timezone>
+            <roles>
+                <role>lead</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>lubos.bistak</id>
+            <name>Lubos Bistak</name>
+            <email>lubos.bistak@gmail.com</email>
+            <timezone>+1</timezone>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <organization>
+        <name>e-movimento</name>
+        <url>http://www.e-movimento.com</url>
+    </organization>
 
-	<build>
-		<plugins>
-			<!-- to automatically upload releases to google code - see http://code.google.com/p/maven-gcu-plugin/wiki/Usage -->
-			<plugin>
-				<groupId>com.googlecode.maven-gcu-plugin</groupId>
-				<artifactId>maven-gcu-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<serverId>googlecode</serverId> <!-- default: googlecode -->
-					<failsOnError>false</failsOnError> <!-- default: false -->
-					<projectName>privilegedaccessor</projectName> <!-- googlecode name default: ${project.artifactId} -->
-					<uploads>
-						<upload>
-							<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
-							<summary>${project.name} bundle ${project.version}</summary>
-							<labels>
-								<label>Featured</label>
-								<label>Type-Jar</label>
-							</labels>
-						</upload>
-					</uploads>
-				</configuration>
-			</plugin>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://privileged-accessor.ci.cloudbees.com/</url>
+    </ciManagement>
 
-			<!-- to automatically deploy releases to nexus - see http://www.sonatype.com/books/nexus-book/reference/staging-sect-deployment.html#staging-sect-deployment-nexus-staging-maven-plugin -->
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.2</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>local-nexus</serverId>
-					<nexusUrl>http://localhost:8081/nexus/</nexusUrl>
-				</configuration>
-			</plugin>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-			<!-- to set the version for the compiler -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${version.java}</source>
-					<target>${version.java}</target>
-				</configuration>
-			</plugin>
+    <build>
+        <plugins>
+            <!-- to automatically upload releases to google code - see http://code.google.com/p/maven-gcu-plugin/wiki/Usage -->
+            <plugin>
+                <groupId>com.googlecode.maven-gcu-plugin</groupId>
+                <artifactId>maven-gcu-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <serverId>googlecode</serverId>
+                    <!-- default: googlecode -->
+                    <failsOnError>false</failsOnError>
+                    <!-- default: false -->
+                    <projectName>privilegedaccessor</projectName>
+                    <!-- googlecode name default: ${project.artifactId} -->
+                    <uploads>
+                        <upload>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}
+                            </file>
+                            <summary>${project.name} bundle ${project.version}</summary>
+                            <labels>
+                                <label>Featured</label>
+                                <label>Type-Jar</label>
+                            </labels>
+                        </upload>
+                    </uploads>
+                </configuration>
+            </plugin>
 
-			<!-- to generate sources -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- to automatically deploy releases to nexus - see http://www.sonatype.com/books/nexus-book/reference/staging-sect-deployment.html#staging-sect-deployment-nexus-staging-maven-plugin -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>local-nexus</serverId>
+                    <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+                </configuration>
+            </plugin>
 
-			<!-- to generate javadocs -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- to set the version for the compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${version.java}</source>
+                    <target>${version.java}</target>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly-descriptor.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
+            <!-- to generate sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<useDefaultManifestFile>true</useDefaultManifestFile>
-				</configuration>
-			</plugin>
+            <!-- to generate javadocs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<configuration>
-					<locales>en</locales>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly-descriptor.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>clirr-maven-plugin</artifactId>
-				<configuration>
-					<minSeverity>info</minSeverity>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
+                </configuration>
+            </plugin>
 
-		</plugins>
-	</build>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <locales>en</locales>
+                </configuration>
+            </plugin>
 
-	<reporting>
-		<plugins>
-			<!-- Generates a changes plugin based on changes at sourceforge -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<inherited>false</inherited>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>changes-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-				<configuration>
-					<issueLinkTemplate>http://code.google.com/p/privilegedaccessor/issues/detail?id=%ISSUE%</issueLinkTemplate>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <configuration>
+                    <minSeverity>info</minSeverity>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<!-- Generate a report based on the results of unit tests. -->
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<configuration>
-					<argLine>-enableassertions</argLine>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>report-only</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+        </plugins>
+    </build>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<configuration>
-					<argLine>-enableassertions</argLine>
-				</configuration>
-			</plugin>
+    <reporting>
+        <plugins>
+            <!-- Generates a changes plugin based on changes at sourceforge -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <inherited>false</inherited>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <issueLinkTemplate>http://code.google.com/p/privilegedaccessor/issues/detail?id=%ISSUE%
+                    </issueLinkTemplate>
+                </configuration>
+            </plugin>
 
-			<!-- TODO, @todo list report -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-			</plugin>
+            <plugin>
+                <!-- Generate a report based on the results of unit tests. -->
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <configuration>
+                    <argLine>-enableassertions</argLine>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <argLine>-enableassertions</argLine>
+                </configuration>
+            </plugin>
 
-			<!-- Erzeugt den Checkstyle Report -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<configLocation>.settings/checkstyle-checks.xml</configLocation>
-					<sourceDirectory>src/main/java</sourceDirectory>
-				</configuration>
-			</plugin>
+            <!-- TODO, @todo list report -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<configuration>
-					<xmlOutput>true</xmlOutput>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<configuration>
-					<targetJdk>${version.java}</targetJdk>
-				</configuration>
-			</plugin>
+            <!-- Erzeugt den Checkstyle Report -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>.settings/checkstyle-checks.xml</configLocation>
+                    <sourceDirectory>src/main/java</sourceDirectory>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>changelog-maven-plugin</artifactId>
-				<reportSets>
-					<reportSet>
-						<id>dual-report</id>
-						<configuration>
-							<type>range</type>
-							<range>1</range>
-						</configuration>
-						<reports>
-							<report>changelog</report>
-							<report>file-activity</report>
-							<report>dev-activity</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <targetJdk>${version.java}</targetJdk>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>dashboard-maven-plugin</artifactId>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <id>dual-report</id>
+                        <configuration>
+                            <type>range</type>
+                            <range>1</range>
+                        </configuration>
+                        <reports>
+                            <report>changelog</report>
+                            <report>file-activity</report>
+                            <report>dev-activity</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>clirr-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>dashboard-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

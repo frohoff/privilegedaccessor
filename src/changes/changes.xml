@@ -1,73 +1,84 @@
 <document>
-  <properties>
-    <title>Changes for PrivilegedAccessor</title>
-    <author email="Sebastian.Dietrich@e-movimento.com">Sebastian Dietrich</author>
-  </properties>
-  <body>
-    <release version="1.2" date="upcoming" description="feature release">
-      <!-- please enter all major changes to this project below... -->
-      <action dev="Sebastian.Dietrich" type="update">
-		switched to junit4 for testing
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		switched to maven as supported build tool (including configuration for eclipse, project site and deployment)
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		reduced some code and slightly improved performance
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) - thanks to Dan Richter for the advice
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		no need to fully declare common objects (e.g. PA.invokeMethod(MyClass.class, "setName(String)", "Brown");) - thanks to Matthias Herp for the request
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		returns the exact type when instantiating objects (no need to cast)
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		works as well with private member classes
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		added methods to get all attribute names and all method signatures - thanks to Matthias Herp for the request
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		added method toString to get a default String representation for objects - thanks to Matthias Herp for the request
-      </action>
-      <action dev="Sebastian.Dietrich" type="fix">
-		works now with methods that require array type parameters (with the exception of object array parameters) - thanks to nut for the advice
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		changed unit-tests to use Java 5.0 features
-      </action>
-      <action dev="Sebastian.Dietrich" type="add">
-		added some more unit-tests - line coverage is now 95% for junit.extensions.PA and 90% for junit.extensions.PrivilegedAccessor
-      </action>
-      <action dev="Sebastian.Dietrich" type="update">
-		improved exception information, more verbous and similar to java internal exceptions
-      </action>
-      <action dev="Sebastian.Dietrich" type="remove">
-		removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or 1 parameters)
-      </action>
-      <action dev="Sebastian.Dietrich" type="remove">
-		removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive), invokeMethod(method, primitive))
-      </action>
-      <action dev="Sebastian.Dietrich" type="fix">
-		size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (6.087 bytes instead of 9.859 bytes for V1.0)
-      </action>
-      <action dev="Sebastian.Dietrich" type="fix">
-		removed test-classes from jar and src.zip
-      </action>            
+    <properties>
+        <title>Changes for PrivilegedAccessor</title>
+        <author email="Sebastian.Dietrich@e-movimento.com">Sebastian Dietrich</author>
+    </properties>
+    <body>
+        <release version="1.2" date="upcoming" description="feature release">
+            <!-- please enter all major changes to this project below... -->
+            <action dev="Sebastian.Dietrich" type="update">
+                switched to junit4 for testing
+            </action>
+            <action dev="Sebastian.Dietrich" type="update">
+                switched to maven as supported build tool (including configuration for eclipse, project site and
+                deployment)
+            </action>
+            <action dev="Sebastian.Dietrich" type="update">
+                reduced some code and slightly improved performance
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                works with Java 5.0 variable parameter count (e.g. PA.instantiate(MyClass.class, "Charlie", "Brown");) -
+                thanks to Dan Richter for the advice
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                works with Java 5.0 autoboxing (e.g. PA.instantiate(MyClass.class, 1, false); instead of
+                PA.instantiate(MyClass.class, new Integer(1), new Boolean(false));)
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                no need to fully declare common objects (e.g. PA.invokeMethod(MyClass.class, "setName(String)",
+                "Brown");) - thanks to Matthias Herp for the request
+            </action>
+            <action dev="Sebastian.Dietrich" type="update">
+                returns the exact type when instantiating objects (no need to cast)
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                works as well with private member classes
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                added methods to get all attribute names and all method signatures - thanks to Matthias Herp for the
+                request
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                added method toString to get a default String representation for objects - thanks to Matthias Herp for
+                the request
+            </action>
+            <action dev="Sebastian.Dietrich" type="fix">
+                works now with methods that require array type parameters (with the exception of object array
+                parameters) - thanks to nut for the advice
+            </action>
+            <action dev="Sebastian.Dietrich" type="update">
+                changed unit-tests to use Java 5.0 features
+            </action>
+            <action dev="Sebastian.Dietrich" type="add">
+                added some more unit-tests - line coverage is now 95% for junit.extensions.PA and 90% for
+                junit.extensions.PrivilegedAccessor
+            </action>
+            <action dev="Sebastian.Dietrich" type="update">
+                improved exception information, more verbous and similar to java internal exceptions
+            </action>
+            <action dev="Sebastian.Dietrich" type="remove">
+                removed methods that are no longer needed due to variable parameter count (e.g. invokeMethod() with 0 or
+                1 parameters)
+            </action>
+            <action dev="Sebastian.Dietrich" type="remove">
+                removed methods that are no longer needed due to autoboxing (e.g. setValue(primitive),
+                invokeMethod(method, primitive))
+            </action>
+            <action dev="Sebastian.Dietrich" type="fix">
+                size of jar is dramatically reduced due to removal of no longer needed methods and test-classes (6.087
+                bytes instead of 9.859 bytes for V1.0)
+            </action>
+            <action dev="Sebastian.Dietrich" type="fix">
+                removed test-classes from jar and src.zip
+            </action>
 
-      
-      <!-- use the following template for new entries:
-      <action dev="Firstname.Lastname (as defined in pom.xml" type="ony of the following add/fix/remove/update">
-        what was done
-      </action>
-      -->
 
-    </release>
-  </body>
+            <!-- use the following template for new entries:
+            <action dev="Firstname.Lastname (as defined in pom.xml" type="ony of the following add/fix/remove/update">
+              what was done
+            </action>
+            -->
+
+        </release>
+    </body>
 </document>

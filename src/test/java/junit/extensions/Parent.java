@@ -21,125 +21,126 @@ import java.security.cert.CertificateException;
  * Test class with private methods to invoke via PrivilegedAccessor
  */
 public class Parent {
-   private String              privateName;
-   private Object              privateObject;
-   private static int          privateStaticInt;
-   private final int           privateFinalInt;
-   private final String        privateFinalString;
-   private static final int    privateStaticFinalInt;
-   private static final String privateStaticFinalString;
+    private static final int privateStaticFinalInt;
+    private static final String privateStaticFinalString;
+    static {
+        privateStaticFinalInt = 3;
+        privateStaticFinalString = "Tester";
+    }
+    private static int privateStaticInt;
+    private final int privateFinalInt;
+    private final String privateFinalString;
+    private String privateName;
+    private Object privateObject;
 
-   static {
-      privateStaticFinalInt = 3;
-      privateStaticFinalString = "Tester";
-   }
+    public Parent(String name) {
+        this(name, "Brown");
+    }
 
-   public Parent(String name) {
-      this(name, "Brown");
-   }
+    private Parent(String name, Object object) {
+        this.privateName = name;
+        this.privateObject = object;
+        privateStaticInt = 1;
+        privateFinalInt = 2;
+        privateFinalString = "Tom";
+    }
 
-   private Parent(String name, Object object) {
-      this.privateName = name;
-      this.privateObject = object;
-      privateStaticInt = 1;
-      privateFinalInt = 2;
-      privateFinalString = "Tom";
-   }
+    @SuppressWarnings("unused")
+    private Parent() {
+        this("Charlie", "Brown");
+    }
 
-   @SuppressWarnings("unused")
-   private Parent() {
-      this("Charlie", "Brown");
-   }
+    private static int getStaticInt() {
+        return Parent.privateStaticInt;
+    }
 
-   private String getName() {
-      return this.privateName;
-   }
+    @SuppressWarnings("unused")
+    private static void setStaticInt(int number) {
+        Parent.privateStaticInt = number;
+    }
 
-   protected void setName(String newName) {
-      this.privateName = newName;
-   }
+    private static int getStaticFinalInt() {
+        return Parent.privateStaticFinalInt;
+    }
 
-   /** overloading setName(String) **/
-   @SuppressWarnings("unused")
-   private void setName() {
-      this.privateName = "Chaplin";
-   }
+    private static String getStaticFinalString() {
+        return Parent.privateStaticFinalString;
+    }
 
-   @SuppressWarnings("unused")
-   private void setNamesWithVarargs(String... name) {
-      this.privateName = name[0];
-      this.privateObject = name[1];
-   }
+    private String getName() {
+        return this.privateName;
+    }
 
-   private Object getObject() {
-      return this.privateObject;
-   }
+    protected void setName(String newName) {
+        this.privateName = newName;
+    }
 
-   @SuppressWarnings("unused")
-   private void setObject(Object newObject) {
-      this.privateObject = newObject;
-   }
+    /**
+     * overloading setName(String) *
+     */
+    @SuppressWarnings("unused")
+    private void setName() {
+        this.privateName = "Chaplin";
+    }
 
-   @SuppressWarnings("unused")
-   private static void setStaticInt(int number) {
-      Parent.privateStaticInt = number;
-   }
+    @SuppressWarnings("unused")
+    private void setNamesWithVarargs(String... name) {
+        this.privateName = name[0];
+        this.privateObject = name[1];
+    }
 
-   private static int getStaticInt() {
-      return Parent.privateStaticInt;
-   }
+    private Object getObject() {
+        return this.privateObject;
+    }
 
-   private int getFinalInt() {
-      return privateFinalInt;
-   }
+    @SuppressWarnings("unused")
+    private void setObject(Object newObject) {
+        this.privateObject = newObject;
+    }
 
-   private String getFinalString() {
-      return privateFinalString;
-   }
+    private int getFinalInt() {
+        return privateFinalInt;
+    }
 
-   private static int getStaticFinalInt() {
-      return Parent.privateStaticFinalInt;
-   }
+    private String getFinalString() {
+        return privateFinalString;
+    }
 
-   private static String getStaticFinalString() {
-      return Parent.privateStaticFinalString;
-   }
+    @SuppressWarnings("unused")
+    private void methodThrowingRuntimeException() throws NullPointerException {
+        throw new NullPointerException("thrown exception");
+    }
 
-   @SuppressWarnings("unused")
-   private void methodThrowingRuntimeException() throws NullPointerException {
-      throw new NullPointerException("thrown exception");
-   }
+    @SuppressWarnings("unused")
+    private void methodThrowingException() throws CertificateException {
+        throw new CertificateException("thrown exception");
+    }
 
-   @SuppressWarnings("unused")
-   private void methodThrowingException() throws CertificateException {
-      throw new CertificateException("thrown exception");
-   }
+    @Override
+    public int hashCode() {
+        return this.privateName.hashCode() + this.privateObject.hashCode();
+    }
 
-   @Override
-   public int hashCode() {
-      return this.privateName.hashCode() + this.privateObject.hashCode();
-   }
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Parent)) {
+            return false;
+        }
 
-   @Override
-   public boolean equals(Object other) {
-      if (!(other instanceof Parent)) {
-         return false;
-      }
+        Parent otherParent = (Parent) other;
 
-      Parent otherParent = (Parent) other;
+        if (this.privateName.equals(otherParent.privateName) && this.privateObject.equals(otherParent.privateObject)) {
+            return true;
+        }
 
-      if (this.privateName.equals(otherParent.privateName) && this.privateObject.equals(otherParent.privateObject)) {
-         return true;
-      }
+        return false;
+    }
 
-      return false;
-   }
-
-   @Override
-   public String toString() {
-      return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
-         + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString()
-         + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString()
-         + "}";
-   }
+    @Override
+    public String toString() {
+        return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
+                + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString()
+                + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString()
+                + "}";
+    }
 }
