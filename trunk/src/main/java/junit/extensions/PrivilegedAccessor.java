@@ -15,659 +15,644 @@
  */
 package junit.extensions;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
+
 
 /**
  * This class is used to access a method or field of an object no matter what the access modifier of the method or field. The syntax
  * for accessing fields and methods is out of the ordinary because this class uses reflection to peel away protection.
- * <p>
+ * <p/>
  * a.k.a. The "ObjectMolester"
- * <p>
+ * <p/>
  * Here is an example of using this to access a private member: <br>
  * <code>myObject</code> is an object of type <code>MyClass</code>. <code>setName(String)</code> is a private method of
  * <code>MyClass</code>.
- * 
+ * <p/>
  * <pre>
  * PrivilegedAccessor.invokeMethod(myObject, &quot;setName(java.lang.String)&quot;, &quot;newName&quot;);
  * </pre>
- * 
+ *
  * @author Charlie Hubbard (chubbard@iss.net)
  * @author Prashant Dhokte (pdhokte@iss.net)
  * @author Sebastian Dietrich (sebastian.dietrich@e-movimento.com)
- * 
  * @deprecated use PA instead. PA improves the functionality of PrivilegedAccessor by introducing support for varargs and removal of
- *             the necessity to catch exceptions.
+ * the necessity to catch exceptions.
  */
 @Deprecated
 public final class PrivilegedAccessor {
-   /**
-    * Private constructor to make it impossible to instantiate this class.
-    */
-   private PrivilegedAccessor() {
-      assert false : "You mustn't instantiate PrivilegedAccessor, use its methods statically";
-   }
+    /**
+     * Maps string representation of primitives to their corresponding classes.
+     */
+    private static final Map<String, Class<?>> PRIMITIVE_MAPPER = new HashMap<String, Class<?>>(8);
+    /**
+     * Fills the map with all java primitives and their corresponding classes.
+     */
+    static {
+        PRIMITIVE_MAPPER.put("int", Integer.TYPE);
+        PRIMITIVE_MAPPER.put("float", Float.TYPE);
+        PRIMITIVE_MAPPER.put("double", Double.TYPE);
+        PRIMITIVE_MAPPER.put("short", Short.TYPE);
+        PRIMITIVE_MAPPER.put("long", Long.TYPE);
+        PRIMITIVE_MAPPER.put("byte", Byte.TYPE);
+        PRIMITIVE_MAPPER.put("char", Character.TYPE);
+        PRIMITIVE_MAPPER.put("boolean", Boolean.TYPE);
+    }
 
-   /**
-    * Returns a string representation of the given object. The string has the following format: "<classname> {<attributes and values>}"
-    * whereas <attributes and values> is a comma separated list with <attributeName>=<attributeValue> <atributes and values> includes
-    * all attributes of the objects class followed by the attributes of its superclass (if any) and so on.
-    * 
-    * @param instanceOrClass the object or class to get a string representation of
-    * @return a string representation of the given object
-    */
-   public static String toString(final Object instanceOrClass) {
-      Collection<String> fields = getFieldNames(instanceOrClass);
+    /**
+     * Private constructor to make it impossible to instantiate this class.
+     */
+    private PrivilegedAccessor() {
+        assert false : "You mustn't instantiate PrivilegedAccessor, use its methods statically";
+    }
 
-      if (fields.isEmpty()) return getClass(instanceOrClass).getName();
+    /**
+     * Returns a string representation of the given object. The string has the following format: "<classname> {<attributes and values>}"
+     * whereas <attributes and values> is a comma separated list with <attributeName>=<attributeValue> <atributes and values> includes
+     * all attributes of the objects class followed by the attributes of its superclass (if any) and so on.
+     *
+     * @param instanceOrClass the object or class to get a string representation of
+     * @return a string representation of the given object
+     */
+    public static String toString(final Object instanceOrClass) {
+        Collection<String> fields = getFieldNames(instanceOrClass);
 
-      StringBuffer stringBuffer = new StringBuffer();
+        if (fields.isEmpty()) return getClass(instanceOrClass).getName();
 
-      stringBuffer.append(getClass(instanceOrClass).getName() + " {");
+        StringBuffer stringBuffer = new StringBuffer();
 
-      for (String fieldName : fields) {
-         try {
-            stringBuffer.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
-         } catch (NoSuchFieldException e) {
-            assert false : "It should always be possible to get a field that was just here";
-         }
-      }
+        stringBuffer.append(getClass(instanceOrClass).getName() + " {");
 
-      stringBuffer.replace(stringBuffer.lastIndexOf(", "), stringBuffer.length(), "}");
-      return stringBuffer.toString();
-   }
-
-   /**
-    * Gets the name of all fields (public, private, protected, default) of the given instance or class. This includes as well all
-    * fields (public, private, protected, default) of all its super classes.
-    * 
-    * @param instanceOrClass the instance or class to get the fields of
-    * @return the collection of field names of the given instance or class
-    */
-   public static Collection<String> getFieldNames(final Object instanceOrClass) {
-      if (instanceOrClass == null) return Collections.EMPTY_LIST;
-
-      Class<?> clazz = getClass(instanceOrClass);
-      Field[] fields = clazz.getDeclaredFields();
-      Collection<String> fieldNames = new ArrayList<String>(fields.length);
-
-      for (Field field : fields) {
-         fieldNames.add(field.getName());
-      }
-      fieldNames.addAll(getFieldNames(clazz.getSuperclass()));
-
-      return fieldNames;
-   }
-
-   /**
-    * Gets the signatures of all methods (public, private, protected, default) of the given instance or class. This includes as well
-    * all methods (public, private, protected, default) of all its super classes. This does not include constructors.
-    * 
-    * @param instanceOrClass the instance or class to get the method signatures of
-    * @return the collection of method signatures of the given instance or class
-    */
-   public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
-      if (instanceOrClass == null) return Collections.EMPTY_LIST;
-
-      Class<?> clazz = getClass(instanceOrClass);
-      Method[] methods = clazz.getDeclaredMethods();
-      Collection<String> methodSignatures = new ArrayList<String>(methods.length + Object.class.getDeclaredMethods().length);
-
-      for (Method method : methods) {
-         methodSignatures.add(method.getName() + "(" + getParameterTypesAsString(method.getParameterTypes()) + ")");
-      }
-      methodSignatures.addAll(getMethodSignatures(clazz.getSuperclass()));
-
-      return methodSignatures;
-   }
-
-   /**
-    * Gets the value of the named field and returns it as an object. If instanceOrClass is a class then a static field is returned.
-    * 
-    * @param instanceOrClass the instance or class to get the field from
-    * @param fieldName the name of the field
-    * @return an object representing the value of the field
-    * @throws NoSuchFieldException if the field does not exist
-    */
-   public static Object getValue(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException {
-      Field field = getField(instanceOrClass, fieldName);
-      try {
-         return field.get(instanceOrClass);
-      } catch (IllegalAccessException e) {
-         assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
-         return null;
-      }
-   }
-
-   /**
-    * Instantiates an object of the given class with the given arguments. If you want to instantiate a member class, you must provide
-    * the object it is a member of as first argument.
-    * 
-    * @param fromClass the class to instantiate an object from
-    * @param args the arguments to pass to the constructor
-    * @return an object of the given type
-    * @throws IllegalArgumentException if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
-    *            arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
-    *            parameter type by a method invocation conversion.
-    * @throws IllegalAccessException if this Constructor object enforces Java language access control and the underlying constructor is
-    *            inaccessible.
-    * @throws InvocationTargetException if the underlying constructor throws an exception.
-    * @throws NoSuchMethodException if the constructor could not be found
-    * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
-    * 
-    * @see PrivilegedAccessor#instantiate(Class,Class[],Object[])
-    */
-   public static <T> T instantiate(final Class<? extends T> fromClass, final Object[] args) throws IllegalArgumentException,
-      InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-      return instantiate(fromClass, getParameterTypes(args), args);
-   }
-
-   /**
-    * Instantiates an object of the given class with the given arguments and the given argument types. If you want to instantiate a
-    * member class, you must provide the object it is a member of as first argument.
-    * 
-    * 
-    * @param fromClass the class to instantiate an object from
-    * @param args the arguments to pass to the constructor
-    * @param argumentTypes the fully qualified types of the arguments of the constructor
-    * @return an object of the given type
-    * @throws IllegalArgumentException if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
-    *            arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
-    *            parameter type by a method invocation conversion.
-    * @throws IllegalAccessException if this Constructor object enforces Java language access control and the underlying constructor is
-    *            inaccessible.
-    * @throws InvocationTargetException if the underlying constructor throws an exception.
-    * @throws NoSuchMethodException if the constructor could not be found
-    * @throws InstantiationException if the class that declares the underlying constructor represents an abstract class.
-    * 
-    * @see PrivilegedAccessor#instantiate(Class,Object[])
-    */
-   public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object[] args)
-      throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
-      NoSuchMethodException {
-      return (T) getConstructor(fromClass, argumentTypes).newInstance(args);
-   }
-
-   /**
-    * Calls a method on the given object instance with the given arguments. Arguments can be object types or representations for
-    * primitives.
-    * 
-    * @param instanceOrClass the instance or class to invoke the method on
-    * @param methodSignature the name of the method and the parameters <br>
-    *           (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
-    * @param arguments an array of objects to pass as arguments
-    * @return the return value of this method or null if void
-    * @throws IllegalAccessException if the method is inaccessible
-    * @throws NoSuchMethodException if no method with the given <code>methodSignature</code> could be found
-    * @throws IllegalArgumentException if an argument couldn't be converted to match the expected type
-    * @throws Throwable if the underlying method throws a non-runtime exception.
-    */
-   public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object[] arguments)
-      throws Throwable {
-      if ((methodSignature.indexOf('(') == -1) || (methodSignature.indexOf('(') >= methodSignature.indexOf(')')))
-         throw new NoSuchMethodException(methodSignature);
-      Class<?>[] parameterTypes = getParameterTypes(methodSignature);
-
-      try {
-         return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
-            getCorrectedArguments(parameterTypes, arguments));
-      } catch (InvocationTargetException e) {
-         throw e.getCause();
-      }
-   }
-
-   /**
-    * Gets the given arguments corrected to match the given methodSignature. Correction is necessary for array arguments not to be
-    * mistaken by varargs.
-    * 
-    * @param parameterTypes the method signatue the given arguments should match
-    * @param arguments the arguments that should be corrected
-    * @return the corrected arguments
-    */
-   private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) {
-      if (arguments == null) return arguments;
-      if (parameterTypes.length > arguments.length) return arguments;
-      if (parameterTypes.length < arguments.length) return getCorrectedArguments(parameterTypes, new Object[] {arguments});
-
-      Object[] correctedArguments = new Object[arguments.length];
-      int currentArgument = 0;
-      for (Class<?> parameterType : parameterTypes) {
-         correctedArguments[currentArgument] = getCorrectedArgument(parameterType, arguments[currentArgument]);
-         currentArgument++;
-      }
-      return correctedArguments;
-   }
-
-   /**
-    * Gets the given argument corrected to match the given parameterType. Correction is necessary for array arguments not to be
-    * mistaken by varargs.
-    * 
-    * @param parameterType the type to match the given argument upon
-    * @param argument the argument to match the given parameterType
-    * @return the corrected argument
-    */
-   private static Object getCorrectedArgument(Class<?> parameterType, Object argument) {
-      if (!parameterType.isArray() || (argument == null)) {
-         return argument; // normal argument for normal parameterType
-      }
-
-      if (!argument.getClass().isArray()) {
-         return new Object[] {argument};
-      }
-
-      if (parameterType.equals(argument.getClass())) return argument; // no need to cast
-
-      // (typed) array argument for (object) array parameterType, elements need to be casted
-      Object correctedArrayArgument = Array.newInstance(parameterType.getComponentType(), Array.getLength(argument));
-      for (int index = 0; index < Array.getLength(argument); index++) {
-         if (parameterType.getComponentType().isPrimitive()) { // rely on autoboxing
-            Array.set(correctedArrayArgument, index, Array.get(argument, index));
-         } else { // cast to expected type
+        for (String fieldName : fields) {
             try {
-               Array.set(correctedArrayArgument, index, parameterType.getComponentType().cast(Array.get(argument, index)));
-            } catch (ClassCastException e) {
-               throw new IllegalArgumentException("Argument " + argument + " of type " + argument.getClass()
-                  + " does not match expected argument type " + parameterType + ".");
+                stringBuffer.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
+            } catch (NoSuchFieldException e) {
+                assert false : "It should always be possible to get a field that was just here";
             }
-         }
-      }
-      return correctedArrayArgument;
-   }
+        }
 
-   /**
-    * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
-    * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
-    * at other times than instantiation can have unpredictable effects.<br/>
-    * <br/>
-    * Example:<br/>
-    * <br/>
-    * <code>
-    * String myString = "Test"; <br/>
-    * <br/>
-    * //setting the private field value<br/>
-    * PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
-    * <br/>
-    * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
-    * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
-    * <br/>
-    * </code>
-    * 
-    * @param instanceOrClass the instance or class to set the field
-    * @param fieldName the name of the field
-    * @param value the new value of the field
-    * @throws NoSuchFieldException if no field with the given <code>fieldName</code> can be found
-    * @throws IllegalAccessException possibly if the field was final
-    */
-   public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException,
-      IllegalAccessException {
-      Field field = getField(instanceOrClass, fieldName);
-      if (Modifier.isFinal(field.getModifiers())) {
-         PrivilegedAccessor.setValue(field, "modifiers", field.getModifiers() ^ Modifier.FINAL);
-      }
-      field.set(instanceOrClass, value);
-   }
+        stringBuffer.replace(stringBuffer.lastIndexOf(", "), stringBuffer.length(), "}");
+        return stringBuffer.toString();
+    }
 
-   /**
-    * Gets the class with the given className. Can handle arrays, varargs, primitives, ...
-    * 
-    * @param className the name of the class to get
-    * @return the class for the given className
-    * @throws ClassNotFoundException if the class could not be found
-    */
-   private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
-      if (className.indexOf('[') > -1) {
-         Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
-         return Array.newInstance(clazz, 0).getClass();
-      }
+    /**
+     * Gets the name of all fields (public, private, protected, default) of the given instance or class. This includes as well all
+     * fields (public, private, protected, default) of all its super classes.
+     *
+     * @param instanceOrClass the instance or class to get the fields of
+     * @return the collection of field names of the given instance or class
+     */
+    public static Collection<String> getFieldNames(final Object instanceOrClass) {
+        if (instanceOrClass == null) return Collections.EMPTY_LIST;
 
-      if (className.indexOf("...") > -1) {
-         Class<?> clazz = getClassForName(className.substring(0, className.indexOf("...")));
-         return Array.newInstance(clazz, 0).getClass();
-      }
+        Class<?> clazz = getClass(instanceOrClass);
+        Field[] fields = clazz.getDeclaredFields();
+        Collection<String> fieldNames = new ArrayList<String>(fields.length);
 
-      try {
-         return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-      } catch (ClassNotFoundException e) {
-         return getSpecialClassForName(className);
-      }
-   }
+        for (Field field : fields) {
+            fieldNames.add(field.getName());
+        }
+        fieldNames.addAll(getFieldNames(clazz.getSuperclass()));
 
-   /**
-    * Maps string representation of primitives to their corresponding classes.
-    */
-   private static final Map<String, Class<?>> PRIMITIVE_MAPPER = new HashMap<String, Class<?>>(8);
+        return fieldNames;
+    }
 
-   /**
-    * Fills the map with all java primitives and their corresponding classes.
-    */
-   static {
-      PRIMITIVE_MAPPER.put("int", Integer.TYPE);
-      PRIMITIVE_MAPPER.put("float", Float.TYPE);
-      PRIMITIVE_MAPPER.put("double", Double.TYPE);
-      PRIMITIVE_MAPPER.put("short", Short.TYPE);
-      PRIMITIVE_MAPPER.put("long", Long.TYPE);
-      PRIMITIVE_MAPPER.put("byte", Byte.TYPE);
-      PRIMITIVE_MAPPER.put("char", Character.TYPE);
-      PRIMITIVE_MAPPER.put("boolean", Boolean.TYPE);
-   }
+    /**
+     * Gets the signatures (including return types) of all methods (public, private, protected, default) of the given instance or class. This includes as well
+     * all methods (public, private, protected, default) of all its super classes. This does not include constructors.
+     *
+     * @param instanceOrClass the instance or class to get the method signatures of
+     * @return the collection of method signatures of the given instance or class
+     */
+    public static Collection<String> getMethodSignatures(final Object instanceOrClass) {
+        if (instanceOrClass == null) return new HashSet<String>();
 
-   /**
-    * Gets special classes for the given className. Special classes are primitives and "standard" Java types (like String)
-    * 
-    * @param className the name of the class to get
-    * @return the class for the given className
-    * @throws ClassNotFoundException if the class could not be found
-    */
-   private static Class<?> getSpecialClassForName(final String className) throws ClassNotFoundException {
-      if (PRIMITIVE_MAPPER.containsKey(className)) return PRIMITIVE_MAPPER.get(className);
+        Class<?> clazz = getClass(instanceOrClass);
+        Method[] methods = clazz.getDeclaredMethods();
+        Collection<String> methodSignatures = getMethodSignatures(clazz.getSuperclass());
 
-      if (missesPackageName(className)) return getStandardClassForName(className);
+        for (Method method : methods) {
+            methodSignatures.add(method.getReturnType().getName() + " " + method.getName() + "(" + getParameterTypesAsString(method.getParameterTypes()) + ")");
+        }
 
-      throw new ClassNotFoundException(className);
-   }
+        return methodSignatures;
+    }
 
-   /**
-    * Gets a 'standard' java class for the given className.
-    * 
-    * @param className the className
-    * @return the class for the given className (if any)
-    * @throws ClassNotFoundException of no 'standard' java class was found for the given className
-    */
-   private static Class<?> getStandardClassForName(String className) throws ClassNotFoundException {
-      try {
-         return Class.forName("java.lang." + className, false, Thread.currentThread().getContextClassLoader());
-      } catch (ClassNotFoundException e) {
-         try {
-            return Class.forName("java.util." + className, false, Thread.currentThread().getContextClassLoader());
-         } catch (ClassNotFoundException e1) {
-            throw new ClassNotFoundException(className);
-         }
-      }
-   }
+    /**
+     * Gets the value of the named field and returns it as an object. If instanceOrClass is a class then a static field is returned.
+     *
+     * @param instanceOrClass the instance or class to get the field from
+     * @param fieldName       the name of the field
+     * @return an object representing the value of the field
+     * @throws NoSuchFieldException if the field does not exist
+     */
+    public static Object getValue(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException {
+        Field field = getField(instanceOrClass, fieldName);
+        try {
+            return field.get(instanceOrClass);
+        } catch (IllegalAccessException e) {
+            assert false : "getField() should have setAccessible(true), so an IllegalAccessException should not occur in this place";
+            return null;
+        }
+    }
 
-   /**
-    * Tests if the given className possibly misses its package name.
-    * 
-    * @param className the className
-    * @return true if the className might miss its package name, otherwise false
-    */
-   private static boolean missesPackageName(String className) {
-      if (className.contains(".")) return false;
-      if (className.startsWith(className.substring(0, 1).toUpperCase())) return true;
-      return false;
-   }
+    /**
+     * Instantiates an object of the given class with the given arguments. If you want to instantiate a member class, you must provide
+     * the object it is a member of as first argument.
+     *
+     * @param fromClass the class to instantiate an object from
+     * @param args      the arguments to pass to the constructor
+     * @return an object of the given type
+     * @throws IllegalArgumentException  if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
+     *                                   arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
+     *                                   parameter type by a method invocation conversion.
+     * @throws IllegalAccessException    if this Constructor object enforces Java language access control and the underlying constructor is
+     *                                   inaccessible.
+     * @throws InvocationTargetException if the underlying constructor throws an exception.
+     * @throws NoSuchMethodException     if the constructor could not be found
+     * @throws InstantiationException    if the class that declares the underlying constructor represents an abstract class.
+     * @see PrivilegedAccessor#instantiate(Class, Class[], Object[])
+     */
+    public static <T> T instantiate(final Class<? extends T> fromClass, final Object[] args) throws IllegalArgumentException,
+            InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        return instantiate(fromClass, getParameterTypes(args), args);
+    }
 
-   /**
-    * Gets the constructor for a given class with the given parameters.
-    * 
-    * @param type the class to instantiate
-    * @param parameterTypes the types of the parameters
-    * @return the constructor
-    * @throws NoSuchMethodException if the method could not be found
-    */
-   private static <T> Constructor<?> getConstructor(final Class<T> type, final Class<?>[] parameterTypes) throws NoSuchMethodException {
-      for (Constructor<?> constructor : type.getDeclaredConstructors()) {
-         if (autoboxingEquals(constructor.getParameterTypes(), parameterTypes)) {
-            constructor.setAccessible(true);
-            return constructor;
-         }
-      }
-      throw new NoSuchMethodException(type.getName() + ".<init>" + argumentTypesToString(parameterTypes));
-   }
+    /**
+     * Instantiates an object of the given class with the given arguments and the given argument types. If you want to instantiate a
+     * member class, you must provide the object it is a member of as first argument.
+     *
+     * @param fromClass     the class to instantiate an object from
+     * @param args          the arguments to pass to the constructor
+     * @param argumentTypes the fully qualified types of the arguments of the constructor
+     * @return an object of the given type
+     * @throws IllegalArgumentException  if the number of actual and formal parameters differ; if an unwrapping conversion for primitive
+     *                                   arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal
+     *                                   parameter type by a method invocation conversion.
+     * @throws IllegalAccessException    if this Constructor object enforces Java language access control and the underlying constructor is
+     *                                   inaccessible.
+     * @throws InvocationTargetException if the underlying constructor throws an exception.
+     * @throws NoSuchMethodException     if the constructor could not be found
+     * @throws InstantiationException    if the class that declares the underlying constructor represents an abstract class.
+     * @see PrivilegedAccessor#instantiate(Class, Object[])
+     */
+    public static <T> T instantiate(final Class<? extends T> fromClass, final Class<?>[] argumentTypes, final Object[] args)
+            throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        return (T) getConstructor(fromClass, argumentTypes).newInstance(args);
+    }
 
-   private static String argumentTypesToString(Class<?>[] argTypes) {
-      StringBuilder buf = new StringBuilder();
-      buf.append("(");
-      if (argTypes != null) {
-         for (int i = 0; i < argTypes.length; i++) {
-            if (i > 0) {
-               buf.append(", ");
+    /**
+     * Calls a method on the given object instance with the given arguments. Arguments can be object types or representations for
+     * primitives.
+     *
+     * @param instanceOrClass the instance or class to invoke the method on
+     * @param methodSignature the name of the method and the parameters <br>
+     *                        (e.g. "myMethod(java.lang.String, com.company.project.MyObject)")
+     * @param arguments       an array of objects to pass as arguments
+     * @return the return value of this method or null if void
+     * @throws IllegalAccessException   if the method is inaccessible
+     * @throws NoSuchMethodException    if no method with the given <code>methodSignature</code> could be found
+     * @throws IllegalArgumentException if an argument couldn't be converted to match the expected type
+     * @throws Throwable                if the underlying method throws a non-runtime exception.
+     */
+    public static Object invokeMethod(final Object instanceOrClass, final String methodSignature, final Object[] arguments)
+            throws Throwable {
+        if ((methodSignature.indexOf('(') == -1) || (methodSignature.indexOf('(') >= methodSignature.indexOf(')')))
+            throw new NoSuchMethodException(methodSignature);
+        Class<?>[] parameterTypes = getParameterTypes(methodSignature);
+
+        try {
+            return getMethod(instanceOrClass, getMethodName(methodSignature), parameterTypes).invoke(instanceOrClass,
+                    getCorrectedArguments(parameterTypes, arguments));
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
+    }
+
+    /**
+     * Gets the given arguments corrected to match the given methodSignature. Correction is necessary for array arguments not to be
+     * mistaken by varargs.
+     *
+     * @param parameterTypes the method signatue the given arguments should match
+     * @param arguments      the arguments that should be corrected
+     * @return the corrected arguments
+     */
+    private static Object[] getCorrectedArguments(Class<?>[] parameterTypes, Object[] arguments) {
+        if (arguments == null) return arguments;
+        if (parameterTypes.length > arguments.length) return arguments;
+        if (parameterTypes.length < arguments.length)
+            return getCorrectedArguments(parameterTypes, new Object[]{arguments});
+
+        Object[] correctedArguments = new Object[arguments.length];
+        int currentArgument = 0;
+        for (Class<?> parameterType : parameterTypes) {
+            correctedArguments[currentArgument] = getCorrectedArgument(parameterType, arguments[currentArgument]);
+            currentArgument++;
+        }
+        return correctedArguments;
+    }
+
+    /**
+     * Gets the given argument corrected to match the given parameterType. Correction is necessary for array arguments not to be
+     * mistaken by varargs.
+     *
+     * @param parameterType the type to match the given argument upon
+     * @param argument      the argument to match the given parameterType
+     * @return the corrected argument
+     */
+    private static Object getCorrectedArgument(Class<?> parameterType, Object argument) {
+        if (!parameterType.isArray() || (argument == null)) {
+            return argument; // normal argument for normal parameterType
+        }
+
+        if (!argument.getClass().isArray()) {
+            return new Object[]{argument};
+        }
+
+        if (parameterType.equals(argument.getClass())) return argument; // no need to cast
+
+        // (typed) array argument for (object) array parameterType, elements need to be casted
+        Object correctedArrayArgument = Array.newInstance(parameterType.getComponentType(), Array.getLength(argument));
+        for (int index = 0; index < Array.getLength(argument); index++) {
+            if (parameterType.getComponentType().isPrimitive()) { // rely on autoboxing
+                Array.set(correctedArrayArgument, index, Array.get(argument, index));
+            } else { // cast to expected type
+                try {
+                    Array.set(correctedArrayArgument, index, parameterType.getComponentType().cast(Array.get(argument, index)));
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Argument " + argument + " of type " + argument.getClass()
+                            + " does not match expected argument type " + parameterType + ".");
+                }
             }
-            Class<?> c = argTypes[i];
-            buf.append((c == null) ? "null" : c.getName());
-         }
-      }
-      buf.append(")");
-      return buf.toString();
-   }
+        }
+        return correctedArrayArgument;
+    }
 
-   /**
-    * Check if the given objectTypes match the given possiblyPrimitiveTypes. Considers autoboxing.
-    */
-   private static boolean autoboxingEquals(Class<?>[] possiblyPrimitiveTypes, Class<?>[] objectTypes) {
-      int length = possiblyPrimitiveTypes.length;
-      if (objectTypes.length != length) return false;
+    /**
+     * Sets the value of the named field. If fieldName denotes a static field, provide a class, otherwise provide an instance. If the
+     * fieldName denotes a final field, this method could fail with an IllegalAccessException, since setting the value of final fields
+     * at other times than instantiation can have unpredictable effects.<br/>
+     * <br/>
+     * Example:<br/>
+     * <br/>
+     * <code>
+     * String myString = "Test"; <br/>
+     * <br/>
+     * //setting the private field value<br/>
+     * PrivilegedAccessor.setValue(myString, "value", new char[] {'T', 'e', 's', 't'});<br/>
+     * <br/>
+     * //setting the static final field serialVersionUID - MIGHT FAIL<br/>
+     * PrivilegedAccessor.setValue(myString.getClass(), "serialVersionUID", 1);<br/>
+     * <br/>
+     * </code>
+     *
+     * @param instanceOrClass the instance or class to set the field
+     * @param fieldName       the name of the field
+     * @param value           the new value of the field
+     * @throws NoSuchFieldException   if no field with the given <code>fieldName</code> can be found
+     * @throws IllegalAccessException possibly if the field was final
+     */
+    public static void setValue(final Object instanceOrClass, final String fieldName, final Object value) throws NoSuchFieldException,
+            IllegalAccessException {
+        Field field = getField(instanceOrClass, fieldName);
+        if (Modifier.isFinal(field.getModifiers())) {
+            PrivilegedAccessor.setValue(field, "modifiers", field.getModifiers() ^ Modifier.FINAL);
+        }
+        field.set(instanceOrClass, value);
+    }
 
-      for (int i = 0; i < length; i++) {
-         Class<?> possiblyPrimitiveType = possiblyPrimitiveTypes[i];
-         Class<?> objectType = objectTypes[i];
-         if (!isAssignableFrom(possiblyPrimitiveType, objectType)) return false;
-      }
+    /**
+     * Gets the class with the given className. Can handle arrays, varargs, primitives, ...
+     *
+     * @param className the name of the class to get
+     * @return the class for the given className
+     * @throws ClassNotFoundException if the class could not be found
+     */
+    private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
+        if (className.indexOf('[') > -1) {
+            Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
+            return Array.newInstance(clazz, 0).getClass();
+        }
 
-      return true;
-   }
+        if (className.indexOf("...") > -1) {
+            Class<?> clazz = getClassForName(className.substring(0, className.indexOf("...")));
+            return Array.newInstance(clazz, 0).getClass();
+        }
 
-   /**
-    * Checks if the given type1 is assignable from the given other type2. Consideres autoboxing - i.e. on the contrary to
-    * Class.isAssignableFrom an int is assignable from an integer
-    */
-   private static boolean isAssignableFrom(final Class<?> type1, final Class<?> type2) {
-      if (type1.equals(Integer.class) || type1.equals(int.class)) {
-         return type2.equals(Integer.class) || type2.equals(int.class);
-      } else if (type1.equals(Float.class) || type1.equals(float.class)) {
-         return type2.equals(Float.class) || type2.equals(float.class);
-      } else if (type1.equals(Double.class) || type1.equals(double.class)) {
-         return type2.equals(Double.class) || type2.equals(double.class);
-      } else if (type1.equals(Character.class) || type1.equals(char.class)) {
-         return type2.equals(Character.class) || type2.equals(char.class);
-      } else if (type1.equals(Long.class) || type1.equals(long.class)) {
-         return type2.equals(Long.class) || type2.equals(long.class);
-      } else if (type1.equals(Short.class) || type1.equals(short.class)) {
-         return type2.equals(Short.class) || type2.equals(short.class);
-      } else if (type1.equals(Boolean.class) || type1.equals(boolean.class)) {
-         return type2.equals(Boolean.class) || type2.equals(boolean.class);
-      } else if (type1.equals(Byte.class) || type1.equals(byte.class)) {
-         return type2.equals(Byte.class) || type2.equals(byte.class);
-      }
-      return type1.isAssignableFrom(type2);
-   }
+        try {
+            return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            return getSpecialClassForName(className);
+        }
+    }
 
-   /**
-    * Return the named field from the given instance or class. Returns a static field if instanceOrClass is a class.
-    * 
-    * @param instanceOrClass the instance or class to get the field from
-    * @param fieldName the name of the field to get
-    * @return the field
-    * @throws NoSuchFieldException if no such field can be found
-    * @throws InvalidParameterException if instanceOrClass was null
-    */
-   private static Field getField(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
-      InvalidParameterException {
-      if (instanceOrClass == null) throw new InvalidParameterException("Can't get field on null object/class");
+    /**
+     * Gets special classes for the given className. Special classes are primitives and "standard" Java types (like String)
+     *
+     * @param className the name of the class to get
+     * @return the class for the given className
+     * @throws ClassNotFoundException if the class could not be found
+     */
+    private static Class<?> getSpecialClassForName(final String className) throws ClassNotFoundException {
+        if (PRIMITIVE_MAPPER.containsKey(className)) return PRIMITIVE_MAPPER.get(className);
 
-      Class<?> type = getClass(instanceOrClass);
+        if (missesPackageName(className)) return getStandardClassForName(className);
 
-      try {
-         Field field = type.getDeclaredField(fieldName);
-         field.setAccessible(true);
-         return field;
-      } catch (NoSuchFieldException e) {
-         if (type.getSuperclass() == null) throw e;
-         return getField(type.getSuperclass(), fieldName);
-      }
-   }
+        throw new ClassNotFoundException(className);
+    }
 
-   public static Class<?> getFieldType(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
-      InvalidParameterException {
-      if (instanceOrClass == null) throw new InvalidParameterException("Can't get field type on null object/class");
-      Class<?> type = getClass(instanceOrClass);
+    /**
+     * Gets a 'standard' java class for the given className.
+     *
+     * @param className the className
+     * @return the class for the given className (if any)
+     * @throws ClassNotFoundException of no 'standard' java class was found for the given className
+     */
+    private static Class<?> getStandardClassForName(String className) throws ClassNotFoundException {
+        try {
+            return Class.forName("java.lang." + className, false, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            try {
+                return Class.forName("java.util." + className, false, Thread.currentThread().getContextClassLoader());
+            } catch (ClassNotFoundException e1) {
+                throw new ClassNotFoundException(className);
+            }
+        }
+    }
 
-      try {
-         Field field = type.getDeclaredField(fieldName);
-         return field.getType();
-      } catch (NoSuchFieldException e) {
-         if (type.getSuperclass() == null) throw e;
-         return getFieldType(type.getSuperclass(), fieldName);
-      }
-   }
+    /**
+     * Tests if the given className possibly misses its package name.
+     *
+     * @param className the className
+     * @return true if the className might miss its package name, otherwise false
+     */
+    private static boolean missesPackageName(String className) {
+        if (className.contains(".")) return false;
+        if (className.startsWith(className.substring(0, 1).toUpperCase())) return true;
+        return false;
+    }
 
-   /**
-    * Gets the class of the given parameter. If the parameter is a class, it is returned, if it is an object, its class is returned
-    * 
-    * @param instanceOrClass the instance or class to get the class of
-    * @return the class of the given parameter
-    */
-   private static Class<?> getClass(final Object instanceOrClass) {
-      if (instanceOrClass instanceof Class) return (Class<?>) instanceOrClass;
+    /**
+     * Gets the constructor for a given class with the given parameters.
+     *
+     * @param type           the class to instantiate
+     * @param parameterTypes the types of the parameters
+     * @return the constructor
+     * @throws NoSuchMethodException if the method could not be found
+     */
+    private static <T> Constructor<?> getConstructor(final Class<T> type, final Class<?>[] parameterTypes) throws NoSuchMethodException {
+        for (Constructor<?> constructor : type.getDeclaredConstructors()) {
+            if (autoboxingEquals(constructor.getParameterTypes(), parameterTypes)) {
+                constructor.setAccessible(true);
+                return constructor;
+            }
+        }
+        throw new NoSuchMethodException(type.getName() + ".<init>" + argumentTypesToString(parameterTypes));
+    }
 
-      return instanceOrClass.getClass();
-   }
+    private static String argumentTypesToString(Class<?>[] argTypes) {
+        StringBuilder buf = new StringBuilder();
+        buf.append("(");
+        if (argTypes != null) {
+            for (int i = 0; i < argTypes.length; i++) {
+                if (i > 0) {
+                    buf.append(", ");
+                }
+                Class<?> c = argTypes[i];
+                buf.append((c == null) ? "null" : c.getName());
+            }
+        }
+        buf.append(")");
+        return buf.toString();
+    }
 
-   /**
-    * Return the named method with a method signature matching classTypes from the given class.
-    * 
-    * @param type the class to get the method from
-    * @param methodName the name of the method to get
-    * @param parameterTypes the parameter-types of the method to get
-    * @return the method
-    * @throws NoSuchMethodException if the method could not be found
-    */
-   private static Method getMethod(final Class<?> type, final String methodName, final Class<?>[] parameterTypes)
-      throws NoSuchMethodException {
-      try {
-         return type.getDeclaredMethod(methodName, parameterTypes);
-      } catch (NoSuchMethodException e) {
-         if (type.getSuperclass() == null) throw e;
-         return getMethod(type.getSuperclass(), methodName, parameterTypes);
-      }
-   }
+    /**
+     * Check if the given objectTypes match the given possiblyPrimitiveTypes. Considers autoboxing.
+     */
+    private static boolean autoboxingEquals(Class<?>[] possiblyPrimitiveTypes, Class<?>[] objectTypes) {
+        int length = possiblyPrimitiveTypes.length;
+        if (objectTypes.length != length) return false;
 
-   /**
-    * Gets the method with the given name and parameters from the given instance or class. If instanceOrClass is a class, then we get a
-    * static method.
-    * 
-    * @param instanceOrClass the instance or class to get the method of
-    * @param methodName the name of the method
-    * @param parameterTypes the parameter-types of the method to get
-    * @return the method
-    * @throws NoSuchMethodException if the method could not be found
-    */
-   private static Method getMethod(final Object instanceOrClass, final String methodName, final Class<?>[] parameterTypes)
-      throws NoSuchMethodException {
-      Class<?> type;
+        for (int i = 0; i < length; i++) {
+            Class<?> possiblyPrimitiveType = possiblyPrimitiveTypes[i];
+            Class<?> objectType = objectTypes[i];
+            if (!isAssignableFrom(possiblyPrimitiveType, objectType)) return false;
+        }
 
-      type = getClass(instanceOrClass);
+        return true;
+    }
 
-      Method accessMethod = getMethod(type, methodName, parameterTypes);
-      accessMethod.setAccessible(true);
-      return accessMethod;
-   }
+    /**
+     * Checks if the given type1 is assignable from the given other type2. Consideres autoboxing - i.e. on the contrary to
+     * Class.isAssignableFrom an int is assignable from an integer
+     */
+    private static boolean isAssignableFrom(final Class<?> type1, final Class<?> type2) {
+        if (type1.equals(Integer.class) || type1.equals(int.class)) {
+            return type2.equals(Integer.class) || type2.equals(int.class);
+        } else if (type1.equals(Float.class) || type1.equals(float.class)) {
+            return type2.equals(Float.class) || type2.equals(float.class);
+        } else if (type1.equals(Double.class) || type1.equals(double.class)) {
+            return type2.equals(Double.class) || type2.equals(double.class);
+        } else if (type1.equals(Character.class) || type1.equals(char.class)) {
+            return type2.equals(Character.class) || type2.equals(char.class);
+        } else if (type1.equals(Long.class) || type1.equals(long.class)) {
+            return type2.equals(Long.class) || type2.equals(long.class);
+        } else if (type1.equals(Short.class) || type1.equals(short.class)) {
+            return type2.equals(Short.class) || type2.equals(short.class);
+        } else if (type1.equals(Boolean.class) || type1.equals(boolean.class)) {
+            return type2.equals(Boolean.class) || type2.equals(boolean.class);
+        } else if (type1.equals(Byte.class) || type1.equals(byte.class)) {
+            return type2.equals(Byte.class) || type2.equals(byte.class);
+        }
+        return type1.isAssignableFrom(type2);
+    }
 
-   /**
-    * Gets the name of a method.
-    * 
-    * @param methodSignature the signature of the method
-    * @return the name of the method
-    */
-   private static String getMethodName(final String methodSignature) {
-      try {
-         return methodSignature.substring(0, methodSignature.indexOf('(')).trim();
-      } catch (StringIndexOutOfBoundsException e) {
-         assert false : "Signature must have been checked before this method was called";
-         return null;
-      }
-   }
+    /**
+     * Return the named field from the given instance or class. Returns a static field if instanceOrClass is a class.
+     *
+     * @param instanceOrClass the instance or class to get the field from
+     * @param fieldName       the name of the field to get
+     * @return the field
+     * @throws NoSuchFieldException      if no such field can be found
+     * @throws InvalidParameterException if instanceOrClass was null
+     */
+    private static Field getField(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
+            InvalidParameterException {
+        if (instanceOrClass == null) throw new InvalidParameterException("Can't get field on null object/class");
 
-   /**
-    * Gets the types of the parameters.
-    * 
-    * @param parameters the parameters
-    * @return the class-types of the arguments
-    */
-   private static Class<?>[] getParameterTypes(final Object[] parameters) {
-      if (parameters == null) return new Class[0];
+        Class<?> type = getClass(instanceOrClass);
 
-      Class<?>[] typesOfParameters = new Class[parameters.length];
+        try {
+            Field field = type.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            if (type.getSuperclass() == null) throw e;
+            return getField(type.getSuperclass(), fieldName);
+        }
+    }
 
-      for (int i = 0; i < parameters.length; i++) {
-         typesOfParameters[i] = parameters[i].getClass();
-      }
-      return typesOfParameters;
-   }
+    public static Class<?> getFieldType(final Object instanceOrClass, final String fieldName) throws NoSuchFieldException,
+            InvalidParameterException {
+        if (instanceOrClass == null) throw new InvalidParameterException("Can't get field type on null object/class");
+        Class<?> type = getClass(instanceOrClass);
 
-   /**
-    * Gets the types of the given parameters. If the parameters don't match the given methodSignature an IllegalArgumentException is
-    * thrown.
-    * 
-    * @param methodSignature the signature of the method
-    * @return the parameter types as class[]
-    * @throws NoSuchMethodException if the method could not be found
-    * @throws IllegalArgumentException if one of the given parameters doesn't math the given methodSignature
-    */
-   private static Class<?>[] getParameterTypes(final String methodSignature) throws NoSuchMethodException, IllegalArgumentException {
-      String signature = getSignatureWithoutBraces(methodSignature);
+        try {
+            Field field = type.getDeclaredField(fieldName);
+            return field.getType();
+        } catch (NoSuchFieldException e) {
+            if (type.getSuperclass() == null) throw e;
+            return getFieldType(type.getSuperclass(), fieldName);
+        }
+    }
 
-      StringTokenizer tokenizer = new StringTokenizer(signature, ", *");
-      Class<?>[] typesInSignature = new Class[tokenizer.countTokens()];
+    /**
+     * Gets the class of the given parameter. If the parameter is a class, it is returned, if it is an object, its class is returned
+     *
+     * @param instanceOrClass the instance or class to get the class of
+     * @return the class of the given parameter
+     */
+    private static Class<?> getClass(final Object instanceOrClass) {
+        if (instanceOrClass instanceof Class) return (Class<?>) instanceOrClass;
 
-      for (int x = 0; tokenizer.hasMoreTokens(); x++) {
-         String className = tokenizer.nextToken();
-         try {
-            typesInSignature[x] = getClassForName(className);
-         } catch (ClassNotFoundException e) {
-            NoSuchMethodException noSuchMethodException = new NoSuchMethodException(methodSignature);
-            noSuchMethodException.initCause(e);
-            throw noSuchMethodException;
-         }
-      }
-      return typesInSignature;
-   }
+        return instanceOrClass.getClass();
+    }
 
-   /**
-    * Gets the parameter types as a string.
-    * 
-    * @param classTypes the types to get as names.
-    * @return the parameter types as a string
-    * 
-    * @see java.lang.Class#argumentTypesToString(Class[])
-    */
-   private static String getParameterTypesAsString(final Class<?>[] classTypes) {
-      assert classTypes != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
-      if (classTypes.length == 0) return "";
+    /**
+     * Return the named method with a method signature matching classTypes from the given class.
+     *
+     * @param type           the class to get the method from
+     * @param methodName     the name of the method to get
+     * @param parameterTypes the parameter-types of the method to get
+     * @return the method
+     * @throws NoSuchMethodException if the method could not be found
+     */
+    private static Method getMethod(final Class<?> type, final String methodName, final Class<?>[] parameterTypes)
+            throws NoSuchMethodException {
+        try {
+            return type.getDeclaredMethod(methodName, parameterTypes);
+        } catch (NoSuchMethodException e) {
+            if (type.getSuperclass() == null) throw e;
+            return getMethod(type.getSuperclass(), methodName, parameterTypes);
+        }
+    }
 
-      StringBuilder parameterTypes = new StringBuilder();
-      for (Class<?> clazz : classTypes) {
-         assert clazz != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
-         parameterTypes.append(clazz.getName()).append(", ");
-      }
+    /**
+     * Gets the method with the given name and parameters from the given instance or class. If instanceOrClass is a class, then we get a
+     * static method.
+     *
+     * @param instanceOrClass the instance or class to get the method of
+     * @param methodName      the name of the method
+     * @param parameterTypes  the parameter-types of the method to get
+     * @return the method
+     * @throws NoSuchMethodException if the method could not be found
+     */
+    private static Method getMethod(final Object instanceOrClass, final String methodName, final Class<?>[] parameterTypes)
+            throws NoSuchMethodException {
+        Class<?> type;
 
-      return parameterTypes.substring(0, parameterTypes.length() - 2);
-   }
+        type = getClass(instanceOrClass);
 
-   /**
-    * Removes the braces around the methods signature.
-    * 
-    * @param methodSignature the signature with braces
-    * @return the signature without braces
-    */
-   private static String getSignatureWithoutBraces(final String methodSignature) {
-      try {
-         return methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'));
-      } catch (IndexOutOfBoundsException e) {
-         assert false : "signature must have been checked before this method";
-         return null;
-      }
-   }
+        Method accessMethod = getMethod(type, methodName, parameterTypes);
+        accessMethod.setAccessible(true);
+        return accessMethod;
+    }
+
+    /**
+     * Gets the name of a method.
+     *
+     * @param methodSignature the signature of the method
+     * @return the name of the method
+     */
+    private static String getMethodName(final String methodSignature) {
+        try {
+            return methodSignature.substring(0, methodSignature.indexOf('(')).trim();
+        } catch (StringIndexOutOfBoundsException e) {
+            assert false : "Signature must have been checked before this method was called";
+            return null;
+        }
+    }
+
+    /**
+     * Gets the types of the parameters.
+     *
+     * @param parameters the parameters
+     * @return the class-types of the arguments
+     */
+    private static Class<?>[] getParameterTypes(final Object[] parameters) {
+        if (parameters == null) return new Class[0];
+
+        Class<?>[] typesOfParameters = new Class[parameters.length];
+
+        for (int i = 0; i < parameters.length; i++) {
+            typesOfParameters[i] = parameters[i].getClass();
+        }
+        return typesOfParameters;
+    }
+
+    /**
+     * Gets the types of the given parameters. If the parameters don't match the given methodSignature an IllegalArgumentException is
+     * thrown.
+     *
+     * @param methodSignature the signature of the method
+     * @return the parameter types as class[]
+     * @throws NoSuchMethodException    if the method could not be found
+     * @throws IllegalArgumentException if one of the given parameters doesn't math the given methodSignature
+     */
+    private static Class<?>[] getParameterTypes(final String methodSignature) throws NoSuchMethodException, IllegalArgumentException {
+        String signature = getSignatureWithoutBraces(methodSignature);
+
+        StringTokenizer tokenizer = new StringTokenizer(signature, ", *");
+        Class<?>[] typesInSignature = new Class[tokenizer.countTokens()];
+
+        for (int x = 0; tokenizer.hasMoreTokens(); x++) {
+            String className = tokenizer.nextToken();
+            try {
+                typesInSignature[x] = getClassForName(className);
+            } catch (ClassNotFoundException e) {
+                NoSuchMethodException noSuchMethodException = new NoSuchMethodException(methodSignature);
+                noSuchMethodException.initCause(e);
+                throw noSuchMethodException;
+            }
+        }
+        return typesInSignature;
+    }
+
+    /**
+     * Gets the parameter types as a string.
+     *
+     * @param classTypes the types to get as names.
+     * @return the parameter types as a string
+     * @see java.lang.Class#argumentTypesToString(Class[])
+     */
+    private static String getParameterTypesAsString(final Class<?>[] classTypes) {
+        assert classTypes != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
+        if (classTypes.length == 0) return "";
+
+        StringBuilder parameterTypes = new StringBuilder();
+        for (Class<?> clazz : classTypes) {
+            assert clazz != null : "getParameterTypes() should have been called before this method and should have provided not-null classTypes";
+            parameterTypes.append(clazz.getName()).append(", ");
+        }
+
+        return parameterTypes.substring(0, parameterTypes.length() - 2);
+    }
+
+    /**
+     * Removes the braces around the methods signature.
+     *
+     * @param methodSignature the signature with braces
+     * @return the signature without braces
+     */
+    private static String getSignatureWithoutBraces(final String methodSignature) {
+        try {
+            return methodSignature.substring(methodSignature.indexOf('(') + 1, methodSignature.indexOf(')'));
+        } catch (IndexOutOfBoundsException e) {
+            assert false : "signature must have been checked before this method";
+            return null;
+        }
+    }
 
 }
