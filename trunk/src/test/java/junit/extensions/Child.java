@@ -15,6 +15,8 @@
  */
 package junit.extensions;
 
+import java.util.Arrays;
+
 /**
  * Test class with private methods to invoke via PrivilegedAccessor.
  */
@@ -34,7 +36,7 @@ public class Child extends Parent {
 
     private Child(String name, Integer number) {
         super(name);
-        this.privateInt = number.intValue();
+        this.privateInt = number;
     }
 
     @SuppressWarnings("unused")
@@ -50,9 +52,10 @@ public class Child extends Parent {
     }
 
     public Child(String name) {
-        this(name, new Integer(8));
+        this(name, 8);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     private Child(int privateInt, float privateFloat) {
         super("Charlie");
         this.privateInt = privateInt;
@@ -222,11 +225,8 @@ public class Child extends Parent {
 
     @Override
     public String toString() {
-        return this.getClass().getName() + " {privateInt=" + getInt() + ", privateLong=" + getPrivateLong() + ", privateShort="
-                + getPrivateShort() + ", privateByte=" + getPrivateByte() + ", privateChar=" + getPrivateChar() + ", privateBoolean="
-                + isPrivateBoolean() + ", privateFloat=" + getPrivateFloat() + ", privateDouble=" + getPrivateDouble() + ", privateInts="
-                + getPrivateInts() + ", privateStrings=" + getPrivateStrings() + ", privateObjects=" + getPrivateObjects()
-                + ", privateCollection=" + getPrivateCollection() + ", " + super.toString().substring(super.toString().indexOf('{') + 1);
+        return this.getClass().getName() + " {privateBoolean=" + isPrivateBoolean() + ", privateObjects=" + Arrays.toString(getPrivateObjects()) + ", privateShort=" +
+                + getPrivateShort() + ", privateStaticFinalInt=" + PA.getValue(this, "privateStaticFinalInt") + ", privateInts=" + Arrays.toString(getPrivateInts()) + ", privateLong=" + getPrivateLong() + ", privateStrings=" + Arrays.toString(getPrivateStrings()) + ", privateFloat=" + getPrivateFloat() + ", privateInt=" + getInt() + ", privateByte=" + getPrivateByte() + ", privateStaticInt=" + PA.getValue(this, "privateStaticInt") + ", privateObject=" + PA.getValue(this, "privateObject") + ", privateCollection=" + getPrivateCollection() + ", privateDouble=" + getPrivateDouble() + ", privateName=" + PA.getValue(this, "privateName") + ", privateStaticFinalString=" + PA.getValue(this, "privateStaticFinalString") + ", privateFinalString=" + PA.getValue(this, "privateFinalString") + ", privateChar=" + getPrivateChar() + ", privateFinalInt=" + PA.getValue(this, "privateFinalInt") + "}";
     }
 
     @SuppressWarnings("unused")
