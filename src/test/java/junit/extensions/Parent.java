@@ -50,20 +50,20 @@ public class Parent {
         this("Charlie", "Brown");
     }
 
-    private static int getStaticInt() {
+    private static int getPrivateStaticInt() {
         return Parent.privateStaticInt;
     }
 
     @SuppressWarnings("unused")
-    private static void setStaticInt(int number) {
+    private static void setPrivateStaticInt(int number) {
         Parent.privateStaticInt = number;
     }
 
-    private static int getStaticFinalInt() {
+    private static int getPrivateStaticFinalInt() {
         return Parent.privateStaticFinalInt;
     }
 
-    private static String getStaticFinalString() {
+    private static String getPrivateStaticFinalString() {
         return Parent.privateStaticFinalString;
     }
 
@@ -98,11 +98,11 @@ public class Parent {
         this.privateObject = newObject;
     }
 
-    private int getFinalInt() {
+    private int getPrivateFinalInt() {
         return privateFinalInt;
     }
 
-    private String getFinalString() {
+    private String getPrivateFinalString() {
         return privateFinalString;
     }
 
@@ -138,9 +138,8 @@ public class Parent {
 
     @Override
     public String toString() {
-        return this.getClass().getName() + " {privateName=" + getName() + ", privateObject=" + getObject() + ", privateStaticInt="
-                + Parent.getStaticInt() + ", privateFinalInt=" + getFinalInt() + ", privateFinalString=" + getFinalString()
-                + ", privateStaticFinalInt=" + Parent.getStaticFinalInt() + ", privateStaticFinalString=" + Parent.getStaticFinalString()
-                + "}";
+        return this.getClass().getName() + " {privateStaticInt=" +Parent.getPrivateStaticInt() + ", privateObject=" + getObject() + ", privateStaticFinalInt=" + Parent.getPrivateStaticFinalInt() + ", privateName=" + getName() + ", privateStaticFinalString=" + Parent.getPrivateStaticFinalString() + ", privateFinalString=" + getPrivateFinalString() +
+                ", privateFinalInt=" + getPrivateFinalInt() + "}";
+
     }
 }

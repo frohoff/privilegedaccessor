@@ -15,6 +15,7 @@
  */
 package junit.extensions;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -165,7 +166,7 @@ public class PA<T> {
         try {
             return PrivilegedAccessor.instantiate(fromClass, argumentTypes, correctVarargs(arguments));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + arguments, e);
+            throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + Arrays.toString(arguments), e);
         }
     }
 
@@ -189,7 +190,7 @@ public class PA<T> {
         try {
             return PrivilegedAccessor.instantiate(fromClass, correctVarargs(arguments));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + arguments, e);
+            throw new IllegalArgumentException("Can't instantiate class " + fromClass + " with arguments " + Arrays.toString(arguments), e);
         }
     }
 
@@ -214,14 +215,14 @@ public class PA<T> {
             return PrivilegedAccessor.invokeMethod(instanceOrClass, methodSignature, correctVarargs(arguments));
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Can't access method " + methodSignature + " of " + instanceOrClass + " with arguments "
-                    + arguments, e);
+                    + Arrays.toString(arguments), e);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Can't find method " + methodSignature + " in " + instanceOrClass, e);
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
             throw new IllegalArgumentException("Invoking method " + methodSignature + " on " + instanceOrClass + " with arguments "
-                    + arguments + " threw the non-runtime exception " + e.getClass().getName(), e);
+                    + Arrays.toString(arguments) + " threw the non-runtime exception " + e.getClass().getName(), e);
         }
     }
 
@@ -253,10 +254,7 @@ public class PA<T> {
      */
     private static boolean changedByVararg(final Object[] parameters) {
         if ((parameters.length == 0) || (parameters[0] == null)) return false;
-
-        if (parameters.getClass() == Object[].class) return false;
-
-        return true;
+        return parameters.getClass() != Object[].class;
     }
 
     /**

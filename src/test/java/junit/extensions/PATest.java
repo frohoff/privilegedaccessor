@@ -594,7 +594,7 @@ public class PATest {
      */
     @Test
     public final void testGetFieldNames() {
-        Collection<String> testFieldNames = new ArrayList<String>();
+        Set<String> testFieldNames = new HashSet<String>();
 
         assertEquals(testFieldNames, PA.getFieldNames(null));
 
@@ -609,12 +609,12 @@ public class PATest {
         testFieldNames.add("privateStaticFinalString");
         assertEquals(testFieldNames, PA.getFieldNames(this.parent));
 
-        testFieldNames = Arrays.asList(new String[]{"privateInt", "privateObject", "privateLong", "privateShort", "privateByte",
-                "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateInts", "privateStrings", "privateObjects",
-                "privateName", "privateStaticInt"});
+        testFieldNames = new HashSet<String>(Arrays.asList(new String[]{"privateInt", "privateObject", "privateLong", "privateShort", "privateByte",
+                "privateChar", "privateBoolean", "privateFloat", "privateDouble", "privateInts", "privateStrings", "privateObjects", "privateCollection",
+                "privateName", "privateStaticInt", "privateStaticFinalString", "privateFinalString", "privateFinalInt", "privateStaticFinalInt"}));
 
-        assertTrue("getFieldNames didn't return all field names", PA.getFieldNames(this.child).containsAll(testFieldNames));
-        assertTrue("getFieldNames didn't return all field names", PA.getFieldNames(this.childInParent).containsAll(testFieldNames));
+        assertEquals("getFieldNames didn't return all field names", testFieldNames, PA.getFieldNames(this.child));
+        assertEquals("getFieldNames didn't return all field names", testFieldNames, PA.getFieldNames(this.childInParent));
     }
 
     /**
@@ -678,7 +678,7 @@ public class PATest {
         assertEquals("getMethodSignatures didn't return correct signatures", testMethodSignatures,
                 PA.getMethodSignatures(Object.class));
 
-        testMethodSignatures = new HashSet<String>(Arrays.asList(new String[]{"boolean equals(java.lang.Object)", "java.lang.String toString()", "int hashCode()", "java.lang.Object getObject()", "java.lang.String getName()", "void setName()", "void setName(java.lang.String)", "void methodThrowingRuntimeException()", "void setNamesWithVarargs([Ljava.lang.String;)", "java.lang.String getFinalString()", "int getStaticFinalInt()", "java.lang.String getStaticFinalString()", "void methodThrowingException()", "void setObject(java.lang.Object)", "void setStaticInt(int)", "int getStaticInt()", "int getFinalInt()", "void finalize()", "void wait(long, int)", "void wait(long)", "void wait()", "boolean equals(java.lang.Object)", "java.lang.String toString()", "int hashCode()", "java.lang.Class getClass()", "java.lang.Object clone()", "void registerNatives()", "void notify()", "void notifyAll()"}));
+        testMethodSignatures = new HashSet<String>(Arrays.asList(new String[]{"boolean equals(java.lang.Object)", "java.lang.String toString()", "int hashCode()", "java.lang.Object getObject()", "java.lang.String getName()", "void setName()", "void setName(java.lang.String)", "void methodThrowingRuntimeException()", "void setNamesWithVarargs([Ljava.lang.String;)", "java.lang.String getPrivateFinalString()", "int getPrivateStaticFinalInt()", "java.lang.String getPrivateStaticFinalString()", "void methodThrowingException()", "void setObject(java.lang.Object)", "void setPrivateStaticInt(int)", "int getPrivateStaticInt()", "int getPrivateFinalInt()", "void finalize()", "void wait(long, int)", "void wait(long)", "void wait()", "boolean equals(java.lang.Object)", "java.lang.String toString()", "int hashCode()", "java.lang.Class getClass()", "java.lang.Object clone()", "void registerNatives()", "void notify()", "void notifyAll()"}));
         assertEquals("getMethodSignatures didn't return correct signatures", testMethodSignatures,
                 PA.getMethodSignatures(this.parent));
     }
@@ -1315,7 +1315,7 @@ public class PATest {
      */
     @Test
     public void testInvokeStaticMethod() {
-        PA.invokeMethod(Parent.class, "setStaticInt(int)", 3);
+        PA.invokeMethod(Parent.class, "setPrivateStaticInt(int)", 3);
         assertEquals(3, PA.getValue(Parent.class, "privateStaticInt"));
     }
 

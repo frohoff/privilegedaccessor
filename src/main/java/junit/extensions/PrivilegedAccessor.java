@@ -104,17 +104,15 @@ public final class PrivilegedAccessor {
      * @return the collection of field names of the given instance or class
      */
     public static Collection<String> getFieldNames(final Object instanceOrClass) {
-        if (instanceOrClass == null) return Collections.EMPTY_LIST;
+        if (instanceOrClass == null) return new HashSet<String>();
 
         Class<?> clazz = getClass(instanceOrClass);
         Field[] fields = clazz.getDeclaredFields();
-        Collection<String> fieldNames = new ArrayList<String>(fields.length);
 
+        Collection<String> fieldNames = getFieldNames(clazz.getSuperclass());
         for (Field field : fields) {
             fieldNames.add(field.getName());
         }
-        fieldNames.addAll(getFieldNames(clazz.getSuperclass()));
-
         return fieldNames;
     }
 

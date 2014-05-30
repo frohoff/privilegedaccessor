@@ -103,10 +103,9 @@ public class PrivilegedAccessorTest {
     @Test
     @SuppressWarnings("deprecation")
     public final void testGetFieldNames() {
-        Collection<String> testFieldNames = new ArrayList<String>();
+        Set<String> testFieldNames = new HashSet<String>();
 
         assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(null));
-
         assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(Object.class));
 
         testFieldNames.add("privateName");
@@ -118,13 +117,12 @@ public class PrivilegedAccessorTest {
         testFieldNames.add("privateStaticFinalString");
         assertEquals(testFieldNames, PrivilegedAccessor.getFieldNames(this.parent));
 
-        testFieldNames = Arrays.asList(new String[]{"privateInt", "privateLong", "privateShort", "privateByte", "privateChar",
-                "privateBoolean", "privateFloat", "privateDouble", "privateInts", "privateStrings", "privateObjects", "privateName",
-                "privateObject", "privateStaticInt"});
-        assertTrue("getFieldNames() returned wrong field names", PrivilegedAccessor.getFieldNames(this.child)
-                .containsAll(testFieldNames));
-        assertTrue("getFieldNames() returned wrong field names",
-                PrivilegedAccessor.getFieldNames(this.childInParent).containsAll(testFieldNames));
+        testFieldNames = new HashSet<String>(Arrays.asList(new String[]{"privateInt", "privateLong", "privateShort", "privateStaticFinalInt", "privateByte", "privateChar",
+                "privateBoolean", "privateFloat", "privateCollection", "privateDouble", "privateInts", "privateStrings", "privateObjects", "privateName",
+                "privateStaticFinalString", "privateObject", "privateFinalString", "privateStaticInt", "privateFinalInt"}));
+        assertEquals("getFieldNames() returned wrong field names", testFieldNames, PrivilegedAccessor.getFieldNames(this.child));
+        assertEquals("getFieldNames() returned wrong field names",testFieldNames,
+                PrivilegedAccessor.getFieldNames(this.childInParent));
     }
 
     /**
@@ -187,7 +185,7 @@ public class PrivilegedAccessorTest {
         testMethodSignatures = new HashSet<String>(Arrays.asList(new String[]{"void wait()", "java.lang.String toString()", "void wait(long)", "void wait(long, int)", "void notify()", "void notifyAll()", "java.lang.Class getClass()", "java.lang.Object clone()", "boolean equals(java.lang.Object)", "int hashCode()", "void registerNatives()", "void finalize()"}));
         assertEquals("getMethodSignatures didn't return correct signatures", testMethodSignatures, PrivilegedAccessor.getMethodSignatures(Object.class));
 
-        testMethodSignatures = new HashSet<String>(Arrays.asList(new String[]{"java.lang.String getName()", "void setName()", "void setObject(java.lang.Object)", "java.lang.String toString()", "void setNamesWithVarargs([Ljava.lang.String;)", "void methodThrowingRuntimeException()", "void notify()", "java.lang.String getFinalString()", "java.lang.Object getObject()", "void notifyAll()", "void registerNatives()", "int getStaticInt()", "int getStaticFinalInt()", "void setStaticInt(int)", "java.lang.Object clone()", "void wait()", "void wait(long, int)", "java.lang.Class getClass()", "void setName(java.lang.String)", "void finalize()", "void wait(long)", "java.lang.String getStaticFinalString()", "void methodThrowingException()", "int getFinalInt()", "boolean equals(java.lang.Object)", "int hashCode()"}));
+        testMethodSignatures = new HashSet<String>(Arrays.asList(new String[]{"java.lang.String getName()", "void setName()", "void setObject(java.lang.Object)", "java.lang.String toString()", "void setNamesWithVarargs([Ljava.lang.String;)", "void methodThrowingRuntimeException()", "void notify()", "java.lang.String getPrivateFinalString()", "java.lang.Object getObject()", "void notifyAll()", "void registerNatives()", "int getPrivateStaticInt()", "int getPrivateStaticFinalInt()", "void setPrivateStaticInt(int)", "java.lang.Object clone()", "void wait()", "void wait(long, int)", "java.lang.Class getClass()", "void setName(java.lang.String)", "void finalize()", "void wait(long)", "java.lang.String getPrivateStaticFinalString()", "void methodThrowingException()", "int getPrivateFinalInt()", "boolean equals(java.lang.Object)", "int hashCode()"}));
         assertEquals("getMethodSignatures didn't return correct signatures", testMethodSignatures, PrivilegedAccessor.getMethodSignatures(this.parent));
     }
 
@@ -854,7 +852,7 @@ public class PrivilegedAccessorTest {
     @Test
     @SuppressWarnings("deprecation")
     public void testInvokeStaticMethod() throws Throwable {
-        PrivilegedAccessor.invokeMethod(Parent.class, "setStaticInt(int)", new Object[]{3});
+        PrivilegedAccessor.invokeMethod(Parent.class, "setPrivateStaticInt(int)", new Object[]{3});
         assertEquals(3, PrivilegedAccessor.getValue(Parent.class, "privateStaticInt"));
     }
 
