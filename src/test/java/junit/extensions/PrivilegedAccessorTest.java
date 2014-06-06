@@ -201,7 +201,7 @@ public class PrivilegedAccessorTest {
         assertEquals("Charlie", PrivilegedAccessor.getValue(this.parent, "privateName"));
 
         assertEquals("Charlie", PrivilegedAccessor.getValue(this.child, "privateName"));
-        assertEquals(new Integer(8), PrivilegedAccessor.getValue(this.child, "privateInt"));
+        assertEquals(8, PrivilegedAccessor.getValue(this.child, "privateInt"));
 
         assertEquals("Charlie", PrivilegedAccessor.getValue(this.childInParent, "privateName"));
         assertEquals(new Integer(8), PrivilegedAccessor.getValue(this.childInParent, "privateInt"));
@@ -216,7 +216,7 @@ public class PrivilegedAccessorTest {
     @Test
     @SuppressWarnings("deprecation")
     public void testGetValueOfStaticField() throws Throwable {
-        assertEquals(new Integer(1), PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
+        assertEquals(1, PrivilegedAccessor.getValue(this.parent, "privateStaticInt"));
         assertEquals(new Integer(1), PrivilegedAccessor.getValue(Parent.class, "privateStaticInt"));
     }
 
@@ -989,7 +989,7 @@ public class PrivilegedAccessorTest {
     @SuppressWarnings("deprecation")
     public void testSetValueOfFinalStringField() throws Throwable {
         String previousValue = (String) PrivilegedAccessor.getValue(this.parent, "privateFinalString");
-        assertTrue(previousValue != "Test");
+        assertFalse(previousValue.equals("Test"));
 
         PrivilegedAccessor.setValue(this.parent, "privateFinalString", "Test");
         assertEquals("Test", PrivilegedAccessor.getValue(this.parent, "privateFinalString"));
@@ -1036,7 +1036,7 @@ public class PrivilegedAccessorTest {
     @SuppressWarnings("deprecation")
     public void testSetValueOfStaticFinalObjectField() throws Throwable {
         String previousValue = (String) PrivilegedAccessor.getValue(this.parent, "privateStaticFinalString");
-        assertTrue(previousValue != "Herbert");
+        assertFalse(previousValue.equals("Herbert"));
 
         try {
             PrivilegedAccessor.setValue(Parent.class, "privateStaticFinalString", "Herbert");
