@@ -128,12 +128,7 @@ public class Parent {
         }
 
         Parent otherParent = (Parent) other;
-
-        if (this.privateName.equals(otherParent.privateName) && this.privateObject.equals(otherParent.privateObject)) {
-            return true;
-        }
-
-        return false;
+        return this.privateName.equals(otherParent.privateName) && this.privateObject.equals(otherParent.privateObject);
     }
 
     @Override

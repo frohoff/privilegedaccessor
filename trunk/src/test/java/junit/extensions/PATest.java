@@ -233,7 +233,7 @@ public class PATest {
      */
     @Test
     public void testAutoboxing() {
-        PA.invokeMethod(this.child, "setInt(int)", Integer.valueOf(4));
+        PA.invokeMethod(this.child, "setInt(int)", 4);
         assertEquals(4, PA.getValue(this.child, "privateInt"));
 
         Integer[] integers = new Integer[]{1, 2, 3};
@@ -286,7 +286,7 @@ public class PATest {
     @Test
     public void testSetValueOfStaticFinalObjectField() {
         String previousValue = (String) PA.getValue(this.parent, "privateStaticFinalString");
-        assertTrue(previousValue != "Herbert");
+        assertNotEquals(previousValue, "Herbert");
 
         try {
             PA.setValue(this.parent, "privateStaticFinalString", "Herbert");
@@ -474,7 +474,7 @@ public class PATest {
     @Test
     public void testSetValueOfFinalStringField() {
         String previousValue = (String) PA.getValue(this.parent, "privateFinalString");
-        assertTrue(previousValue != "Test");
+        assertNotEquals(previousValue, "Test");
 
         PA.setValue(this.parent, "privateFinalString", "Test");
         assertEquals("Test", PA.getValue(this.parent, "privateFinalString"));
@@ -493,10 +493,10 @@ public class PATest {
         assertEquals("Charlie", PA.getValue(this.parent, "privateName"));
 
         assertEquals("Charlie", PA.getValue(this.child, "privateName"));
-        assertEquals(new Integer(8), PA.getValue(this.child, "privateInt"));
+        assertEquals(8, PA.getValue(this.child, "privateInt"));
 
         assertEquals("Charlie", PA.getValue(this.childInParent, "privateName"));
-        assertEquals(new Integer(8), PA.getValue(this.childInParent, "privateInt"));
+        assertEquals(8, PA.getValue(this.childInParent, "privateInt"));
     }
 
     /**
@@ -560,8 +560,8 @@ public class PATest {
      */
     @Test
     public void testGetValueOfStaticField() {
-        assertEquals(new Integer(1), PA.getValue(this.parent, "privateStaticInt"));
-        assertEquals(new Integer(1), PA.getValue(Parent.class, "privateStaticInt"));
+        assertEquals(1, PA.getValue(this.parent, "privateStaticInt"));
+        assertEquals(1, PA.getValue(Parent.class, "privateStaticInt"));
     }
 
     @Test
@@ -579,6 +579,7 @@ public class PATest {
     /**
      * Tests the method <code>toString</code>
      */
+    @SuppressWarnings("deprecation")
     @Test
     public final void testToString() {
         assertEquals("java.lang.Object", PA.toString(new Object()));
@@ -866,17 +867,17 @@ public class PATest {
      */
     @Test
     public void testInvokeMethodThatRequireArrays() {
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{new Integer(1)});
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{new Integer(1)});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{1});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{1});
 
         PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{"Dolly"});
         PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Dolly"});
 
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{"Hello", new Integer(1)});
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", new Integer(1)});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{"Hello", 1});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", 1});
 
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{"Hello", new Integer(1)});
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", new Integer(1)});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", (Object) new Object[]{"Hello", 1});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", 1});
     }
 
     /**
@@ -1284,11 +1285,11 @@ public class PATest {
      */
     @Test
     public void testVarargsCantBeDistinquishedFromObjectArray() {
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", new Integer(3)});
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", new Object[]{"Hello", 3});
 
         // [Issue 11] the next method should fail with IllegalArgumentException, but since we can't distinquish varargs from Object[] it
         // works.
-        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", "Hello", new Integer(3));
+        PA.invokeMethod(this.child, "setPrivateObjects(java.lang.Object[])", "Hello", 3);
     }
 
     /**

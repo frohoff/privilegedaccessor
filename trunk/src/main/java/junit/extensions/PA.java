@@ -77,7 +77,9 @@ public class PA<T> {
      * @param instanceOrClass the object or class to get a string representation of
      * @return a string representation of the given object
      * @see PrivilegedAccessor#toString(Object)
+     * @deprecated use org.apache.commons.lang3.builder.ToStringBuilder instead
      */
+    @Deprecated
     @SuppressWarnings("deprecation")
     public static String toString(final Object instanceOrClass) {
         return PrivilegedAccessor.toString(instanceOrClass);

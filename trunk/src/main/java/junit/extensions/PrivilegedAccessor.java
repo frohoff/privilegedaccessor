@@ -74,26 +74,27 @@ public final class PrivilegedAccessor {
      *
      * @param instanceOrClass the object or class to get a string representation of
      * @return a string representation of the given object
+     *
+     * @deprecated use org.apache.commons.lang3.builder.ToStringBuilder instead
      */
+    @Deprecated
     public static String toString(final Object instanceOrClass) {
         Collection<String> fields = getFieldNames(instanceOrClass);
-
         if (fields.isEmpty()) return getClass(instanceOrClass).getName();
 
-        StringBuffer stringBuffer = new StringBuffer();
-
-        stringBuffer.append(getClass(instanceOrClass).getName() + " {");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getClass(instanceOrClass).getName()).append(" {");
 
         for (String fieldName : fields) {
             try {
-                stringBuffer.append(fieldName + "=" + getValue(instanceOrClass, fieldName) + ", ");
+                stringBuilder.append(fieldName).append("=").append(getValue(instanceOrClass, fieldName)).append(", ");
             } catch (NoSuchFieldException e) {
                 assert false : "It should always be possible to get a field that was just here";
             }
         }
 
-        stringBuffer.replace(stringBuffer.lastIndexOf(", "), stringBuffer.length(), "}");
-        return stringBuffer.toString();
+        stringBuilder.replace(stringBuilder.lastIndexOf(", "), stringBuilder.length(), "}");
+        return stringBuilder.toString();
     }
 
     /**
@@ -329,12 +330,12 @@ public final class PrivilegedAccessor {
      * @throws ClassNotFoundException if the class could not be found
      */
     private static Class<?> getClassForName(final String className) throws ClassNotFoundException {
-        if (className.indexOf('[') > -1) {
+        if (className.contains("[")) {
             Class<?> clazz = getClassForName(className.substring(0, className.indexOf('[')));
             return Array.newInstance(clazz, 0).getClass();
         }
 
-        if (className.indexOf("...") > -1) {
+        if (className.contains("...")) {
             Class<?> clazz = getClassForName(className.substring(0, className.indexOf("...")));
             return Array.newInstance(clazz, 0).getClass();
         }
@@ -388,8 +389,7 @@ public final class PrivilegedAccessor {
      */
     private static boolean missesPackageName(String className) {
         if (className.contains(".")) return false;
-        if (className.startsWith(className.substring(0, 1).toUpperCase())) return true;
-        return false;
+        return className.startsWith(className.substring(0, 1).toUpperCase());
     }
 
     /**
